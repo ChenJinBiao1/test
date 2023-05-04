@@ -1,0 +1,506 @@
+{
+	"name": "sqrIPT092DIVTZoneGrosRPCGP",
+	"properties": {
+		"activities": [
+			{
+				"name": "Order To Azure MRHPG_MDSE_HIER_PRC_GRP_T",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure MHIERSEQNBR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT MDSE_HIER_PRC_GRP_SEQ_NBR_S, MDSE_HIER_LVL_SEQ_NBR_S,1 as Test FROM MRHPG_MDSE_HIER_PRC_GRP_T",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MDSE_HIER_LVL_SEQ_NBR_S",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "MDSE_HIER_LVL_SEQ_NBR_S",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TEST",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "TEST",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T",
+						"type": "DatasetReference",
+						"parameters": {
+							"IPT_DB_SCHEMA": {
+								"value": "@pipeline().globalParameters.IPT_DB_SHCEMA",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T_TEST",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT092DIVTZoneGrps_PRCGP_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure MRHPG_MDSE_HIER_PRC_GRP_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT092DIVTZoneGrps_PRCGP_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pInvocationId": "\"ASIA\""
+						},
+						"datasetParameters": {
+							"DSUHILVSeqNbr": {
+								"pInvocationId": "ASIA"
+							},
+							"DSPrcGroupsDesc": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Order To Azure MHIERSEQNBR",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure PRCGP_PRC_GRP_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT IPTCGI.PRC_GRP_SEQ_NBR.NEXTVAL as PRC_GRP_SEQ_NBR_S FROM DUAL",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MHIERSEQNBR",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_MHIERSEQNBR_PRCGPSeqNbr",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Order To Azure PRCGP_PRC_GRP_T",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT PRC_GRP_SEQ_NBR_S , PRC_GRP_ID , MDSE_HIER_PRC_GRP_SEQ_NBR_S , MKT_ID , CHNL_ID FROM IPTCGI.PRCGP_PRC_GRP_T",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_PRCGP_PRC_GRP_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_IPTCGI_PRCGP_PRC_GRP_T",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "ldIPT092DIVTZoneGrps_PRCGP_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT092DIVTZoneGrps_PRCGP_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT092DIVTZoneGrps_PRCGP_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pUserId": "\"PIPT091U\""
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Send-Emial_4",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT092DIVTZoneGrps_PRCGP_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT092DIVTZoneGrps_PRCGP_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_3",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure MRHPG_MDSE_HIER_PRC_GRP_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order To Azure MRHPG_MDSE_HIER_PRC_GRP_T\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure MHIERSEQNBR",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order To Azure MHIERSEQNBR\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure PRCGP_PRC_GRP_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order To Azure PRCGP_PRC_GRP_T\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_5",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ldIPT092DIVTZoneGrps_PRCGP_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:ldIPT092DIVTZoneGrps_PRCGP_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "T092_IPTCGI_PRCGP_PRC_GRP_T_OUT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ldIPT092DIVTZoneGrps_PRCGP_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=T092_IPTCGI_PRCGP_PRC_GRP_T_OUT&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=T092_IPTCGI_PRCGP_PRC_GRP_T_OUT.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "T092_IPTCGI_PRCGP_PRC_GRP_T_OUT",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"Foreachjson": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T08:49:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

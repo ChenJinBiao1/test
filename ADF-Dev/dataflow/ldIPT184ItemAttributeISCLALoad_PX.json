@@ -1,0 +1,114 @@
+{
+	"name": "ldIPT184ItemAttributeISCLALoad_PX",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT183NewProductToISCLA_PX_DS_ISCLALoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT183NewPriceToISCLA_PX_DS_ISCLA_Update_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLAUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp2",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLAUPD"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          STRT_DT as date,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DLT_IND as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCLA",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as timestamp,",
+				"          DLT_IND as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCLAUpdate",
+				"DSISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LOC_NBR as string,",
+				"          STRT_DT as string,",
+				"          RTL_PRC_AMT as string,",
+				"          PRC_STAT_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DLT_IND as string",
+				"     ),",
+				"     partitionFileNames:['ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTISCLA",
+				"DSISCLAUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LOC_NBR as string,",
+				"          RTL_PRC_AMT as string,",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as string,",
+				"          DLT_IND as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp2.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTISCLAUPD"
+			]
+		}
+	}
+}

@@ -1,0 +1,124 @@
+{
+	"name": "srcIPT031BCRSalesExtract_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_StoreSales_BCR",
+						"type": "DatasetReference"
+					},
+					"name": "FFBCRSales"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LOCLT_LOC_LIST_T_UnitSales",
+						"type": "DatasetReference"
+					},
+					"name": "LOCLTLOCLISTT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT031BCRSalesExtract_PX_DS_SalesExtract_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSalesExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT031BCRSalesExtract_PX_DS_LOCLT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLOCLT"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FFBCRSalesSelect"
+				},
+				{
+					"name": "XNullHandle"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          OPR_BRD_ID as integer,",
+				"          OPR_MKT_ID as integer,",
+				"          OPR_CHNL_ID as integer,",
+				"          OPR_STY_CD as string,",
+				"          CLR_ID as string,",
+				"          OPR_STY_CLR_NBR as string,",
+				"          OPR_LOC_NBR as integer,",
+				"          PROC_DT as string,",
+				"          LN_TOT_UN_SLS_QTY as string,",
+				"          LN_Tot_RTL_SLS_AMT as string,",
+				"          LN_TOT_XTD_WAC_CST_AMT as string,",
+				"          LN_TOT_XTD_ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFBCRSales",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          CHNL_ID as integer,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LOCLTLOCLISTT",
+				"FFBCRSales select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT = PROC_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT = LN_Tot_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT = LN_TOT_XTD_ORIG_RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFBCRSalesSelect",
+				"FFBCRSalesSelect derive(OPR_STY_CD = iif(isNull(OPR_STY_CD), '', OPR_STY_CD),",
+				"          CLR_ID = iif(isNull(CLR_ID), '', CLR_ID),",
+				"          OPR_STY_CLR_NBR = iif(isNull(OPR_STY_CLR_NBR), '', OPR_STY_CLR_NBR),",
+				"          LN_TOT_UN_SLS_QTY = iif(isNull(LN_TOT_UN_SLS_QTY), 0, toInteger(LN_TOT_UN_SLS_QTY)),",
+				"          LN_TOT_RTL_SLS_AMT = iif(isNull(LN_TOT_RTL_SLS_AMT), toDecimal(0), toDecimal(LN_TOT_RTL_SLS_AMT)),",
+				"          LN_TOT_XTD_WAC_CST_AMT = iif(isNull(LN_TOT_XTD_WAC_CST_AMT), toDecimal(0), toDecimal(LN_TOT_XTD_WAC_CST_AMT)),",
+				"          RTL_PRC_AMT = iif(isNull(RTL_PRC_AMT), toDecimal(0), toDecimal(RTL_PRC_AMT))) ~> XNullHandle",
+				"XNullHandle sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT031BCRSalesExtract_PX.DS_SalesExtract.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSSalesExtract",
+				"LOCLTLOCLISTT sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT031BCRSalesExtract_PX.DS_LOCLT.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSLOCLT"
+			]
+		}
+	}
+}

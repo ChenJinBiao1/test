@@ -1,0 +1,272 @@
+{
+	"name": "xfmIPT015BCRItemsCorpComp_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsITMSCC_PX_DS_UHILV_LHILV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSItemsSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LHILV_LGCY_HIER_LVL_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLHILVSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_MHIERSEQNBR_UHILV",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUHILVSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TMRCY_MDSE_LVL_TYP_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTMRCYSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT015BCRItemsCorpComp_PX_DS_DistinctCorpComp_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDistinctCorpComp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FILHILV"
+				},
+				{
+					"name": "LLHILVLookup"
+				},
+				{
+					"name": "LLHILVDerivedColumn"
+				},
+				{
+					"name": "LLHILVSplit"
+				},
+				{
+					"name": "LLHILVMatchSelect"
+				},
+				{
+					"name": "LLHILVNotMatchSelect"
+				},
+				{
+					"name": "inUHILVSeqnbrLookup"
+				},
+				{
+					"name": "IPTUHILVSelect"
+				},
+				{
+					"name": "IPTUHILVDerivedColumn"
+				},
+				{
+					"name": "LLHILVNotMatchDerivedColumn"
+				},
+				{
+					"name": "inUHILVSeqnbrSelect"
+				},
+				{
+					"name": "loLHILVSeqNbrLookup"
+				},
+				{
+					"name": "IPTTMRCYSelect"
+				},
+				{
+					"name": "loLHILVSeqNbrSelect"
+				},
+				{
+					"name": "FCorpComp"
+				},
+				{
+					"name": "RDCorpComp"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          CO_ID as string,",
+				"          CORP_ID as string,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          PRGM_NBR as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          LGCY_IND as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSItemsSource",
+				"source(output(",
+				"          MHIER_LVL_SEQ as integer,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_LVL_CD as string,",
+				"          TEST as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLHILVSource",
+				"source(output(",
+				"          MHIER_LVL_SEQ as integer,",
+				"          DUMMY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTUHILVSource",
+				"source(output(",
+				"          MDSE_LVL_CD as string,",
+				"          TEST as integer,",
+				"          DUMMY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTMRCYSource",
+				"DSItemsSource filter(LGCY_IND == 'Y') ~> FILHILV",
+				"RDCorpComp, IPTLHILVSource lookup(RDCorpComp@CORP_ID == IPTLHILVSource@CORP_ID",
+				"     && CO_ID == MDSE_CO_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLHILVLookup",
+				"LLHILVLookup derive(IsMatch = isMatch()) ~> LLHILVDerivedColumn",
+				"LLHILVDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LLHILVSplit@(LLHILVLookupMatch, LLHILVLookupNotMatch)",
+				"LLHILVSplit@LLHILVLookupMatch select(mapColumn(",
+				"          BRD_ID,",
+				"          CO_ID,",
+				"          CORP_ID = LLHILVSplit@LLHILVLookupMatch@CORP_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          PRGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          LGCY_IND,",
+				"          MHIER_LVL_SEQ,",
+				"          MDSE_LVL_CD,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLHILVMatchSelect",
+				"LLHILVSplit@LLHILVLookupNotMatch select(mapColumn(",
+				"          BRD_ID,",
+				"          CO_ID,",
+				"          CORP_ID = LLHILVSplit@LLHILVLookupNotMatch@CORP_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          PRGM_NBR,",
+				"          LGCY_IND,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLHILVNotMatchSelect",
+				"LLHILVNotMatchDerivedColumn, IPTUHILVDerivedColumn lookup(LLHILVNotMatchDerivedColumn@AddColumn == IPTUHILVDerivedColumn@AddColumn,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> inUHILVSeqnbrLookup",
+				"IPTUHILVSource select(mapColumn(",
+				"          MHIER_LVL_SEQ,",
+				"          Dummy = DUMMY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTUHILVSelect",
+				"IPTUHILVSelect derive(AddColumn = 1) ~> IPTUHILVDerivedColumn",
+				"LLHILVNotMatchSelect derive(AddColumn = 1) ~> LLHILVNotMatchDerivedColumn",
+				"inUHILVSeqnbrLookup select(mapColumn(",
+				"          BRD_ID,",
+				"          CO_ID,",
+				"          CORP_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          PRGM_NBR,",
+				"          LGCY_IND,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MHIER_LVL_SEQ,",
+				"          Dummy",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inUHILVSeqnbrSelect",
+				"inUHILVSeqnbrSelect, IPTTMRCYSelect lookup(inUHILVSeqnbrSelect@Dummy == IPTTMRCYSelect@Dummy,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> loLHILVSeqNbrLookup",
+				"IPTTMRCYSource select(mapColumn(",
+				"          MDSE_LVL_CD,",
+				"          TEST,",
+				"          Dummy = DUMMY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTTMRCYSelect",
+				"loLHILVSeqNbrLookup select(mapColumn(",
+				"          BRD_ID,",
+				"          CO_ID,",
+				"          CORP_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          PRGM_NBR,",
+				"          LGCY_IND,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MHIER_LVL_SEQ,",
+				"          MDSE_LVL_CD,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loLHILVSeqNbrSelect",
+				"LLHILVMatchSelect, loLHILVSeqNbrSelect union(byName: true)~> FCorpComp",
+				"FILHILV aggregate(groupBy(CORP_ID,",
+				"          CO_ID),",
+				"     each(match(!in(['CORP_ID','CO_ID'],name)), $$ = first($$))) ~> RDCorpComp",
+				"FCorpComp sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT015BCRItemsCorpComp_PX.DS_DistinctCorpComp.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          BRD_ID,",
+				"          CORP_ID,",
+				"          CO_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          PRGM_NBR,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LGCY_IND,",
+				"          MHIER_LVL_SEQ,",
+				"          MDSE_LVL_CD,",
+				"          TEST",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DSDistinctCorpComp"
+			]
+		}
+	}
+}

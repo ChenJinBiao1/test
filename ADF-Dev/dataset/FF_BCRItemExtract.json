@@ -1,0 +1,89 @@
+{
+	"name": "FF_BCRItemExtract",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Inventory_BCR_to_IPT_ASIA",
+				"folderPath": "destintion",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OPR_BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_ENTP_MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CLR_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CLR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "OPR_LOC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "PROC_DT",
+				"type": "String"
+			},
+			{
+				"name": "OH_INV_UN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "IXIT_INV_UN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "NON_SELL_UN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "RSV_UN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "XPCT_UN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "ON_ORD_QTY",
+				"type": "String"
+			},
+			{
+				"name": "CD_DTL_NM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

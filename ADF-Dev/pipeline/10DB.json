@@ -1,0 +1,139 @@
+{
+	"name": "10DB",
+	"properties": {
+		"description": "蓝色DB",
+		"activities": [
+			{
+				"name": "Order To Azure TCDX_MH_CO_DIV_XRF_01",
+				"description": "Order To Azure UHILV_UNIV_HIER_LVL_T2(第四个之后的蓝色DB)",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DIVISION, CORP_ID,\n                  MDSE_CO_ID as CO_ID,\n                 BRD_XREF_ID          \n  FROM    IPTCGI.TCDX_MH_CO_DIV_XRF \n",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "TCDX_MH_CO_DIV_XRF",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_TCDX_MH_CO_DIV_XRF_01",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Order To Azure TCDX_MH_CO_DIV_XRF_02",
+				"description": "Order To Azure LHILV_LGCY_HIER_LVL_T_01之前的(蓝色DB)",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order To Azure TCDX_MH_CO_DIV_XRF_01",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT  CORP_ID,\n                  MDSE_CO_ID as CO_ID,\n                 BRD_XREF_ID          \n  FROM    IPTCGI.TCDX_MH_CO_DIV_XRF \n",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "TCDX_MH_CO_DIV_XRF",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_TCDX_MH_CO_DIV_XRF_02",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-14T08:25:44Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

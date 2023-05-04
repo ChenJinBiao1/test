@@ -1,0 +1,37 @@
+{
+	"name": "12",
+	"properties": {
+		"activities": [
+			{
+				"name": "xfmIPT124RPMCmplxSeqNbrGen_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMCmplxSeqNbrGen_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 16,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-02-12T16:26:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

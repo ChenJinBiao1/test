@@ -1,0 +1,104 @@
+{
+	"name": "xfmIPT224A_RPMPromo_ORPOS_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_224A",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_224A",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_Promo_Errors_RPM_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFPromoErrorsORPOS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPromoId"
+				},
+				{
+					"name": "loBrdMktChnl"
+				},
+				{
+					"name": "fiBrdMktChnl"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          NAME as string,",
+				"          START_DATE as date,",
+				"          END_DATE as date,",
+				"          CURRENCY_CODE as string,",
+				"          STATE as string,",
+				"          DESCR as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOS",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"RPMORPOS, IPTTPROOUHILVOPORI lookup(RPMORPOS@PROMO_ID == IPTTPROOUHILVOPORI@PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPromoId",
+				"LPromoId select(mapColumn(",
+				"          PROMO_ID = RPMORPOS@PROMO_ID,",
+				"          NAME,",
+				"          START_DATE,",
+				"          END_DATE,",
+				"          CURRENCY_CODE,",
+				"          STATE,",
+				"          DESCR,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loBrdMktChnl",
+				"loBrdMktChnl filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> fiBrdMktChnl",
+				"fiBrdMktChnl sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_Promo_Errors_RPM_ORPOS_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFPromoErrorsORPOS"
+			]
+		}
+	}
+}

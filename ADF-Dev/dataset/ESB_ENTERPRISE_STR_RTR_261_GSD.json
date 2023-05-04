@@ -1,0 +1,37 @@
+{
+	"name": "ESB_ENTERPRISE_STR_RTR_261_GSD",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/26-ESBPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ESB_ENTERPRISE_STR_RTR_261_GSD.txt",
+				"folderPath": "score",
+				"fileSystem": "26esbpricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Count",
+				"type": "String"
+			},
+			{
+				"name": "txn_typ_cd",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

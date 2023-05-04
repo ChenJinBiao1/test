@@ -1,0 +1,1071 @@
+{
+	"name": "sqrIPT124RPMApprPromoTrnfrm",
+	"properties": {
+		"activities": [
+			{
+				"name": "TPRGP_PRGS_PMOTN_T",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT TPRGP.PMOTN_REQ_ID_S, TPRGP.PRC_GRP_ZN_SEQ_NBR_S, TPRGP.MIN_QTY, TPRGP.PMOTN_PRC_UN_AMT, \nTPRGP.PMOTN_PCT_OFF_RAT, TPRGP.PMOTN_DLR_OFF_AMT,TPRGP.PMOTN_DSCT_CD, TPRGP.PMOTN_DESC \nFROM IPTCGI.TPRGP_PRGS_PMOTN_T TPRGP, IPTCGI.TPROO_PMOTN_REQ_HDR_OTPT_T TPROO\nWHERE TPROO.PMOTN_REQ_ID_S = TPRGP.PMOTN_REQ_ID_S AND  TPROO.PROC_STAT_CD=6",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "TPRGP_PRGS_PMOTN_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_TPRGP_PRGS_PMOTN_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "PRGPZ_PRC_GRP_ZN_T",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "TPRGP_PRGS_PMOTN_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "select PRC_GRP_ZN_SEQ_NBR_S,CNCY_CD from IPTCGI.PRGPZ_PRC_GRP_ZN_T",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_PRGPZ_PRC_GRP_ZN_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_PRGPZ_PRC_GRP_ZN_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "PMOTN_REQ_ID",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "PRGPZ_PRC_GRP_ZN_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT IPTCGI.PMOTN_REQ_ID.NEXTVAL AS Pmotn_Comp_Id FROM DUAL",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "PMOTN_REQ_ID",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_PMOTN_REQ_ID_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT124RPMTrnfrm0_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "PMOTN_REQ_ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMTrnfrm0_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "PRGSL_PRC_GRP_ZN_STR_T",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm0_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT PRC_GRP_ZN_SEQ_NBR_S, \nSTR_NBR, \nSTRT_DT, \nEND_DT \nFROM IPTCGI.PRGSL_PRC_GRP_ZN_STR_T ",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTGIC_PRGSL_PRC_GRP_ZN_STR_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_PRGSL_PRC_GRP_ZN_STR_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "UHILV_UNIV_HIER_LVL_T",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "PRGSL_PRC_GRP_ZN_STR_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "select UNIV_HIER_LVL_SEQ_NBR_S, BRD_ID,DIV_ID,DEPT_ID,CLS_ID,SCLS_ID,\nITM_STY_CLR_SEQ_NBR_S,ITM_STY_SEQ_NBR_S,MDSE_LVL_CD \nfrom IPTCGI.UHILV_UNIV_HIER_LVL_T",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_UHILV_UNIV_HIER_LVL_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_UHILV_UNIV_HIER_LVL_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT124RPMTrnfrm1_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "UHILV_UNIV_HIER_LVL_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMTrnfrm1_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "sqrIPT033BCRSalesMHD_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm1_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT033BCRSalesMHD_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "xfmIPT124RPMTrnfrm2_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT033BCRSalesMHD_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMTrnfrm2_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "UIACX_UNIV_INTR_APPL_XREF_T",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm2_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT BRD_ID, INTR_APPL_BRD_ID FROM  IPTCGI.UIACX_UNIV_INTR_APPL_XREF_T",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "UIACX_UNIV_INTR_APPL_XREF_T",
+						"type": "DatasetReference",
+						"parameters": {
+							"IPT_DB_SCHEMA": "IPTCGI"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_UIACX_UNIV_INTR_APPL_XREF_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "LOCLT_LOC_LIST_T_124",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "UIACX_UNIV_INTR_APPL_XREF_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT LOC_NBR, CNCY_CD FROM IPTCGI.LOCLT_LOC_LIST_T",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "LOCLT_LOC_LIST_T",
+						"type": "DatasetReference",
+						"parameters": {
+							"IPT_DB_SCHEMA": "IPTCGI"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_LOCLT_LOC_LIST_T_124",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT124RPMTrnfrm3_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "LOCLT_LOC_LIST_T_124",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMTrnfrm3_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "xfmIPT124RPMCmplxSeqNbrGen_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm3_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT124RPMCmplxSeqNbrGen_PX",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Send-Emial_1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "TPRGP_PRGS_PMOTN_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:TPRGP_PRGS_PMOTN_T failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_4",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm0_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT124RPMTrnfrm0_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PRGPZ_PRC_GRP_ZN_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:PRGPZ_PRC_GRP_ZN_T failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_3",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PMOTN_REQ_ID",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:PMOTN_REQ_ID failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_5",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PRGSL_PRC_GRP_ZN_STR_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:PRGSL_PRC_GRP_ZN_STR_T failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_6",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "UHILV_UNIV_HIER_LVL_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:UHILV_UNIV_HIER_LVL_T failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_7",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm1_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT124RPMTrnfrm1_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_8",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm2_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT124RPMTrnfrm2_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_9",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "UIACX_UNIV_INTR_APPL_XREF_T",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:UIACX_UNIV_INTR_APPL_XREF_T failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_10",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "LOCLT_LOC_LIST_T_124",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:LOCLT_LOC_LIST_T_124 failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_11",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMTrnfrm3_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT124RPMTrnfrm3_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_12",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT124RPMCmplxSeqNbrGen_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT124RPMCmplxSeqNbrGen_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_7_copy1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT033BCRSalesMHD_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:sqrIPT033BCRSalesMHD_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T08:53:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

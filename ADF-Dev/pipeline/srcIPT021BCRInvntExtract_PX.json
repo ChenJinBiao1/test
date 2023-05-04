@@ -1,0 +1,155 @@
+{
+	"name": "srcIPT021BCRInvntExtract_PX",
+	"properties": {
+		"activities": [
+			{
+				"name": "Oracle To Azure LOCLT_LOC_LIST_T",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "Select LOC_NBR From LOCLT_LOC_LIST_T",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "LOC_NBR",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "LOC_NBR",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "LOCLT_LOC_LIST_T",
+						"type": "DatasetReference",
+						"parameters": {
+							"IPT_DB_SCHEMA": {
+								"value": "@pipeline().globalParameters.IPT_DB_SHCEMA",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_LOCIT_LOC_LIST_T",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Oracle To Azure Inventory_BCR_to_IPT",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 300,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "FtpReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "/apps/xchg/IPA/IPADEV/default/inbox",
+								"type": "Expression"
+							},
+							"wildcardFileName": "Inventory_BCR_to_IPT_ASIA_*.csv",
+							"enablePartitionDiscovery": false,
+							"useBinaryTransfer": true,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Inventory_BCR_to_IPT",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_Inventory_BCR_to_IPT",
+						"type": "DatasetReference",
+						"parameters": {
+							"pInvocationId": "ASIA"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T09:44:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

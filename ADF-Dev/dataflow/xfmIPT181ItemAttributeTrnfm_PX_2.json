@@ -1,0 +1,137 @@
+{
+	"name": "xfmIPT181ItemAttributeTrnfm_PX_2",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT181ItemAttributeExtract_PX_DS_ISCCA_Previous_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrevISCCA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCCAItem"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "Copy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "Delete"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"     CNCY_CD as string,",
+				"     CTRY_CD as string,",
+				"     CHNL_ID as integer,",
+				"     AUC_AMT as decimal(15,2),",
+				"     ORIG_RTL_PRC_AMT as decimal(15,2)",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          AUC_AMT as decimal(15,2),",
+				"          ORIG_RTL_PRC_AMT as decimal(15,2)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPrevISCCA",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          AUC_AMT as string,",
+				"          ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCCAItem",
+				"DSPrevISCCA split(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S && CNCY_CD == $CNCY_CD && CTRY_CD == $CTRY_CD && CHNL_ID == $CHNL_ID && AUC_AMT == $AUC_AMT,",
+				"     ITM_STY_CLR_SEQ_NBR_S != $ITM_STY_CLR_SEQ_NBR_S || CNCY_CD != $CNCY_CD || CTRY_CD != $CTRY_CD || CHNL_ID != $CHNL_ID,",
+				"     disjoint: false) ~> split1@(AllTureY, NoAllTrue)",
+				"split1@AllTureY derive(ITM_STY_CLR_SEQ_NBR_S = $ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD = $CNCY_CD,",
+				"          CTRY_CD = $CTRY_CD,",
+				"          CHNL_ID = $CHNL_ID,",
+				"          AUC_AMT = $AUC_AMT,",
+				"          ORIG_RTL_PRC_AMT = $ORIG_RTL_PRC_AMT,",
+				"          change_code = 0) ~> derivedColumn1",
+				"split1@NoAllTrue derive(ITM_STY_CLR_SEQ_NBR_S = $ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD = $CNCY_CD,",
+				"          CTRY_CD = $CTRY_CD,",
+				"          CHNL_ID = $CHNL_ID,",
+				"          AUC_AMT = $AUC_AMT,",
+				"          ORIG_RTL_PRC_AMT = $ORIG_RTL_PRC_AMT,",
+				"          change_code = 2) ~> derivedColumn2",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          AUC_AMT as string,",
+				"          ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     partitionFileNames:['AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Copy",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          AUC_AMT as string,",
+				"          ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     partitionFileNames:['AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Delete"
+			]
+		}
+	}
+}

@@ -1,0 +1,68 @@
+{
+	"name": "ldIPT093DIVTZoneGrps_PRGPZ_PX_Fail",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_PRGPZ_PX_DS_PRGPZLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGPZLoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRGPZ_PRC_GRP_ZN_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGPZ"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_ID as integer,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRGPZLoad",
+				"DSPRGPZLoad sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_ID as string,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_D as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['IPTCGI_PRGPZ_PRC_GRP_ZN_T_OUT.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTPRGPZ"
+			]
+		}
+	}
+}

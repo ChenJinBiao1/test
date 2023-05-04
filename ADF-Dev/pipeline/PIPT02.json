@@ -1,0 +1,173 @@
+{
+	"name": "PIPT02",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqr021BCRInvntExtAndTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT020U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqr021BCRInvntExtAndTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqr022BCRInvntLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqr021BCRInvntExtAndTrnfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqr022BCRInvntLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT020U",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DownFile_02_NEW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT020U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&scriptName=PIPT020U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT020U-20221229033000,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT020U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT024DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT023U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT024DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=gatherStatistics.sh&&params=PIPT024DU,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT024DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT023U",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqr022BCRInvntLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT023U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&&&scriptName=PIPT023U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT023U-20221229033000,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT023U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "DownFile_02_NEW",
+				"description": "DownFile_02_NEW",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=DownFile_02_NEW&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=DownFile_02_NEW.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "DownFile_02_NEW",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"state": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-22T01:42:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,454 @@
+{
+	"name": "xfmIPT092DIVTZoneGrps_PRCGP_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT091DIVTZoneGrps_MRHPG_PX_DS_UHILVSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUHILVSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T_TEST",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMRHPG"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_PrcGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrcGroupsDesc"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRCGP_PRC_GRP_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRCGP"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_MHIERSEQNBR_PRCGPSeqNbr",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRCGPSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_ZoneGrp_MktCncy",
+						"type": "DatasetReference"
+					},
+					"name": "FFConfigFile"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT092DIVTZoneGrps_PRCGP_PX_DS_MRHPGSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPGSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT092DIVTZoneGrps_PRCGP_PX_DS_PRCGPLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRCGPLoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "IPTMRHPGFilter"
+				},
+				{
+					"name": "LMRHPG"
+				},
+				{
+					"name": "LMRHPGFILTER"
+				},
+				{
+					"name": "ReduceColumn"
+				},
+				{
+					"name": "LPRCGP"
+				},
+				{
+					"name": "LPRCGPFilter"
+				},
+				{
+					"name": "LPrcGrpDesc"
+				},
+				{
+					"name": "LPrcGrpDescFilter"
+				},
+				{
+					"name": "IPTPRCGPSeqNbrFilter"
+				},
+				{
+					"name": "LPrcGrpDescFilterAdd"
+				},
+				{
+					"name": "LPRCGPSeqNbr"
+				},
+				{
+					"name": "LPRCGPSeqNbrFilter"
+				},
+				{
+					"name": "FPRCGPFilter"
+				},
+				{
+					"name": "LMktCncyCdFilter"
+				},
+				{
+					"name": "LMktCncyCd"
+				},
+				{
+					"name": "FPRCGP"
+				},
+				{
+					"name": "RDPrcGrpSeq"
+				},
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "IsMatch3"
+				},
+				{
+					"name": "split4"
+				},
+				{
+					"name": "OutNumber"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSUHILVSeqNbr",
+				"source(output(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          TEST as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTMRHPG",
+				"source(output(",
+				"          PrcGrpDesc as string,",
+				"          PrcGrpId as integer,",
+				"          Brand as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPrcGroupsDesc",
+				"source(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ID as integer,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRCGP",
+				"source(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRCGPSeqNbr",
+				"source(output(",
+				"          PrcGrpId as integer,",
+				"          BRD_ID as integer,",
+				"          Mkt_ID as integer,",
+				"          MKT_CNCY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFConfigFile",
+				"IPTMRHPG select(mapColumn(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTMRHPGFilter",
+				"DSUHILVSeqNbr, IPTMRHPGFilter lookup(UNIV_HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LMRHPG",
+				"split2@Yes1 select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LMRHPGFILTER",
+				"LMRHPGFILTER select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ReduceColumn",
+				"LMRHPGFILTER, DSPrcGroupsDesc lookup(BRD_ID == Brand,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPRCGP",
+				"RDPrcGrpSeq select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPRCGPFilter",
+				"LPRCGPFilter, IPTPRCGP lookup(PrcGrpId == PRC_GRP_ID",
+				"     && LPRCGPFilter@MDSE_HIER_PRC_GRP_SEQ_NBR_S == IPTPRCGP@MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"     && LPRCGPFilter@MKT_ID == IPTPRCGP@MKT_ID",
+				"     && LPRCGPFilter@CHNL_ID == IPTPRCGP@CHNL_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPrcGrpDesc",
+				"split1@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID = split1@No@MKT_ID,",
+				"          CHNL_ID = split1@No@CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S = split1@No@MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrcGrpDescFilter",
+				"IPTPRCGPSeqNbr derive(a = 1) ~> IPTPRCGPSeqNbrFilter",
+				"LPrcGrpDescFilter derive(a = 1) ~> LPrcGrpDescFilterAdd",
+				"LPrcGrpDescFilterAdd, IPTPRCGPSeqNbrFilter lookup(LPrcGrpDescFilterAdd@a == IPTPRCGPSeqNbrFilter@a,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPRCGPSeqNbr",
+				"LPRCGPSeqNbr select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPRCGPSeqNbrFilter",
+				"FPRCGP select(skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FPRCGPFilter",
+				"LMktCncyCd select(mapColumn(",
+				"          BRD_ID = FPRCGPFilter@BRD_ID,",
+				"          MKT_ID = FPRCGPFilter@MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId = FPRCGPFilter@PrcGrpId,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          MKT_CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LMktCncyCdFilter",
+				"FPRCGPFilter, FFConfigFile lookup(FPRCGPFilter@PrcGrpId == FFConfigFile@PrcGrpId",
+				"     && FPRCGPFilter@BRD_ID == FFConfigFile@BRD_ID",
+				"     && FPRCGPFilter@MKT_ID == toString(FFConfigFile@Mkt_ID),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LMktCncyCd",
+				"LPRCGPSeqNbrFilter, select1 union(byName: true)~> FPRCGP",
+				"split3@Yes2 aggregate(groupBy(MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PrcGrpId),",
+				"     each(match(!in(['MDSE_HIER_PRC_GRP_SEQ_NBR_S','MKT_ID','CHNL_ID','PrcGrpId'],name)), $$ = first($$))) ~> RDPrcGrpSeq",
+				"split4@Yes3 cast(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"LPrcGrpDesc derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"split1@Yes select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID = split1@Yes@MKT_ID,",
+				"          CHNL_ID = split1@Yes@CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S = split1@Yes@MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LMRHPG derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes1)",
+				"LPRCGP derive(IsMatch = isMatch()) ~> derivedColumn2",
+				"derivedColumn2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes2)",
+				"LMktCncyCdFilter derive(IsMatch = isMatch()) ~> IsMatch3",
+				"IsMatch3 split(IsMatch==true(),",
+				"     disjoint: false) ~> split4@(Yes3)",
+				"cast1 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          MKT_CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> OutNumber",
+				"ReduceColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT092DIVTZoneGrps_PRCGP_PX.DS_MRHPGSeqNbr.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSMRHPGSeqNbr",
+				"OutNumber sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          PrcGrpDesc as string,",
+				"          PrcGrpId as string,",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          MKT_CNCY_CD as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT092DIVTZoneGrps_PRCGP_PX.DS_PRCGPLoad.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPRCGPLoad"
+			]
+		}
+	}
+}

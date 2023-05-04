@@ -1,0 +1,135 @@
+{
+	"name": "ErrorfileIPT010C",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_LUSAS_LGCY_USER_ACS_T_10C",
+						"type": "DatasetReference"
+					},
+					"name": "LUSASLGCYUSERACST"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT10CDIVTUSEAC_Legacy_Load_PX_FF_LusasRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT10CDIVTUSEAC_Legacy_Load_PX_FF_LusasRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUSEACRej"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filter"
+				},
+				{
+					"name": "outMRHPG"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ENTP_DIR_USER_ID as string (toString(null())),",
+				"     CORP_ID as string (toString(null())),",
+				"     MDSE_CO_ID as string (toString(null())),",
+				"     MDSE_DIV_ID as string (toString(null())),",
+				"     MKT_ID as integer (toInteger(null())),",
+				"     BRD_ID as integer (toInteger(null())),",
+				"     CHNL_ID as integer (toInteger(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     EML_ADDR_TXT as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ENTP_DIR_USER_ID as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MKT_ID as integer,",
+				"          BRD_ID as integer,",
+				"          CHNL_ID as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LUSASLGCYUSERACST",
+				"source(output(",
+				"          ENTP_DIR_USER_ID as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MKT_ID as integer,",
+				"          BRD_ID as integer,",
+				"          CHNL_ID as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          EML_ADDR_TXT as string,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"LUSASLGCYUSERACST filter((ENTP_DIR_USER_ID == $ENTP_DIR_USER_ID || isNull(ENTP_DIR_USER_ID)) && \r",
+				"(CORP_ID == $CORP_ID || isNull(CORP_ID)) && \r",
+				"(MDSE_CO_ID == $MDSE_CO_ID || isNull(MDSE_CO_ID)) && \r",
+				"(MDSE_DIV_ID  == $ MDSE_DIV_ID || isNull(MDSE_DIV_ID)) && \r",
+				"(MKT_ID == $ MKT_ID || isNull(MKT_ID)) && \r",
+				"(BRD_ID == $BRD_ID || isNull(BRD_ID)) && \r",
+				"(CHNL_ID  == $ CHNL_ID || isNull(CHNL_ID)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(EML_ADDR_TXT == $EML_ADDR_TXT || isNull(EML_ADDR_TXT))) ~> Filter",
+				"Filter derive(DATE_TIME = currentDate()) ~> outMRHPG",
+				"outMRHPG, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ENTP_DIR_USER_ID as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MKT_ID as string,",
+				"          BRD_ID as string,",
+				"          CHNL_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          EML_ADDR_TXT as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT10CDIVTUSEAC_Legacy_Load_PX.FF_LusasRej.ASIA.txt'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFUSEACRej"
+			]
+		}
+	}
+}

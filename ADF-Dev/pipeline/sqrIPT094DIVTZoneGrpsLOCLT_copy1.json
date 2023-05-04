@@ -1,0 +1,537 @@
+{
+	"name": "sqrIPT094DIVTZoneGrpsLOCLT_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "ldIPT094DIVTZoneGrps_LOCLT_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "ReadAndDeltePipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT094DIVTZoneGrps_LOCLT_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pUserId": "'PIPT091U'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"DSZoneGroups": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 16,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "ldIPT094DIVTZoneGrps_DCSTM_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "T094_ldIPT094DIVTZoneGrps_LOCLT_PX_RD_LocNbr",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT094DIVTZoneGrps_DCSTM_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pUserId": "'PIPT091U'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"DSZoneGroups": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "T094_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT  PRGSL.STR_NBR,\nPRCGP.MDSE_HIER_PRC_GRP_SEQ_NBR_S,\nPRCGP.CHNL_ID\nFROM @{pipeline().globalParameters.IPT_DB_SHCEMA}.LOCLT_LOC_LIST_T LOCLT, \n@{pipeline().globalParameters.IPT_DB_SHCEMA}.TMKET_MKT_T TMKET,\n@{pipeline().globalParameters.IPT_DB_SHCEMA}.PRGSL_PRC_GRP_ZN_STR_T PRGSL,\n@{pipeline().globalParameters.IPT_DB_SHCEMA}.PRGPZ_PRC_GRP_ZN_T PRGPZ,\n@{pipeline().globalParameters.IPT_DB_SHCEMA}.PRCGP_PRC_GRP_T PRCGP\nWHERE\nTMKET.MKT_ID IN ( @{pipeline().parameters.pDelIndMktId} ) AND \nTMKET.MKT_ID = LOCLT.MKT_ID AND\nLOCLT.LOC_NBR = PRGSL.STR_NBR AND\nPRGSL.PRC_GRP_ZN_SEQ_NBR_S = PRGPZ.PRC_GRP_ZN_SEQ_NBR_S AND\nPRGPZ.PRC_GRP_SEQ_NBR_S = PRCGP.PRC_GRP_SEQ_NBR_S\n;",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTGIC_PRGSL_PRC_GRP_ZN_STR_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT_ASIA",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pInvocationId": "'ASIA'"
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT  PRC_GRP_ZN_SEQ_NBR_S,STR_NBR,STRT_DT,END_DT,LGCY_CSTM_STR_ATTR_NBR,CRT_UPDT_USER_ID,CRT_UPDT_DTTM,LST_UPDT_USER_ID,LST_UPDT_DTTM FROM @{pipeline().globalParameters.IPT_DB_SHCEMA}.PRGSL_PRC_GRP_ZN_STR_T",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTGIC_PRGSL_PRC_GRP_ZN_STR_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX_DS_Backup_ASIA",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ldIPT094DIVTZoneGrps_LOCLT_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:ldIPT094DIVTZoneGrps_LOCLT_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_4",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ldIPT094DIVTZoneGrps_DCSTM_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:ldIPT094DIVTZoneGrps_DCSTM_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_7",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_9",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_8",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT094DIVTZoneGrps_StrNbrDel_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "T094_ldIPT094DIVTZoneGrps_LOCLT_PX_RD_LocNbr",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ldIPT094DIVTZoneGrps_LOCLT_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=T094_ldIPT094DIVTZoneGrps_LOCLT.PX_RD_LocNbr&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=T094_ldIPT094DIVTZoneGrps_LOCLT.PX_RD_LocNbr.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "T094_ldIPT094DIVTZoneGrps_LOCLT.PX_RD_LocNbr",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "T094_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ldIPT094DIVTZoneGrps_DCSTM_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=T094_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=T094_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "T094_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "T094_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr",
+				"description": "T094_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=T094_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=T094_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "T094_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "ReadAndDeltePipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ReadAndDeltePipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"parameters": {
+			"pDelIndMktId": {
+				"type": "string",
+				"defaultValue": "6,8"
+			}
+		},
+		"variables": {
+			"ForEachABRecordJson": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T08:49:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

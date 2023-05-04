@@ -1,0 +1,233 @@
+{
+	"name": "PIPT03U",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT031BCRSalesExtAndTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT030U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT031BCRSalesExtAndTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT032BCRSalesTrnFrm_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT031BCRSalesExtAndTrnfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT032BCRSalesTrnFrm_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT033BCRSalesMHD_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT032BCRSalesTrnFrm_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT033BCRSalesMHD_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT034BCRSalesTrnfrm_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT033BCRSalesMHD_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT034BCRSalesTrnfrm_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT035BCRSalesLoad_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT034BCRSalesTrnfrm_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT035BCRSalesLoad_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT030U",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DownFile_03_NEW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT030U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&&&scriptName=PIPT030U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT030U-20221229033000,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT030U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT037U",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT035BCRSalesLoad_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT037U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&scriptName=PIPT037U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT037U-20230105033000,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT037U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT038DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT037U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT038DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=gatherStatistics.sh&&params=PIPT038DU,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT038DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "DownFile_03_NEW",
+				"description": "DownFile_03_NEW.py",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=DownFile_03_NEW&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=DownFile_03_NEW.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "DownFile_03_NEW",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"state": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-22T01:42:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,299 @@
+{
+	"name": "sqrlPT109DIVTUSEAC_UNIV_Load_PX",
+	"properties": {
+		"activities": [
+			{
+				"name": "ldIPT109DIVTUSEAC_UNIV_Load_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT109DIVTUSEAC_UNIV_Load_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pUserId": "'PIPT091U'"
+						},
+						"datasetParameters": {
+							"DSUniversal": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "AB_USEAC_UNIV_USER_ACS_T_109",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ldIPT109DIVTUSEAC_UNIV_Load_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "AB_USEAC_UNIV_USER_ACS_T_109",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "AB_USEAC_UNIV_USER_ACS_T_109",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('AB_USEAC_UNIV_USER_ACS_T_109').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Insert",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SelfHosted_IPT_DB_DEV",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "BRD_ID",
+												"type": "Int32",
+												"value": {
+													"value": "@item().BRD_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "MKT_ID",
+												"type": "String",
+												"value": {
+													"value": "@item().MKT_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "CHNL_ID",
+												"type": "Int32",
+												"value": {
+													"value": "@item().CHNL_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "DIV_ID",
+												"type": "Int32",
+												"value": {
+													"value": "@item().DIV_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "ENTP_DIR_USER_ID",
+												"type": "String",
+												"value": {
+													"value": "@item().ENTP_DIR_USER_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "CRT_UPDT_USER_ID",
+												"type": "String",
+												"value": {
+													"value": "@item().CRT_UPDT_USER_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "CRT_UPDT_DTTM",
+												"type": "Datetime",
+												"value": {
+													"value": "@item().CRT_UPDT_DTTM",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "LST_UPDT_USER_ID",
+												"type": "String",
+												"value": {
+													"value": "@item().LST_UPDT_USER_ID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "LST_UPDT_DTTM",
+												"type": "Datetime",
+												"value": {
+													"value": "@item().LST_UPDT_DTTM",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "EML_ADDR_TXT",
+												"type": "String",
+												"value": {
+													"value": "@item().EML_ADDR_TXT",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "INSERT INTO IPTCGI.USEAC_UNIV_USER_ACS_T (BRD_ID, MKT_ID, CHNL_ID, DIV_ID, ENTP_DIR_USER_ID, CRT_UPDT_USER_ID, CRT_UPDT_DTTM, LST_UPDT_USER_ID, LST_UPDT_DTTM,EML_ADDR_TXT) \nVALUES (?,?,?,?,?,?,?,?,?,?)",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "ErrorfileIPT0109",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "Insert",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "ErrorfileIPT0109",
+									"type": "DataFlowReference",
+									"parameters": {
+										"BRD_ID": {
+											"value": "@item().BRD_ID",
+											"type": "Expression"
+										},
+										"MKT_ID": {
+											"value": "'@{item().MKT_ID}'",
+											"type": "Expression"
+										},
+										"CHNL_ID": {
+											"value": "@item().CHNL_ID",
+											"type": "Expression"
+										},
+										"DIV_ID": {
+											"value": "@item().DIV_ID",
+											"type": "Expression"
+										},
+										"ENTP_DIR_USER_ID": {
+											"value": "'@{item().ENTP_DIR_USER_ID}'",
+											"type": "Expression"
+										},
+										"CRT_UPDT_USER_ID": {
+											"value": "'@{item().CRT_UPDT_USER_ID}'",
+											"type": "Expression"
+										},
+										"CRT_UPDT_DTTM": {
+											"value": "'@{item().CRT_UPDT_DTTM}'",
+											"type": "Expression"
+										},
+										"LST_UPDT_USER_ID": {
+											"value": "'@{item().LST_UPDT_USER_ID}'",
+											"type": "Expression"
+										},
+										"LST_UPDT_DTTM": {
+											"value": "'@{item().LST_UPDT_DTTM}'",
+											"type": "Expression"
+										},
+										"EML_ADDR_TXT": {
+											"value": "'@{item().EML_ADDR_TXT}'",
+											"type": "Expression"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T09:37:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

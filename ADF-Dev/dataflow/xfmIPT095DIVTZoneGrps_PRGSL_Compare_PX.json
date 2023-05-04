@@ -1,0 +1,282 @@
+{
+	"name": "xfmIPT095DIVTZoneGrps_PRGSL_Compare_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT094DIVTZoneGrps_PRGSL_Backup_PX_DS_Backup_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "BackupPRGSL"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTGIC_PRGSL_PRC_GRP_ZN_STR_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGSL"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT095DIVTZoneGrps_PRGSL_PX_DS_PRGSLLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGSLLoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_output",
+						"type": "DatasetReference"
+					},
+					"name": "output"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT095DIVTZoneGrps_PRGSL_Compare_PX_DS_Compare_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "comparedds"
+				}
+			],
+			"transformations": [
+				{
+					"name": "copy118"
+				},
+				{
+					"name": "Lookup122"
+				},
+				{
+					"name": "DSLink124"
+				},
+				{
+					"name": "Lookup"
+				},
+				{
+					"name": "cpafterdata"
+				},
+				{
+					"name": "bfore"
+				},
+				{
+					"name": "join"
+				},
+				{
+					"name": "DSLink101"
+				},
+				{
+					"name": "After"
+				},
+				{
+					"name": "Before"
+				},
+				{
+					"name": "AddBeforeColumn"
+				},
+				{
+					"name": "AddAfterColumn"
+				},
+				{
+					"name": "BeforeFinish"
+				},
+				{
+					"name": "AfterFinish"
+				},
+				{
+					"name": "Funnel"
+				},
+				{
+					"name": "Transformer1"
+				},
+				{
+					"name": "DSLink131"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          END_DT as timestamp,",
+				"          LGCY_CSTM_STR_ATTR_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as timestamp,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BackupPRGSL",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          END_DT as timestamp,",
+				"          LGCY_CSTM_STR_ATTR_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as timestamp,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRGSL",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as string,",
+				"          END_DT as string,",
+				"          LGCY_CSTM_STR_ATTR_NBR as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRGSLLoad",
+				"BackupPRGSL select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> copy118",
+				"copy118, IPTPRGSL lookup(copy118@STR_NBR == IPTPRGSL@STR_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> Lookup122",
+				"split1@No select(mapColumn(",
+				"          STR_NBR = split1@No@STR_NBR,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = split1@No@PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSLink124",
+				"copy118, cpafterdata lookup(copy118@STR_NBR == cpafterdata@STR_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> Lookup",
+				"DSPRGSLLoad select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> cpafterdata",
+				"Lookup select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S = copy118@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR = cpafterdata@STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> bfore",
+				"select2, cpafterdata join(select2@STR_NBR == cpafterdata@STR_NBR",
+				"     && select2@PRC_GRP_ZN_SEQ_NBR_S == cpafterdata@PRC_GRP_ZN_SEQ_NBR_S,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"join select(mapColumn(",
+				"          Before_PRC_GRP_ZN_SEQ_NBR_S = select2@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          Before_STR_NBR = select2@STR_NBR,",
+				"          After_PRC_GRP_ZN_SEQ_NBR_S = cpafterdata@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          After_STR_NBR = cpafterdata@STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSLink101",
+				"DSLink101 filter(After_STR_NBR == 0) ~> After",
+				"DSLink101 filter(Before_STR_NBR == 0) ~> Before",
+				"Before derive(LST_UPDT_DTTM = currentDate()) ~> AddBeforeColumn",
+				"After derive(LST_UPDT_DTTM = currentDate()) ~> AddAfterColumn",
+				"AddBeforeColumn select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S = Before_PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> BeforeFinish",
+				"AddAfterColumn select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S = After_PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> AfterFinish",
+				"BeforeFinish, AfterFinish, DSLink131 union(byName: true)~> Funnel",
+				"DSLink124 derive(LST_UPDT_DTTM = currentDate()) ~> Transformer1",
+				"Transformer1 select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSLink131",
+				"Lookup122 derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"split1@Yes select(mapColumn(",
+				"          STR_NBR = split1@Yes@STR_NBR,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = split1@Yes@PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"bfore derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2)",
+				"split2@Yes2 select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          STR_NBR as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[('output.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> output",
+				"Funnel sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT095DIVTZoneGrps_PRGSL_Compare_PX.DS_Compare.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> comparedds"
+			]
+		}
+	}
+}

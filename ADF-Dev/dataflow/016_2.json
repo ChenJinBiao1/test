@@ -1,0 +1,116 @@
+{
+	"name": "016_2",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "OutFile_016",
+						"type": "DatasetReference"
+					},
+					"name": "Sql016"
+				},
+				{
+					"dataset": {
+						"referenceName": "016_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "OUT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT016BCRItemsDistinctLevels_PX_DS_UHILV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          change_code as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Sql016",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          change_code as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OUT",
+				"Sql016 derive(change_code = 5) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          MDSE_LVL_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          change_code",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1, OUT union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(\"xfmIPT016BCRItemsDistinctLevels_PX.DS_LHILV.ASIA.txt\")],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2"
+			]
+		}
+	}
+}

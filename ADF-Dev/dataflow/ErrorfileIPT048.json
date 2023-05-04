@@ -1,0 +1,96 @@
+{
+	"name": "ErrorfileIPT048",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045DeletePriceTrnfrm_PX_DS_DltPrcTrnfrm_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDltPrcTrnfrm"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT048DeletePriceUpdate_PX_FF_ISCLAUpdateRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT048DeletePriceUpdate_PX_FF_ISCLAUpdateRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFISCLAUpdateRej"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FILTER"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as integer (toInteger(null())),",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     LOC_NBR as integer (toInteger(null())),",
+				"     PRC_CHG_ID as integer (toInteger(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          PRC_CHG_ID as integer,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSDltPrcTrnfrm",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          PRC_CHG_ID as integer,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSDltPrcTrnfrm filter((ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)) && \r",
+				"(LOC_NBR == ($LOC_NBR) || isNull(LOC_NBR)) && \r",
+				"(PRC_CHG_ID == $PRC_CHG_ID || isNull(PRC_CHG_ID)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM))) ~> FILTER",
+				"FILTER, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LocationNbr as string,",
+				"          PRC_CHG_ID as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT048DeletePriceUpdate_PX.FF_ISCLAUpdateRej.ASIA'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFISCLAUpdateRej"
+			]
+		}
+	}
+}

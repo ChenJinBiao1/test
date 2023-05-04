@@ -1,0 +1,226 @@
+{
+	"name": "IPT10DIVTPriceLadders",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT101DIVTPromo_ExtAndTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT101DIVTPromo_ExtAndTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT102DIVTPromo_Refresh",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT101DIVTPromo_ExtAndTrnfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT102DIVTPromo_Refresh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT103DIVTPromo_Transform",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT102DIVTPromo_Refresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT103DIVTPromo_Transform",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT104DIVTPromo_LoadTPRML",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT103DIVTPromo_Transform",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT104DIVTPromo_LoadTPRML",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT105DIVTPromo_Trnsfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT104DIVTPromo_LoadTPRML",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT105DIVTPromo_Trnsfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT106DIVTPromo_Load_TPLDV",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT105DIVTPromo_Trnsfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT106DIVTPromo_Load_TPLDV",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT108DIVTUSEAC_UNIV_Ext_Ref",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT106DIVTPromo_Load_TPLDV",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT108DIVTUSEAC_UNIV_Ext_Ref",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrlPT109DIVTUSEAC_UNIV_Load_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT108DIVTUSEAC_UNIV_Ext_Ref",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrlPT109DIVTUSEAC_UNIV_Load_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT10ADIVTUSEAC_Legacy_Ext_R",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT109DIVTUSEAC_UNIV_Load_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT10ADIVTUSEAC_Legacy_Ext_R",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT10BDIVTUSEAC_Leagcy_Trnfr",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT10ADIVTUSEAC_Legacy_Ext_R",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT10BDIVTUSEAC_Leagcy_Trnfr",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT10CDIVTUSEAC_Leagcy_Load",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT10BDIVTUSEAC_Leagcy_Trnfr",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT10CDIVTUSEAC_Leagcy_Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-12-01T06:45:09Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

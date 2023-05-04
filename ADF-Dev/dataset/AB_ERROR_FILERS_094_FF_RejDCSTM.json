@@ -1,0 +1,57 @@
+{
+	"name": "AB_ERROR_FILERS_094_FF_RejDCSTM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "sqrIPT094DIVTZoneGrpsLOCLT.FF_RejDCSTM.ASIA.txt",
+				"folderPath": "error",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "STR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "DC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "DATE_TIME",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

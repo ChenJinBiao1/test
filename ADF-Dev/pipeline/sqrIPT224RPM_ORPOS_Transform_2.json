@@ -1,0 +1,1600 @@
+{
+	"name": "sqrIPT224RPM_ORPOS_Transform_2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Order to Azure IPT_TPROO_UHILV_OPORI_224E",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "select OPORI.PMOTN_GRP_ID_S as PROMO_ID,OPORI.PMOTN_REQ_ID_S,\nUHILV.BRD_ID,\nTPROO.MKT_ID, \nTPROO.CHNL_ID,\nUHILV.DIV_ID,\n(select distinct div_desc from IPTCGI.UMHDS_UNIV_MDSE_HIER_T UMHDS where UMHDS.DIV_ID=UHILV.div_id) as DIV_DESC,\nTPROO.CRT_UPDT_USER_ID\nfrom \nIPTCGI.OPORI_OUTB_PMOTN_REQ_GRP_T OPORI, \nIPTCGI.UHILV_UNIV_HIER_LVL_T UHILV, \nIPTCGI.TPROO_PMOTN_REQ_HDR_OTPT_T TPROO,\nIPTCGI.PRPLA_PMOTN_REQ_PMOTN_LVL_T PRPLA\nwhere\nOPORI.PMOTN_REQ_ID_S = TPROO.PMOTN_REQ_ID_S and\nTPROO.PMOTN_REQ_ID_S = PRPLA.PMOTN_REQ_ID_S and\nPRPLA.MDSE_HIER_LVL_SEQ_NBR_S = UHILV.UNIV_HIER_LVL_SEQ_NBR_S",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_OPORI_OUTB_PMOTN_REQ_GRP_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_224E",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_COUNT_224G",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pBrandId": "1",
+							"pChnlId": "1",
+							"pMarketId": "'8'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"FFTotalCount": {
+								"pInvocationId": "ASIA"
+							},
+							"FFNotInORPOS": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotatIPTRPMCount": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Order to Azure IPT_TPROO_UHILV_OPORI_224F",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "select OPORI.PMOTN_GRP_ID_S as PROMO_ID,OPORI.PMOTN_REQ_ID_S,\nUHILV.BRD_ID,\nTPROO.MKT_ID, \nTPROO.CHNL_ID,\nUHILV.DIV_ID,\n(select distinct div_desc from IPTCGI.UMHDS_UNIV_MDSE_HIER_T UMHDS where UMHDS.DIV_ID=UHILV.div_id) as DIV_DESC,\nTPROO.CRT_UPDT_USER_ID\nfrom \nIPTCGI.OPORI_OUTB_PMOTN_REQ_GRP_T OPORI, \nIPTCGI.UHILV_UNIV_HIER_LVL_T UHILV, \nIPTCGI.TPROO_PMOTN_REQ_HDR_OTPT_T TPROO,\nIPTCGI.PRPLA_PMOTN_REQ_PMOTN_LVL_T PRPLA\nwhere\nOPORI.PMOTN_REQ_ID_S = TPROO.PMOTN_REQ_ID_S and\nTPROO.PMOTN_REQ_ID_S = PRPLA.PMOTN_REQ_ID_S and\nPRPLA.MDSE_HIER_LVL_SEQ_NBR_S = UHILV.UNIV_HIER_LVL_SEQ_NBR_S",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "IPTCGI_OPORI_OUTB_PMOTN_REQ_GRP_T",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_224F",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_F",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pBrandId": "1",
+							"pChnlId": "1",
+							"pMarketId": "'8'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"FFTotalCount": {
+								"pInvocationId": "ASIA"
+							},
+							"FFNotInORPOS": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotatIPTRPMCount": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Order to Azure IPT_COUNT_224G",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_CLEARANCE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT 1 AS GROUP_KEY,0 AS COUNT FROM DUAL;\n",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MHIERSEQNBR",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_IPT_COUNT_224",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_STAGE_CLEARANCE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pBrandId": "1",
+							"pChnlId": "1",
+							"pMarketId": "'8'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"DSApprMDComplete": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotalCount": {
+								"pInvocationId": "ASIA"
+							},
+							"FFMDNotInORPOS": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotalIPTRPMORPOSCount": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "xfmIPT224H_RPM_UnApprMD_ORPOS_Reject_Count_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_STAGE_CLEARANCE_H",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmIPT224H_RPM_UnApprMD_ORPOS_Reject_Count_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pBrandId": "1",
+							"pChnlId": "1",
+							"pMarketId": "'8'",
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"DSApprMDComplete": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotalCount": {
+								"pInvocationId": "ASIA"
+							},
+							"FFMDNotInORPOS": {
+								"pInvocationId": "ASIA"
+							},
+							"FFTotalIPTRPMORPOSCount": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Send-Emial_6",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_TPROO_UHILV_OPORI_224E",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure IPT_TPROO_UHILV_OPORI_224E\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_7",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_COUNT_224G",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure IPT_COUNT_224G\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_8",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_9",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_TPROO_UHILV_OPORI_224F",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure IPT_TPROO_UHILV_OPORI_224F\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_10",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_11",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_12",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224H_RPM_UnApprMD_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:xfmIPT224H_RPM_UnApprMD_ORPOS_Reject_Count_PX\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_TSPCT",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_TPROO_UHILV_OPORI_224E",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT PROMO_ID \nFROM TSPCT_STG_PMOTN_CMPLX_THLD_T \nWHERE STATUS IN ('C')",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_TSPCT_224E",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_TSPCT\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_ORPOS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT a.promo_id , b.state,1 AS GROUP_KEY FROM RPM_ORPOS_CMPLX_PROMO_PUBLISH a,rpm_promo_dtl b WHERE a.promo_id in ( \nSELECT DISTINCT promo_id FROM TSPCT_STG_PMOTN_CMPLX_THLD_T WHERE STATUS IN ('C') ) AND a.PROMO_COMP_DETAIL_ID = b.promo_dtl_id\nAND b.state NOT IN ('0')",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_ORPOS_224E",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm2",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_ORPOS\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_TSPCT_ITEM",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "select distinct a.promo_id , b.item, a.location, a.start_date from TSPCT_STG_PMOTN_CMPLX_THLD_T a,item_master b \n  where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period) and a.item = b.item_parent  and a.diff_id = b.diff_1\nUnion All  \nselect distinct a.promo_id , b.item, a.location, a.start_date  from TSPCT_STG_PMOTN_CMPLX_THLD_T a,item_master b \n  where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period) and a.item = b.item_parent  and a.diff_id is null",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_TSPCT_ITEM_224E",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm3",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT_ITEM",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_TSPCT_ITEM\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_CLEARANCE",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT_ITEM",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT \n           b.item, a.location, a.change_amount , a.effective_date\n           FROM rpm_clearance a,\n                item_master b\n           WHERE \n              a.item = b.item_parent \n          and a.diff_id = b.diff_1 \n          and a.reset_date is null \n          and a.state in ('pricechange.state.approved','pricechange.state.executed')\n          and a.diff_id is not null\n          and a.zone_node_type = '0'\n          and a.item in ( select item  from TSPCT_STG_PMOTN_CMPLX_THLD_T where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period)) \nUNION          \nSELECT   \n           b.item, a.location, a.change_amount , a.effective_date\n           FROM rpm_clearance a,\n                item_master b\n          WHERE \n              a.item = b.item_parent \n          and a.reset_date is null\n          and a.state in ('pricechange.state.approved','pricechange.state.executed')\n          and a.diff_id is  null\n          and a.zone_node_type = '0'\n          and a.item in ( select item  from TSPCT_STG_PMOTN_CMPLX_THLD_T where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period)) \nUNION\nSELECT   \n           b.item, c.location, a.change_amount , a.effective_date\n           FROM rpm_clearance a,\n                item_master b,\n                rpm_zone_location c\n          WHERE \n              a.item = b.item_parent \n          and a.diff_id = b.diff_1 \n          and a.reset_date is null \n          and a.state in ('pricechange.state.approved','pricechange.state.executed')\n          and a.diff_id is not null\n          and a.zone_node_type = '1'\n          and a.zone_id = c.zone_id\n          and a.item in ( select item  from TSPCT_STG_PMOTN_CMPLX_THLD_T where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period)) \nUNION          \nSELECT   \n           b.item, c.location, a.change_amount , a.effective_date\n           FROM rpm_clearance a,\n                item_master b,\n                rpm_zone_location c\n          WHERE \n              a.item = b.item_parent \n          and a.reset_date is null \n          and a.state in ('pricechange.state.approved','pricechange.state.executed')\n          and a.diff_id is  null\n          and a.zone_node_type = '1'\n          and a.zone_id = c.zone_id\n          and a.item in ( select item  from TSPCT_STG_PMOTN_CMPLX_THLD_T where trunc( LST_UPDT_DTTM) = (SELECT vdate-1 FROM period))      ",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_CLEARANCE_224E",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm4",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_CLEARANCE",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_CLEARANCE\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_TSPCT_F",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure IPT_TPROO_UHILV_OPORI_224F",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT PROMO_ID \nFROM TSPCT_STG_PMOTN_CMPLX_THLD_T \nWHERE STATUS IN ('C')",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_TSPCT_224F",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm5",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT_F",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Order to Azure RPM_TSPCT_F\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_ORPOS_F",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_TSPCT_F",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT a.promo_id , b.state,1 AS GROUP_KEY FROM RPM_ORPOS_CMPLX_PROMO_PUBLISH a,rpm_promo_dtl b WHERE a.promo_id in ( \nSELECT DISTINCT promo_id FROM TSPCT_STG_PMOTN_CMPLX_THLD_T WHERE STATUS IN ('C') ) AND a.PROMO_COMP_DETAIL_ID = b.promo_dtl_id\nAND b.state IN ('0')",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_ORPOS_224F",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm6",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_F",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_ORPOS_F\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_ORPOS_PUBLISH",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT A.CLEARANCE_ID,\nB.ITEM_PARENT,\nB.DIFF_1 AS DIFF_ID,\nA.LOCATION,\nA.EFFECTIVE_DATE,\nA.SELLING_RETAIL,\n1 AS GROUP_KEY\nFROM RPM_ORPOS_CLEARANCE_PUBLISH A,ITEM_MASTER B\nWHERE A.ITEM=B.ITEM\nAND A.PRICE_EVENT_HDR_DTL_IND='Chd'\nAND A.clearance_id in ( SELECT clearance_id\nFROM RPM_CLEARANCE \nWHERE CREATE_DATE >= (SELECT vdate-1 FROM period)\nAND ZONE_NODE_TYPE= '0'\nAND STATE IN ('pricechange.state.executed','pricechange.state.approved'))\n",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_ORPOS_PUBLISH_224G",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm7",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_PUBLISH",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Order to Azure RPM_ORPOS_PUBLISH\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_STAGE_CLEARANCE",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_PUBLISH",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT RPM_STAGE_CLEARANCE_ID, REASON_CODE, ITEM, DIFF_ID, ZONE_ID, LOCATION, ZONE_NODE_TYPE, EFFECTIVE_DATE,\nOUT_OF_STOCK_DATE, RESET_DATE, CHANGE_TYPE, CHANGE_AMOUNT, CHANGE_PERCENT, PRICE_GUIDE_ID, AUTO_APPROVE_IND,\nSTATUS, ERROR_MESSAGE, PROCESS_ID, CLEARANCE_ID, CLEARANCE_DISPLAY_ID\nFROM RPM_STAGE_CLEARANCE\nWHERE STATUS IN ('C')",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_STAGE_CLEARANCE_224G",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm8",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_STAGE_CLEARANCE",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_STAGE_CLEARANCE\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_ORPOS_PUBLISH_H",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT DISTINCT A.CLEARANCE_ID,\nB.ITEM_PARENT,\nB.DIFF_1 AS DIFF_ID,\nA.LOCATION,\nA.EFFECTIVE_DATE,\nA.SELLING_RETAIL,\n1 AS GROUP_KEY\nFROM RPM_ORPOS_CLEARANCE_PUB_RSV_T A,ITEM_MASTER B\nWHERE A.ITEM=B.ITEM\nAND A.RIB_TYPE = 'DEL'\nAND A.PRICE_EVENT_HDR_DTL_IND='Chd'\nAND A.clearance_id in ( SELECT clearance_id\nFROM RPM_CLEARANCE \nWHERE ZONE_NODE_TYPE= '0'\nAND STATE IN ('pricechange.state.worksheet'))",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_ORPOS_PUBLISH_224H",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm9",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_PUBLISH_H",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Order to Azure RPM_ORPOS_PUBLISH_H\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Order to Azure RPM_STAGE_CLEARANCE_H",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_ORPOS_PUBLISH_H",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": {
+							"value": "SELECT RPM_STAGE_CLEARANCE_ID, REASON_CODE, ITEM, DIFF_ID, ZONE_ID, LOCATION, ZONE_NODE_TYPE, EFFECTIVE_DATE,\nOUT_OF_STOCK_DATE, RESET_DATE, CHANGE_TYPE, CHANGE_AMOUNT, CHANGE_PERCENT, PRICE_GUIDE_ID, AUTO_APPROVE_IND,\nSTATUS, ERROR_MESSAGE, PROCESS_ID, CLEARANCE_ID, CLEARANCE_DISPLAY_ID\nFROM RPM_STAGE_CLEARANCE\nWHERE STATUS IN ('C')\n",
+							"type": "Expression"
+						},
+						"partitionOption": "None",
+						"convertDecimalToInteger": false,
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RPM_PROMO_COMP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_RPM_STAGE_CLEARANCE_224H",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Send-Emial_rpm10",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Order to Azure RPM_STAGE_CLEARANCE_H",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:Order to Azure RPM_STAGE_CLEARANCE_H\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T09:01:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,50 @@
+{
+	"name": "interior",
+	"properties": {
+		"folder": {
+			"name": "Internor"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "complete",
+						"type": "DatasetReference"
+					},
+					"name": "complete"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "fileinterior",
+						"type": "DatasetReference"
+					},
+					"name": "interior"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"parameters{",
+				"     Filename as string",
+				"}",
+				"source(output(",
+				"          complete as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> complete",
+				"complete sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('ADF_',$Filename,'.ASIA_',replace(replace(replace(toString(toTimestamp(toString((currentUTC()+ hours(8))),'yyyy-MM-dd HH:mm:ss')), ' '),':'), '-'),'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> interior"
+			]
+		}
+	}
+}

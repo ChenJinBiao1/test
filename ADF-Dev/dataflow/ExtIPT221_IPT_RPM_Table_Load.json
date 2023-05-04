@@ -1,0 +1,61 @@
+{
+	"name": "ExtIPT221_IPT_RPM_Table_Load",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_USEAC_UNIV_USER_ACS_T_221",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUSEAC"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_FF_UserMailID_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUSEAC"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XBMC"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pChnlId as integer (1),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTUSEAC",
+				"IPTUSEAC filter(BRD_ID == $pBrandId && MKT_ID == $pMarketId && CHNL_ID == $pChnlId) ~> XBMC",
+				"XBMC sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('FF_UserMailID_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFUSEAC"
+			]
+		}
+	}
+}

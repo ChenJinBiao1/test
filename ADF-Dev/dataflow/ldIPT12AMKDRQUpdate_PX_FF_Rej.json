@@ -1,0 +1,149 @@
+{
+	"name": "ldIPT12AMKDRQUpdate_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_MKDRQ_MD_REQ_T_12A_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "MKDRQTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT12AMKDRQUpdate_PX_FF_MKDRQRej",
+						"type": "DatasetReference"
+					},
+					"name": "FFClearRej"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT12AMKDRQUpdate_PX_FF_MKDRQRej",
+						"type": "DatasetReference"
+					},
+					"name": "FFClearRej1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     MD_REQ_SEQ_NBR_S as long (0),",
+				"     PRC_GRP_ZN_SEQ_NBR_S as integer (0),",
+				"     MDSE_HIER_LVL_SEQ_NBR_S as integer (0),",
+				"     STRT_DT as string,",
+				"     MD_PRC_AMT as decimal(10,0) (toDecimal(0)),",
+				"     RCMD_MD_PCT_OFF_RAT as decimal(10,0) (toDecimal(0)),",
+				"     PROC_STAT_CD as string (toString(null())),",
+				"     MDSE_LVL_CD as string (toString(null())),",
+				"     MKT_ID as string (toString(null())),",
+				"     CHNL_ID as integer (0),",
+				"     MD_CNT as string (toString(null())),",
+				"     PNT_DT as string (toString(null())),",
+				"     ITM_STY_NBR as string (toString(null())),",
+				"     MKT_DIFF1_ID as string (toString(null())),",
+				"     STR_NBR as integer (0)",
+				"}",
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as long,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MKDRQTemp",
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as long,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          START_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFClearRej",
+				"MKDRQTemp filter(MD_REQ_SEQ_NBR_S == $MD_REQ_SEQ_NBR_S || isNull(MD_REQ_SEQ_NBR_S)  && \r",
+				"PRC_GRP_ZN_SEQ_NBR_S == $PRC_GRP_ZN_SEQ_NBR_S || isNull(PRC_GRP_ZN_SEQ_NBR_S)  && \r",
+				"MDSE_HIER_LVL_SEQ_NBR_S == $MDSE_HIER_LVL_SEQ_NBR_S || isNull(MDSE_HIER_LVL_SEQ_NBR_S)  && \r",
+				"STRT_DT ==toTimestamp($STRT_DT)  || isNull(STRT_DT) &&\r",
+				"PNT_DT ==toTimestamp($PNT_DT)  || isNull(PNT_DT) &&\r",
+				"MD_PRC_AMT ==$MD_PRC_AMT  || isNull(MD_PRC_AMT) &&\r",
+				"RCMD_MD_PCT_OFF_RAT == $RCMD_MD_PCT_OFF_RAT || isNull(RCMD_MD_PCT_OFF_RAT)  && \r",
+				"PROC_STAT_CD == $PROC_STAT_CD || isNull(PROC_STAT_CD)  && \r",
+				"MDSE_LVL_CD == $MDSE_LVL_CD || isNull(MDSE_LVL_CD)  && \r",
+				"MKT_ID == $MKT_ID || isNull(MKT_ID)  && \r",
+				"CHNL_ID == $CHNL_ID || isNull(CHNL_ID)  && \r",
+				"MD_CNT == $MD_CNT || isNull(MD_CNT)  && \r",
+				"ITM_STY_NBR == $ITM_STY_NBR || isNull(ITM_STY_NBR)  && \r",
+				"MKT_DIFF1_ID == $MKT_DIFF1_ID || isNull(MKT_DIFF1_ID)  && \r",
+				"STR_NBR == $STR_NBR || isNull(STR_NBR)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFClearRej union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MD_REQ_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          START_DT as string,",
+				"          MD_PRC_AMT as string,",
+				"          RCMD_MD_PCT_OFF_RAT as string,",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as string,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT12AMKDRQUpdate_PX.FF_MKDRQRej.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFClearRej1"
+			]
+		}
+	}
+}

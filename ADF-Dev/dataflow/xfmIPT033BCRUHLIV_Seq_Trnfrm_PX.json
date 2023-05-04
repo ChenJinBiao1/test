@@ -1,0 +1,566 @@
+{
+	"name": "xfmIPT033BCRUHLIV_Seq_Trnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_UHILV_UNIV_HIER_LVL_T_033",
+						"type": "DatasetReference"
+					},
+					"name": "UHILVUNIVHIERLVLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT032BCRSalesTrnfrm_PX_FF_HieSeq_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFSEQLVL"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRUHLIV_Seq_Trnfrm_PX_DS_SEQLVL_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSEQLVL"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRUHLIV_Seq_Trnfrm_PX_DS_UHLIV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUHLIV"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRUHLIV_Seq_Trnfrm_PX_FF_UHLIV_Rejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUHLIVRejects"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XUNIVSplit"
+				},
+				{
+					"name": "xoItmStySeq"
+				},
+				{
+					"name": "xoSclass"
+				},
+				{
+					"name": "xoUNIV"
+				},
+				{
+					"name": "xoClass"
+				},
+				{
+					"name": "xoDept"
+				},
+				{
+					"name": "xoDiv"
+				},
+				{
+					"name": "LUNLVLCODE"
+				},
+				{
+					"name": "LUNLVLCODEDerivedColumn"
+				},
+				{
+					"name": "LUNLVLCODESplit"
+				},
+				{
+					"name": "loUMDSE"
+				},
+				{
+					"name": "rejSEQLVL"
+				},
+				{
+					"name": "FIUNHL"
+				},
+				{
+					"name": "LDIV"
+				},
+				{
+					"name": "LDept"
+				},
+				{
+					"name": "LClass"
+				},
+				{
+					"name": "LSubclass"
+				},
+				{
+					"name": "LItmStySeq"
+				},
+				{
+					"name": "LDIVDerivedColumn"
+				},
+				{
+					"name": "LDIVSplit"
+				},
+				{
+					"name": "LDIVMatchSelect"
+				},
+				{
+					"name": "LDIVNotMatchSelect"
+				},
+				{
+					"name": "LDeptDerivedColumn"
+				},
+				{
+					"name": "LDeptSplit"
+				},
+				{
+					"name": "LDeptMatchSelect"
+				},
+				{
+					"name": "LDeptNotMatchSelect"
+				},
+				{
+					"name": "LClassDerivedColumn"
+				},
+				{
+					"name": "LClassSplit"
+				},
+				{
+					"name": "LClassMatchSelect"
+				},
+				{
+					"name": "LClassNotMatchselect"
+				},
+				{
+					"name": "LSubclassDerivedColumn"
+				},
+				{
+					"name": "LSubclassSplit"
+				},
+				{
+					"name": "LSubclassMatchSelect"
+				},
+				{
+					"name": "LSubclassNotMatchSelect"
+				},
+				{
+					"name": "LItmStySeqDerivedColumn"
+				},
+				{
+					"name": "LItmStySeqSplit"
+				},
+				{
+					"name": "LItmStySeqMatchSelect"
+				},
+				{
+					"name": "LItmStySeqNotMatchSelect"
+				},
+				{
+					"name": "FUHLIV"
+				},
+				{
+					"name": "FUHLIVSelect"
+				},
+				{
+					"name": "FRejects"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select4"
+				},
+				{
+					"name": "select5"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILVUNIVHIERLVLT",
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFSEQLVL",
+				"UHILVUNIVHIERLVLT split(MDSE_LVL_CD == '9',",
+				"     disjoint: false) ~> XUNIVSplit@(XUNIVSplitMatch, XUNIVSplitNotMatch)",
+				"XUNIVSplit@XUNIVSplitMatch derive(BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoItmStySeq",
+				"XUNIVSplit@XUNIVSplitMatch derive(BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoSclass",
+				"UHILVUNIVHIERLVLT derive(UNIV_HIER_LVL_SEQ_NBR_S = UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S),",
+				"          MDSE_LVL_CD = MDSE_LVL_CD) ~> xoUNIV",
+				"XUNIVSplit@XUNIVSplitMatch derive(BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoClass",
+				"XUNIVSplit@XUNIVSplitMatch derive(BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoDept",
+				"XUNIVSplit@XUNIVSplitMatch derive(BRD_ID = iif(isNull(BRD_ID), 0, BRD_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, DIV_ID),",
+				"          DEPT_ID = iif(isNull(DEPT_ID), 0, DEPT_ID),",
+				"          CLS_ID = iif(isNull(CLS_ID), 0, CLS_ID),",
+				"          SCLS_ID = iif(isNull(SCLS_ID), 0, SCLS_ID),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoDiv",
+				"FFSEQLVL, xoUNIV lookup(MDSE_HIER_LVL_SEQ_NBR_S == UNIV_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LUNLVLCODE",
+				"LUNLVLCODE derive(IsMatch = isMatch()) ~> LUNLVLCODEDerivedColumn",
+				"LUNLVLCODEDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LUNLVLCODESplit@(LUNLVLCODELookupMatch, LUNLVLCODELookupNotMatch)",
+				"LUNLVLCODESplit@LUNLVLCODELookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loUMDSE",
+				"LUNLVLCODESplit@LUNLVLCODELookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejSEQLVL",
+				"loUMDSE split(MDSE_LVL_CD == '3',",
+				"     MDSE_LVL_CD == '4',",
+				"     MDSE_LVL_CD == '9',",
+				"     MDSE_LVL_CD == '5',",
+				"     MDSE_LVL_CD == '6',",
+				"     MDSE_LVL_CD == '8',",
+				"     disjoint: false) ~> FIUNHL@(fioDiv, fioDept, fioClrSeqnbr, fioClass, fioSubclass, fioItmStyseq, fioNone)",
+				"FIUNHL@fioDiv, xoDiv lookup(FIUNHL@fioDiv@BRD_ID == xoDiv@BRD_ID",
+				"     && FIUNHL@fioDiv@DIV_ID == xoDiv@DIV_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LDIV",
+				"FIUNHL@fioDept, xoDept lookup(FIUNHL@fioDept@BRD_ID == xoDept@BRD_ID",
+				"     && FIUNHL@fioDept@DIV_ID == xoDept@DIV_ID",
+				"     && FIUNHL@fioDept@DEPT_ID == xoDept@DEPT_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LDept",
+				"FIUNHL@fioClass, xoClass lookup(FIUNHL@fioClass@BRD_ID == xoClass@BRD_ID",
+				"     && FIUNHL@fioClass@DIV_ID == xoClass@DIV_ID",
+				"     && FIUNHL@fioClass@DEPT_ID == xoClass@DEPT_ID",
+				"     && FIUNHL@fioClass@CLS_ID == xoClass@CLS_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LClass",
+				"FIUNHL@fioSubclass, xoSclass lookup(FIUNHL@fioSubclass@BRD_ID == xoSclass@BRD_ID",
+				"     && FIUNHL@fioSubclass@DIV_ID == xoSclass@DIV_ID",
+				"     && FIUNHL@fioSubclass@DEPT_ID == xoSclass@DEPT_ID",
+				"     && FIUNHL@fioSubclass@CLS_ID == xoSclass@CLS_ID",
+				"     && FIUNHL@fioSubclass@SCLS_ID == xoSclass@SCLS_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LSubclass",
+				"FIUNHL@fioItmStyseq, xoItmStySeq lookup(FIUNHL@fioItmStyseq@BRD_ID == xoItmStySeq@BRD_ID",
+				"     && FIUNHL@fioItmStyseq@DIV_ID == xoItmStySeq@DIV_ID",
+				"     && FIUNHL@fioItmStyseq@DEPT_ID == xoItmStySeq@DEPT_ID",
+				"     && FIUNHL@fioItmStyseq@CLS_ID == xoItmStySeq@CLS_ID",
+				"     && FIUNHL@fioItmStyseq@SCLS_ID == xoItmStySeq@SCLS_ID",
+				"     && FIUNHL@fioItmStyseq@ITM_STY_SEQ_NBR_S == xoItmStySeq@ITM_STY_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LItmStySeq",
+				"LDIV derive(IsMatch = isMatch()) ~> LDIVDerivedColumn",
+				"select1 split(IsMatch==true(),",
+				"     disjoint: false) ~> LDIVSplit@(LDIVLookupMatch, LDIVLookupNotMatch)",
+				"LDIVSplit@LDIVLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDIVMatchSelect",
+				"LDIVSplit@LDIVLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDIVNotMatchSelect",
+				"select2 derive(IsMatch = isMatch()) ~> LDeptDerivedColumn",
+				"LDeptDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LDeptSplit@(LDeptLookupMatch, LDeptLookupNotMatch)",
+				"LDeptSplit@LDeptLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDeptMatchSelect",
+				"LDeptSplit@LDeptLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDeptNotMatchSelect",
+				"select3 derive(IsMatch = isMatch()) ~> LClassDerivedColumn",
+				"LClassDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LClassSplit@(LClassLookupMatch, LClassLookupNotMatch)",
+				"LClassSplit@LClassLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LClassMatchSelect",
+				"LClassSplit@LClassLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LClassNotMatchselect",
+				"select4 derive(IsMatch = isMatch()) ~> LSubclassDerivedColumn",
+				"LSubclassDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LSubclassSplit@(LSubclassLookupMatch, LSubclassLookupNotMatch)",
+				"LSubclassSplit@LSubclassLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LSubclassMatchSelect",
+				"LSubclassSplit@LSubclassLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LSubclassNotMatchSelect",
+				"select5 derive(IsMatch = isMatch()) ~> LItmStySeqDerivedColumn",
+				"LItmStySeqDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LItmStySeqSplit@(LItmStySeqMatch, LItmStySeqNotMatch)",
+				"LItmStySeqSplit@LItmStySeqMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LItmStySeqMatchSelect",
+				"LItmStySeqSplit@LItmStySeqNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LItmStySeqNotMatchSelect",
+				"LDIVMatchSelect, LDeptMatchSelect, LClassMatchSelect, LSubclassMatchSelect, LItmStySeqMatchSelect, FIUNHL@fioClrSeqnbr union(byName: true)~> FUHLIV",
+				"FUHLIV select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FUHLIVSelect",
+				"LItmStySeqNotMatchSelect, LSubclassNotMatchSelect, LClassNotMatchselect, LDeptNotMatchSelect, LDIVNotMatchSelect union(byName: true)~> FRejects",
+				"LDIVDerivedColumn select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = xoDiv@BRD_ID,",
+				"          DIV_ID = xoDiv@DIV_ID,",
+				"          DEPT_ID = xoDiv@DEPT_ID,",
+				"          CLS_ID = xoDiv@CLS_ID,",
+				"          SCLS_ID = xoDiv@SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = xoDiv@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = xoDiv@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = XUNIVSplit@XUNIVSplitMatch@MDSE_LVL_CD,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LDept select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = xoDept@BRD_ID,",
+				"          DIV_ID = xoDept@DIV_ID,",
+				"          DEPT_ID = xoDept@DEPT_ID,",
+				"          CLS_ID = xoDept@CLS_ID,",
+				"          SCLS_ID = xoDept@SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = xoDept@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = xoDept@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = XUNIVSplit@XUNIVSplitMatch@MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"LClass select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = xoClass@BRD_ID,",
+				"          DIV_ID = xoClass@DIV_ID,",
+				"          DEPT_ID = xoClass@DEPT_ID,",
+				"          CLS_ID = xoClass@CLS_ID,",
+				"          SCLS_ID = xoClass@SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = xoClass@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = xoClass@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = XUNIVSplit@XUNIVSplitMatch@MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"LSubclass select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = xoSclass@BRD_ID,",
+				"          DIV_ID = xoSclass@DIV_ID,",
+				"          DEPT_ID = xoSclass@DEPT_ID,",
+				"          CLS_ID = xoSclass@CLS_ID,",
+				"          SCLS_ID = xoSclass@SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = xoSclass@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = xoSclass@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = XUNIVSplit@XUNIVSplitMatch@MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"LItmStySeq select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID = xoItmStySeq@BRD_ID,",
+				"          DIV_ID = xoItmStySeq@DIV_ID,",
+				"          DEPT_ID = xoItmStySeq@DEPT_ID,",
+				"          CLS_ID = xoItmStySeq@CLS_ID,",
+				"          SCLS_ID = xoItmStySeq@SCLS_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = xoItmStySeq@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = xoItmStySeq@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = XUNIVSplit@XUNIVSplitMatch@MDSE_LVL_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select5",
+				"rejSEQLVL sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRUHLIV_Seq_Trnfrm_PX.DS_SEQLVL.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSSEQLVL",
+				"FUHLIVSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRUHLIV_Seq_Trnfrm_PX.DS_UHLIV.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSUHLIV",
+				"FRejects sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRUHLIV_Seq_Trnfrm_PX.FF_UHLIV_Rejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFUHLIVRejects"
+			]
+		}
+	}
+}

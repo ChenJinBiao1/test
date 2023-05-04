@@ -1,0 +1,37 @@
+{
+	"name": "AB_IPT_LOC_222D",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPT_LOC_222D.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LOC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "CNCY_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

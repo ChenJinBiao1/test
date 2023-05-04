@@ -1,0 +1,57 @@
+{
+	"name": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T_TEST",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T.txt",
+				"folderPath": "source",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_HIER_LVL_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "TEST",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

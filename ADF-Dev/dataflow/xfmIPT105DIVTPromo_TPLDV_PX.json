@@ -1,0 +1,226 @@
+{
+	"name": "xfmIPT105DIVTPromo_TPLDV_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_DS_ALL_data_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSAllData"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TPRML_PMOTN_LADR_T_105",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPRML"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT105DIVTPromo_TPLDV_PX_FF_rejects_PMOTN_ID_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFrejectsPMOTNID"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT105DIVTPromo_TPLDV_PX_DS_TPLDV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSTPLDV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XLdrDesc"
+				},
+				{
+					"name": "inLPMOTNID"
+				},
+				{
+					"name": "LPMOTNID"
+				},
+				{
+					"name": "inPMOTNID"
+				},
+				{
+					"name": "rejPMOTNID"
+				},
+				{
+					"name": "Xtpldv"
+				},
+				{
+					"name": "xoTPLDV"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA'),",
+				"     pUserId as string ('PIPT091U')",
+				"}",
+				"source(output(",
+				"          MKT_ID as string,",
+				"          BRD_ID as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CHNL_ID as integer,",
+				"          LADR_NAME as string,",
+				"          LADR_TYP as string,",
+				"          PCT_OFF as decimal(15,2),",
+				"          AMT_OFF as decimal(15,2),",
+				"          NET_PRICE as decimal(15,2),",
+				"          HIER_LVL_SEQ_NBR_S as integer,",
+				"          LADR_TYP_CD as string,",
+				"          DSCT_TYP_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSAllData",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PMOTN_LADR_DESC as string,",
+				"          DSCT_TYP_CD as string,",
+				"          LADR_TYP_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPRML",
+				"inLPMOTNID select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          LADR_TYP_CD,",
+				"          DSCT_TYP_CD,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          LadderDescription",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XLdrDesc",
+				"DSAllData derive(LadderDescription = concat(LADR_NAME, LADR_TYP)) ~> inLPMOTNID",
+				"XLdrDesc, IPTTPRML lookup(HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S",
+				"     && upper(LadderDescription) == upper(PMOTN_LADR_DESC)",
+				"     && upper(XLdrDesc@DSCT_TYP_CD) == upper(IPTTPRML@DSCT_TYP_CD)",
+				"     && upper(XLdrDesc@LADR_TYP_CD) == upper(IPTTPRML@LADR_TYP_CD)",
+				"     && XLdrDesc@MKT_ID == IPTTPRML@MKT_ID",
+				"     && XLdrDesc@CHNL_ID == IPTTPRML@CHNL_ID",
+				"     && XLdrDesc@PRC_GRP_ZN_SEQ_NBR_S == IPTTPRML@PRC_GRP_ZN_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPMOTNID",
+				"split1@Yes select(mapColumn(",
+				"          PMOTN_LADR_ID_S,",
+				"          NET_PRICE,",
+				"          PCT_OFF,",
+				"          AMT_OFF",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inPMOTNID",
+				"split1@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID = split1@No@MKT_ID,",
+				"          CHNL_ID = split1@No@CHNL_ID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = split1@No@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          LADR_TYP_CD = split1@No@LADR_TYP_CD,",
+				"          DSCT_TYP_CD = split1@No@DSCT_TYP_CD,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          LadderDescription",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejPMOTNID",
+				"inPMOTNID derive(CRT_UPDT_DTTM = currentDate(),",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          PMOTN_LADR_SEQ_ORD_NBR = 1) ~> Xtpldv",
+				"Xtpldv select(mapColumn(",
+				"          PMOTN_LADR_ID_S,",
+				"          PMOTN_LADR_SEQ_ORD_NBR,",
+				"          PMOTN_PRC_UN_AMT = NET_PRICE,",
+				"          PMOTN_PCT_OFF_RAT = PCT_OFF,",
+				"          PMOTN_DLR_OFF_AMT = AMT_OFF,",
+				"          CRT_UPDT_DTTM,",
+				"          CRT_UPDT_USER_ID,",
+				"          LST_UPDT_ID = LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoTPLDV",
+				"LPMOTNID derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"rejPMOTNID sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          LADR_NAME as string,",
+				"          LADR_TYP as string,",
+				"          PCT_OFF as string,",
+				"          AMT_OFF as string,",
+				"          NET_PRICE as string,",
+				"          LADR_TYP_CD as string,",
+				"          DSCT_TYP_CD as string,",
+				"          HIER_LVL_SEQ_NBR_S as string,",
+				"          LadderDescription as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.DS_Reject.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFrejectsPMOTNID",
+				"xoTPLDV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_LADR_ID_S as string,",
+				"          PMOTN_LADR_SEQ_ORD_NBR as string,",
+				"          PMOTN_PRC_UN_AMT as string,",
+				"          PMOTN_PCT_OFF_RAT as string,",
+				"          PMOTN_DLR_OFF_AMT as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT105DIVTPromo_TPLDV_PX.DS_TPLDV.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSTPLDV"
+			]
+		}
+	}
+}

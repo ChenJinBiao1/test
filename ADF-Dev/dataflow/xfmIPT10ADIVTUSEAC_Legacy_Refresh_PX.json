@@ -1,0 +1,72 @@
+{
+	"name": "xfmIPT10ADIVTUSEAC_Legacy_Refresh_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT10ADIVTUSEAC_Legacy_Extract_PX_DS_Legacy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLegacy"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_LUSAS_LGCY_USER_ACS_T",
+						"type": "DatasetReference"
+					},
+					"name": "LUSASLGCYUSERACST"
+				}
+			],
+			"transformations": [
+				{
+					"name": "rdoCorpcoId"
+				},
+				{
+					"name": "rdoCorpCoId1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ENTP_USER_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLegacy",
+				"DSLegacy aggregate(groupBy(CORP_ID,",
+				"          MDSE_CO_ID),",
+				"     each(match(!in(['CORP_ID','MDSE_CO_ID'],name)), $$ = first($$))) ~> rdoCorpcoId",
+				"rdoCorpcoId select(mapColumn(",
+				"          CORP_ID,",
+				"          MDSE_CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rdoCorpCoId1",
+				"rdoCorpCoId1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CORP_ID as string,",
+				"          MDSE_CD_ID as string",
+				"     ),",
+				"     partitionFileNames:['LUSAS_LGCY_USER_ACS_T.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LUSASLGCYUSERACST"
+			]
+		}
+	}
+}

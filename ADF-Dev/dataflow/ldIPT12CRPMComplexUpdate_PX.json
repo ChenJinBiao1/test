@@ -1,0 +1,70 @@
+{
+	"name": "ldIPT12CRPMComplexUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT122RPMUnApprPromoExtract1_PX_DS_ComplexPromoUpdate",
+						"type": "DatasetReference"
+					},
+					"name": "DSComplexPromoUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_TSPCT_STG_PMOTN_CMPLX_THLD_T_12C_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "TSPCTSTGPMOTNCMPLXTHLDT"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MIN_QTY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSComplexPromoUpdate",
+				"DSComplexPromoUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_STRT_DT as string,",
+				"          PMOTN_END_DT as string,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as string,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as string,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MIN_QTY as string",
+				"     ),",
+				"     partitionFileNames:['TSPCT_STG_PMOTN_CMPLX_THLD_T_12C_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> TSPCTSTGPMOTNCMPLXTHLDT"
+			]
+		}
+	}
+}

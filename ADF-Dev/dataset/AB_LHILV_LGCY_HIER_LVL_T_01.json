@@ -1,0 +1,45 @@
+{
+	"name": "AB_LHILV_LGCY_HIER_LVL_T_01",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "LHILV_LGCY_HIER_LVL_T_01.txt",
+				"folderPath": "source",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LGCY_HIER_LVL_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": " MDSE_CO_ID",
+				"type": "String"
+			},
+			{
+				"name": " MDSE_DIV_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

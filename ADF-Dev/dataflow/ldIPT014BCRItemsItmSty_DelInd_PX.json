@@ -1,0 +1,72 @@
+{
+	"name": "ldIPT014BCRItemsItmSty_DelInd_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStySeqNbr_PX_DS_DelInd_Y_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDelIndYITMSTY"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsItmSty_DelInd_PX_ITMSTY_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "ITMSTYUpdtDelInd"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XITMSTYDelInd"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U')",
+				"}",
+				"source(output(",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ItmStyNbr as string,",
+				"          MktId as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSDelIndYITMSTY",
+				"DSDelIndYITMSTY derive(ITM_STY_NBR = ItmStyNbr,",
+				"          DLT_IND = 'Y',",
+				"          LST_UPDT_USER_ID = $jsUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XITMSTYDelInd",
+				"XITMSTYDelInd select(mapColumn(",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          DLT_IND,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ldIPT014BCRItemsItmSty_DelInd_PX_ITMSTY_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> ITMSTYUpdtDelInd"
+			]
+		}
+	}
+}

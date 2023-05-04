@@ -1,0 +1,580 @@
+{
+	"name": "xfmIPT033BCRLHLIV_Seq_Trnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_LHILV_LGCY_HIER_LVL_T_033",
+						"type": "DatasetReference"
+					},
+					"name": "LHILVLGCYHIERLVLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRUHLIV_Seq_Trnfrm_PX_DS_SEQLVL_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSEQLVL"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRLHLIV_Seq_Trnfrm_PX_FF_SEQLVL_Rejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFSEQLVLRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRLHLIV_Seq_Trnfrm_PX_DS_LGCY_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLGCY"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRLHLIV_Seq_Trnfrm_PX_FF_Rejects_LHLIV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejectsLHLIV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XLGCYSplit"
+				},
+				{
+					"name": "xoITMSTY"
+				},
+				{
+					"name": "xoSclass"
+				},
+				{
+					"name": "xoLGCY"
+				},
+				{
+					"name": "xoClass"
+				},
+				{
+					"name": "xoDept"
+				},
+				{
+					"name": "xoDiv"
+				},
+				{
+					"name": "LMDSELG"
+				},
+				{
+					"name": "LMDSELGDerivedColumn"
+				},
+				{
+					"name": "LMDSELGSplit"
+				},
+				{
+					"name": "loMDSELG"
+				},
+				{
+					"name": "RejectsSEQLVL"
+				},
+				{
+					"name": "FILGCY"
+				},
+				{
+					"name": "LDivid"
+				},
+				{
+					"name": "LDeptid"
+				},
+				{
+					"name": "LClassid"
+				},
+				{
+					"name": "LSubclassid"
+				},
+				{
+					"name": "LITMSTYSEQ"
+				},
+				{
+					"name": "LDividDerivedColumn"
+				},
+				{
+					"name": "LDividSplit"
+				},
+				{
+					"name": "LDividMatchSelect"
+				},
+				{
+					"name": "LDividNotMatchSelect"
+				},
+				{
+					"name": "LDeptidDerivedColumn"
+				},
+				{
+					"name": "LDeptidSplit"
+				},
+				{
+					"name": "LDeptidMatchSelect"
+				},
+				{
+					"name": "LDeptidNotMatchSelect"
+				},
+				{
+					"name": "LClassidDerivedColumn"
+				},
+				{
+					"name": "LClassidSplit"
+				},
+				{
+					"name": "LClassidMatchSelect"
+				},
+				{
+					"name": "LClassidNotMatchselect"
+				},
+				{
+					"name": "LSubclassidDerivedColumn"
+				},
+				{
+					"name": "LSubclassidSplit"
+				},
+				{
+					"name": "LSubclassidMatchSelect"
+				},
+				{
+					"name": "LSubclassidNotMatchSelect"
+				},
+				{
+					"name": "LITMSTYSEQDerivedColumn"
+				},
+				{
+					"name": "LITMSTYSEQSplit"
+				},
+				{
+					"name": "LITMSTYSEQMatchSelect"
+				},
+				{
+					"name": "LITMSTYSEQNotMatchSelect"
+				},
+				{
+					"name": "FLHLIV"
+				},
+				{
+					"name": "FLHLIVSelect"
+				},
+				{
+					"name": "FRejects"
+				},
+				{
+					"name": "xoPrgNbr"
+				},
+				{
+					"name": "LPrgNbr"
+				},
+				{
+					"name": "LPrgNbrDerivedColumn"
+				},
+				{
+					"name": "LPrgNbrSplit"
+				},
+				{
+					"name": "LPrgNbrMatchSelect"
+				},
+				{
+					"name": "LPrgNbrNotMatchSelect"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          LGCY_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          PGM_NBR as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LHILVLGCYHIERLVLT",
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSSEQLVL",
+				"LHILVLGCYHIERLVLT split(MDSE_LVL_CD == '9',",
+				"     MDSE_LVL_CD == '7',",
+				"     disjoint: false) ~> XLGCYSplit@(XLGCYSplitMatch, XLGCYPrgNbr, XLGCYNone)",
+				"XLGCYSplit@XLGCYSplitMatch derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoITMSTY",
+				"XLGCYSplit@XLGCYSplitMatch derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoSclass",
+				"LHILVLGCYHIERLVLT derive(LGCY_HIER_LVL_SEQ_NBR_S = LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = CORP_ID,",
+				"          MDSE_CO_ID = MDSE_CO_ID,",
+				"          MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S),",
+				"          MDSE_LVL_CD = MDSE_LVL_CD) ~> xoLGCY",
+				"XLGCYSplit@XLGCYSplitMatch derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoClass",
+				"XLGCYSplit@XLGCYSplitMatch derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoDept",
+				"XLGCYSplit@XLGCYSplitMatch derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoDiv",
+				"DSSEQLVL, xoLGCY lookup(MDSE_HIER_LVL_SEQ_NBR_S == LGCY_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LMDSELG",
+				"LMDSELG derive(IsMatch = isMatch()) ~> LMDSELGDerivedColumn",
+				"LMDSELGDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LMDSELGSplit@(LMDSELGLookupMatch, LMDSELGLookupNotMatch)",
+				"LMDSELGSplit@LMDSELGLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD,",
+				"          MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID,",
+				"          PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMDSELG",
+				"LMDSELGSplit@LMDSELGLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RejectsSEQLVL",
+				"loMDSELG split(MDSE_LVL_CD == '3',",
+				"     MDSE_LVL_CD == '4',",
+				"     MDSE_LVL_CD == '9',",
+				"     MDSE_LVL_CD == '5',",
+				"     MDSE_LVL_CD == '6',",
+				"     MDSE_LVL_CD == '7',",
+				"     MDSE_LVL_CD == '8',",
+				"     disjoint: false) ~> FILGCY@(fioDivid, fioDeptid, fioStyClrSeq, fioClassid, fioSubclassid, fioPrgNbr, fioSTYSEQ, fioNone)",
+				"FILGCY@fioDivid, xoDiv lookup(FILGCY@fioDivid@MDSE_DIV_ID == xoDiv@MDSE_DIV_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LDivid",
+				"FILGCY@fioDeptid, xoDept lookup(FILGCY@fioDeptid@MDSE_DIV_ID == xoDept@MDSE_DIV_ID",
+				"     && FILGCY@fioDeptid@MDSE_DEPT_ID == xoDept@MDSE_DEPT_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LDeptid",
+				"FILGCY@fioClassid, xoClass lookup(FILGCY@fioClassid@MDSE_DIV_ID == xoClass@MDSE_DIV_ID",
+				"     && FILGCY@fioClassid@MDSE_DEPT_ID == xoClass@MDSE_DEPT_ID",
+				"     && FILGCY@fioClassid@MDSE_CLS_ID == xoClass@MDSE_CLS_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LClassid",
+				"FILGCY@fioSubclassid, xoSclass lookup(FILGCY@fioSubclassid@MDSE_DIV_ID == xoSclass@MDSE_DIV_ID",
+				"     && FILGCY@fioSubclassid@MDSE_DEPT_ID == xoSclass@MDSE_DEPT_ID",
+				"     && FILGCY@fioSubclassid@MDSE_CLS_ID == xoSclass@MDSE_CLS_ID",
+				"     && FILGCY@fioSubclassid@MDSE_SCLS_ID == xoSclass@MDSE_SCLS_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LSubclassid",
+				"FILGCY@fioSTYSEQ, xoITMSTY lookup(FILGCY@fioSTYSEQ@MDSE_DIV_ID == xoITMSTY@MDSE_DIV_ID",
+				"     && FILGCY@fioSTYSEQ@MDSE_DEPT_ID == xoITMSTY@MDSE_DEPT_ID",
+				"     && FILGCY@fioSTYSEQ@MDSE_CLS_ID == xoITMSTY@MDSE_CLS_ID",
+				"     && FILGCY@fioSTYSEQ@MDSE_SCLS_ID == xoITMSTY@MDSE_SCLS_ID",
+				"     && FILGCY@fioSTYSEQ@ITM_STY_SEQ_NBR_S == xoITMSTY@ITM_STY_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LITMSTYSEQ",
+				"LDivid derive(IsMatch = isMatch()) ~> LDividDerivedColumn",
+				"LDividDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LDividSplit@(LDividLookupMatch, LDividLookupNotMatch)",
+				"LDividSplit@LDividLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LDividSplit@LDividLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDividSplit@LDividLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDividSplit@LDividLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDividSplit@LDividLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDividSplit@LDividLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDividSplit@LDividLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDividSplit@LDividLookupMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LDividSplit@LDividLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDividSplit@LDividLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDividSplit@LDividLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDividSplit@LDividLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDividSplit@LDividLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDividSplit@LDividLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDividSplit@LDividLookupMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDividMatchSelect",
+				"LDividSplit@LDividLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LDividSplit@LDividLookupNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LDividSplit@LDividLookupNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDividSplit@LDividLookupNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDividSplit@LDividLookupNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDividSplit@LDividLookupNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDividSplit@LDividLookupNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDividSplit@LDividLookupNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDividSplit@LDividLookupNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDividNotMatchSelect",
+				"LDeptid derive(IsMatch = isMatch()) ~> LDeptidDerivedColumn",
+				"LDeptidDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LDeptidSplit@(LDeptidLookupMatch, LDeptidLookupNotMatch)",
+				"LDeptidSplit@LDeptidLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDeptidSplit@LDeptidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDeptidSplit@LDeptidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDeptidSplit@LDeptidLookupMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDeptidSplit@LDeptidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDeptidSplit@LDeptidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDeptidSplit@LDeptidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDeptidSplit@LDeptidLookupMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDeptidMatchSelect",
+				"LDeptidSplit@LDeptidLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LDeptidSplit@LDeptidLookupNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LDeptidSplit@LDeptidLookupNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LDeptidSplit@LDeptidLookupNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LDeptidSplit@LDeptidLookupNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LDeptidSplit@LDeptidLookupNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LDeptidSplit@LDeptidLookupNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LDeptidSplit@LDeptidLookupNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LDeptidSplit@LDeptidLookupNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LDeptidNotMatchSelect",
+				"LClassid derive(IsMatch = isMatch()) ~> LClassidDerivedColumn",
+				"LClassidDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LClassidSplit@(LClassidLookupMatch, LClassidLookupNotMatch)",
+				"LClassidSplit@LClassidLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LClassidSplit@LClassidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LClassidSplit@LClassidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LClassidSplit@LClassidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LClassidSplit@LClassidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LClassidSplit@LClassidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LClassidSplit@LClassidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LClassidSplit@LClassidLookupMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LClassidSplit@LClassidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LClassidSplit@LClassidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LClassidSplit@LClassidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LClassidSplit@LClassidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LClassidSplit@LClassidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LClassidSplit@LClassidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LClassidSplit@LClassidLookupMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LClassidMatchSelect",
+				"LClassidSplit@LClassidLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LClassidSplit@LClassidLookupNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LClassidSplit@LClassidLookupNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LClassidSplit@LClassidLookupNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LClassidSplit@LClassidLookupNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LClassidSplit@LClassidLookupNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LClassidSplit@LClassidLookupNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LClassidSplit@LClassidLookupNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LClassidSplit@LClassidLookupNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LClassidNotMatchselect",
+				"LSubclassid derive(IsMatch = isMatch()) ~> LSubclassidDerivedColumn",
+				"LSubclassidDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LSubclassidSplit@(LSubclassidLookupMatch, LSubclassidLookupNotMatch)",
+				"LSubclassidSplit@LSubclassidLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LSubclassidSplit@LSubclassidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LSubclassidSplit@LSubclassidLookupMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LSubclassidSplit@LSubclassidLookupMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LSubclassidMatchSelect",
+				"LSubclassidSplit@LSubclassidLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LSubclassidSplit@LSubclassidLookupNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LSubclassidSplit@LSubclassidLookupNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LSubclassidSplit@LSubclassidLookupNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LSubclassidSplit@LSubclassidLookupNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LSubclassidSplit@LSubclassidLookupNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LSubclassidSplit@LSubclassidLookupNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LSubclassidSplit@LSubclassidLookupNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LSubclassidNotMatchSelect",
+				"LITMSTYSEQ derive(IsMatch = isMatch()) ~> LITMSTYSEQDerivedColumn",
+				"LITMSTYSEQDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LITMSTYSEQSplit@(LITMSTYSEQMatch, LITMSTYSEQNotMatch)",
+				"LITMSTYSEQSplit@LITMSTYSEQMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LITMSTYSEQSplit@LITMSTYSEQMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LITMSTYSEQSplit@LITMSTYSEQMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LITMSTYSEQSplit@LITMSTYSEQMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LITMSTYSEQMatchSelect",
+				"LITMSTYSEQSplit@LITMSTYSEQNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LITMSTYSEQSplit@LITMSTYSEQNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LITMSTYSEQSplit@LITMSTYSEQNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LITMSTYSEQSplit@LITMSTYSEQNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LITMSTYSEQSplit@LITMSTYSEQNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LITMSTYSEQSplit@LITMSTYSEQNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LITMSTYSEQSplit@LITMSTYSEQNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LITMSTYSEQSplit@LITMSTYSEQNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LITMSTYSEQNotMatchSelect",
+				"LDividMatchSelect, LDeptidMatchSelect, LClassidMatchSelect, LSubclassidMatchSelect, LITMSTYSEQMatchSelect, FILGCY@fioStyClrSeq, LPrgNbrMatchSelect union(byName: true)~> FLHLIV",
+				"FLHLIV select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FLHLIVSelect",
+				"LITMSTYSEQNotMatchSelect, LSubclassidNotMatchSelect, LClassidNotMatchselect, LDeptidNotMatchSelect, LDividNotMatchSelect, LPrgNbrNotMatchSelect union(byName: true)~> FRejects",
+				"XLGCYSplit@XLGCYPrgNbr derive(MDSE_DIV_ID = iif(isNull(MDSE_DIV_ID), ' ', MDSE_DIV_ID),",
+				"          MDSE_DEPT_ID = iif(isNull(MDSE_DEPT_ID), ' ', MDSE_DEPT_ID),",
+				"          MDSE_CLS_ID = iif(isNull(MDSE_CLS_ID), ' ', MDSE_CLS_ID),",
+				"          MDSE_SCLS_ID = iif(isNull(MDSE_SCLS_ID), ' ', MDSE_SCLS_ID),",
+				"          PGM_NBR = iif(isNull(PGM_NBR), 0, PGM_NBR),",
+				"          ITM_STY_CLR_SEQ_NBR_S = iif(isNull(ITM_STY_CLR_SEQ_NBR_S), 0, ITM_STY_CLR_SEQ_NBR_S),",
+				"          ITM_STY_SEQ_NBR_S = iif(isNull(ITM_STY_SEQ_NBR_S), 0, ITM_STY_SEQ_NBR_S)) ~> xoPrgNbr",
+				"FILGCY@fioPrgNbr, xoPrgNbr lookup(FILGCY@fioPrgNbr@MDSE_DIV_ID == xoPrgNbr@MDSE_DIV_ID",
+				"     && FILGCY@fioPrgNbr@PGM_NBR == xoPrgNbr@PGM_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPrgNbr",
+				"LPrgNbr derive(IsMatch = isMatch()) ~> LPrgNbrDerivedColumn",
+				"LPrgNbrDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LPrgNbrSplit@(LPrgNbrMatch, LPrgNbrNotMatch)",
+				"LPrgNbrSplit@LPrgNbrMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LPrgNbrSplit@LPrgNbrMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrMatch@ITM_STY_SEQ_NBR_S,",
+				"          MDSE_DIV_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LPrgNbrSplit@LPrgNbrMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LPrgNbrSplit@LPrgNbrMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrgNbrMatchSelect",
+				"LPrgNbrSplit@LPrgNbrNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_LVL_CD = LPrgNbrSplit@LPrgNbrNotMatch@MDSE_LVL_CD,",
+				"          MDSE_DIV_ID = LPrgNbrSplit@LPrgNbrNotMatch@MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID = LPrgNbrSplit@LPrgNbrNotMatch@MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID = LPrgNbrSplit@LPrgNbrNotMatch@MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID = LPrgNbrSplit@LPrgNbrNotMatch@MDSE_SCLS_ID,",
+				"          PGM_NBR = LPrgNbrSplit@LPrgNbrNotMatch@PGM_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = LPrgNbrSplit@LPrgNbrNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrgNbrNotMatchSelect",
+				"RejectsSEQLVL sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRLHLIV_Seq_Trnfrm_PX.FF_SEQLVL_Rejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFSEQLVLRejects",
+				"FLHLIVSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRLHLIV_Seq_Trnfrm_PX.DS_LGCY.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSLGCY",
+				"FRejects sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRLHLIV_Seq_Trnfrm_PX.FF_Rejects_LHLIV.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejectsLHLIV"
+			]
+		}
+	}
+}

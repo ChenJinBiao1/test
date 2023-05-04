@@ -1,0 +1,93 @@
+{
+	"name": "ldIPT096DIVTZoneGrps_ISCLA_PX_Fail",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT096DIVTZoneGrps_ISCLA_PX_DS_ISCLALoa_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLALoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XISCLA"
+				},
+				{
+					"name": "outISCLA"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string (\"PIPT091U\")",
+				"}",
+				"source(output(",
+				"          MKT_ID as string,",
+				"          STR_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCLALoad",
+				"DSISCLALoad derive(CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          DLT_IND = 'N') ~> XISCLA",
+				"XISCLA select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = STR_NBR,",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          DLT_IND",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outISCLA",
+				"outISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {ITM_STY_CLR_SEQ_NBR_S } as string,",
+				"          { LOC_NBR } as string,",
+				"          { STRT_DT} as string,",
+				"          { RTL_PRC_AMT } as string,",
+				"          { PRC_STAT_CD} as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DLT_IND as string",
+				"     ),",
+				"     partitionFileNames:[(\"IPTCGI.ISCLA_ITM_STY_CLR_LOC_ATTR_T.txt\")],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTISCLA"
+			]
+		}
+	}
+}

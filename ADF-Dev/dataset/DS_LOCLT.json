@@ -1,0 +1,36 @@
+{
+	"name": "DS_LOCLT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_FTP_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "String",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "IPTFile/02-BCRInventory"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation",
+				"fileName": {
+					"value": "@concat('srcIPT021BCRInvntExtract_PX.',dataset().pInvocationId,'.DS_LOCLT.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "seqfiles/dsfiles"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

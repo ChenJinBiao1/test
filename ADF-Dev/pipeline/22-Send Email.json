@@ -1,0 +1,75 @@
+{
+	"name": "22-Send Email",
+	"properties": {
+		"activities": [
+			{
+				"name": "SendEmail",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "GetEmailFile_22DU",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"pInvocationId": "ASIA"
+							},
+							"source2": {
+								"pInvocationId": "ASIA"
+							},
+							"source3": {
+								"pInvocationId": "ASIA"
+							},
+							"source4": {
+								"pInvocationId": "ASIA"
+							},
+							"source5": {
+								"pInvocationId": "ASIA"
+							},
+							"source6": {
+								"pInvocationId": "ASIA"
+							},
+							"source7": {
+								"pInvocationId": "ASIA"
+							},
+							"source8": {
+								"pInvocationId": "ASIA"
+							},
+							"source9": {
+								"pInvocationId": "ASIA"
+							},
+							"source10": {
+								"pInvocationId": "ASIA"
+							},
+							"source11": {
+								"pInvocationId": "ASIA"
+							},
+							"source12": {
+								"pInvocationId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "ALL/22DU-Send Email"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-03T07:24:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

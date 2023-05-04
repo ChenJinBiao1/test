@@ -1,0 +1,16 @@
+{
+	"name": "SelfHosted_IPT_DIVS_DEV",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=tagesd14.gap.com;port=1521;sid=ISCSMTB2;user id=gapchinaipt",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1YWQ4YThjOC01M2QyLTQ0YjQtYjYxNy1hZmUwMmI4NzlkZTkiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

@@ -1,0 +1,101 @@
+{
+	"name": "xfmIPT181ItemAttributeTrnfm_PX_2_CopyDelete",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCCAItem"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "OutFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy1",
+						"type": "DatasetReference"
+					},
+					"name": "EmptyFile"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy2",
+						"type": "DatasetReference"
+					},
+					"name": "EmptyFile2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCCAItem",
+				"DSISCCAItem derive(ITM_STY_CLR_SEQ_NBR_S = '',",
+				"          CNCY_CD = '',",
+				"          CTRY_CD = '',",
+				"          CHNL_ID = '',",
+				"          AUC_AMT = '',",
+				"          ORIG_RTL_PRC_AMT = '',",
+				"          change_code = '') ~> derivedColumn1",
+				"DSISCCAItem derive(ITM_STY_CLR_SEQ_NBR_S = '',",
+				"          CNCY_CD = '',",
+				"          CTRY_CD = '',",
+				"          CHNL_ID = '',",
+				"          AUC_AMT = '',",
+				"          ORIG_RTL_PRC_AMT = '',",
+				"          change_code = '') ~> derivedColumn2",
+				"DSISCCAItem sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPTItemAttributeTrnfm_PX.DS_ISCCA_Item.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutFile",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          AUC_AMT as string,",
+				"          ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> EmptyFile",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> EmptyFile2"
+			]
+		}
+	}
+}

@@ -1,0 +1,41 @@
+{
+	"name": "AB_ITEM_LOC_225F",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ITEM_LOC_225F.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "LOC",
+				"type": "String"
+			},
+			{
+				"name": "REGULAR_UNIT_RETAIL",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

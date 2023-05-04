@@ -1,0 +1,76 @@
+{
+	"name": "Out Files_RPM",
+	"properties": {
+		"activities": [
+			{
+				"name": "Unite",
+				"description": "state2",
+				"type": "Until",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('state'),'1')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Out Files",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Out Files_RPM_1",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"location": {
+										"value": "@pipeline().parameters.location",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Out Files",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "state",
+								"value": "1"
+							}
+						}
+					],
+					"timeout": "2:00:00"
+				}
+			}
+		],
+		"parameters": {
+			"location": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"state": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"folder": {
+			"name": "ALL/external"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-08T14:25:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

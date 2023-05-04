@@ -1,0 +1,169 @@
+{
+	"name": "ldIPT129RPMClearanceLoad_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_STAGE_CLEARANCE_129_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "RPMTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT129RPMClearanceLoad_PX_FF_ClearRej",
+						"type": "DatasetReference"
+					},
+					"name": "FFClearRej"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT129RPMClearanceLoad_PX_FF_ClearRej",
+						"type": "DatasetReference"
+					},
+					"name": "FFClearRej1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     REASON_CODE as integer (0),",
+				"     ITEM as string (toString(null())),",
+				"     DIFF_ID as string (toString(null())),",
+				"     ZONE_ID as integer (0),",
+				"     LOCATION as integer (0),",
+				"     ZONE_NODE_TYPE as integer (0),",
+				"     EFFECTIVE_DATE as string (toString(null())),",
+				"     OUT_OF_STOCK_DATE as string (toString(null())),",
+				"     RESET_DATE as string (toString(null())),",
+				"     CHANGE_TYPE as integer (0),",
+				"     CHANGE_AMOUNT as decimal(10,0) (toDecimal(0)),",
+				"     CHANGE_PERCENT as decimal(10,0) (toDecimal(0)),",
+				"     PRICE_GUIDE_ID as integer (0),",
+				"     AUTO_APPROVE_IND as integer (0),",
+				"     STATUS as string (toString(null())),",
+				"     ERROR_MESSAGE as string (toString(null())),",
+				"     PROCESS_ID as integer (0),",
+				"     CLEARANCE_ID as long (0),",
+				"     CLEARANCE_DISPLAY_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          REASON_CODE as integer,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          LOCATION as integer,",
+				"          ZONE_NODE_TYPE as integer,",
+				"          EFFECTIVE_DATE as timestamp,",
+				"          OUT_OF_STOCK_DATE as timestamp,",
+				"          RESET_DATE as timestamp,",
+				"          CHANGE_TYPE as integer,",
+				"          CHANGE_AMOUNT as decimal(10,0),",
+				"          CHANGE_PERCENT as decimal(10,0),",
+				"          PRICE_GUIDE_ID as integer,",
+				"          AUTO_APPROVE_IND as integer,",
+				"          STATUS as string,",
+				"          ERROR_MESSAGE as string,",
+				"          PROCESS_ID as integer,",
+				"          CLEARANCE_ID as long,",
+				"          CLEARANCE_DISPLAY_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMTemp",
+				"source(output(",
+				"          REASON_CODE as integer,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          LOCATION as integer,",
+				"          ZONE_NODE_TYPE as integer,",
+				"          EFFECTIVE_DATE as timestamp,",
+				"          OUT_OF_STOCK_DATE as timestamp,",
+				"          RESET_DATE as timestamp,",
+				"          CHANGE_TYPE as integer,",
+				"          CHANGE_AMOUNT as decimal(10,0),",
+				"          CHANGE_PERCENT as decimal(10,0),",
+				"          PRICE_GUIDE_ID as integer,",
+				"          AUTO_APPROVE_IND as integer,",
+				"          STATUS as string,",
+				"          ERROR_MESSAGE as string,",
+				"          PROCESS_ID as integer,",
+				"          CLEARANCE_ID as long,",
+				"          CLEARANCE_DISPLAY_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFClearRej",
+				"RPMTemp filter(REASON_CODE == $REASON_CODE || isNull(REASON_CODE)  && \r",
+				"ITEM == $ITEM || isNull(ITEM)  && \r",
+				"DIFF_ID == $DIFF_ID || isNull(DIFF_ID)  && \r",
+				"ZONE_ID == $ZONE_ID || isNull(ZONE_ID)  && \r",
+				"LOCATION == $LOCATION || isNull(LOCATION)  && \r",
+				"ZONE_NODE_TYPE == $ZONE_NODE_TYPE || isNull(ZONE_NODE_TYPE)  && \r",
+				"EFFECTIVE_DATE ==toTimestamp($EFFECTIVE_DATE)  || isNull(EFFECTIVE_DATE) &&\r",
+				"OUT_OF_STOCK_DATE ==toTimestamp($OUT_OF_STOCK_DATE)  || isNull(OUT_OF_STOCK_DATE) &&\r",
+				"RESET_DATE ==toTimestamp($RESET_DATE)  || isNull(RESET_DATE) &&\r",
+				"CHANGE_TYPE == $CHANGE_TYPE || isNull(CHANGE_TYPE)  && \r",
+				"CHANGE_AMOUNT == $CHANGE_AMOUNT || isNull(CHANGE_AMOUNT)  && \r",
+				"CHANGE_PERCENT == $CHANGE_PERCENT || isNull(CHANGE_PERCENT)  && \r",
+				"PRICE_GUIDE_ID == $PRICE_GUIDE_ID || isNull(PRICE_GUIDE_ID)  && \r",
+				"AUTO_APPROVE_IND == $AUTO_APPROVE_IND || isNull(AUTO_APPROVE_IND)  && \r",
+				"STATUS == $STATUS || isNull(STATUS)  && \r",
+				"ERROR_MESSAGE == $ERROR_MESSAGE || isNull(ERROR_MESSAGE)  && \r",
+				"PROCESS_ID == $PROCESS_ID || isNull(PROCESS_ID)  && \r",
+				"CLEARANCE_ID == $CLEARANCE_ID || isNull(CLEARANCE_ID)  && \r",
+				"CLEARANCE_DISPLAY_ID == $CLEARANCE_DISPLAY_ID || isNull(CLEARANCE_DISPLAY_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFClearRej union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          REASON_CODE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as string,",
+				"          LOCATION as string,",
+				"          ZONE_NODE_TYPE as string,",
+				"          EFFECTIVE_DATE as string,",
+				"          OUT_OF_STOCK_DATE as string,",
+				"          RESET_DATE as string,",
+				"          CHANGE_TYPE as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CHANGE_PERCENT as string,",
+				"          PRICE_GUIDE_ID as string,",
+				"          AUTO_APPROVE_IND as string,",
+				"          STATUS as string,",
+				"          ERROR_MESSAGE as string,",
+				"          PROCESS_ID as string,",
+				"          CLEARANCE_ID as string,",
+				"          CLEARANCE_DISPLAY_ID as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT129RPMClearanceLoad_PX.FF_ClearRej.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFClearRej1"
+			]
+		}
+	}
+}

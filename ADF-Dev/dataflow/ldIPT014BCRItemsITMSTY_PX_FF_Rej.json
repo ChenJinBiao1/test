@@ -1,0 +1,144 @@
+{
+	"name": "ldIPT014BCRItemsITMSTY_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT017BCRItemsITMSTY_PX_FF_Reject_Style_Temp_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTITMSTYTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT017BCRItemsITMSTY_PX_FF_Reject_Style_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTY"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT017BCRItemsITMSTY_PX_FF_Reject_Style_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTY1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_NBR as string (toString(null())),",
+				"     MKT_ID as string (toString(null())),",
+				"     ITM_STY_DESC as string (toString(null())),",
+				"     ITM_STY_ABBR_DESC as string (toString(null())),",
+				"     MDSE_HIER_SEQ_NBR_S as integer (toInteger(null())),",
+				"     LGCY_IND as string (toString(null())),",
+				"     DLT_IND as string (toString(null())),",
+				"     PGM_NBR as integer (toInteger(null())),",
+				"     PGM_DESC as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     CRT_UPDT_USER_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_ID as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_ABBR_DESC as string,",
+				"          MDSE_HIER_SEQ_NBR_S as integer,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          PGM_NBR as integer,",
+				"          PGM_DESC as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTITMSTYTemp",
+				"source(output(",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_ID as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_ABBR_DESC as string,",
+				"          MDSE_HIER_SEQ_NBR_S as integer,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          PGM_NBR as integer,",
+				"          PGM_DESC as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFRejITMSTY",
+				"IPTITMSTYTemp filter(ITM_STY_SEQ_NBR_S == $ITM_STY_SEQ_NBR_S || isNull(ITM_STY_SEQ_NBR_S)  && \r",
+				"ITM_STY_NBR == $ITM_STY_NBR || isNull(ITM_STY_NBR) && \r",
+				"MKT_ID == $MKT_ID || isNull(MKT_ID) && \r",
+				"ITM_STY_DESC == $ITM_STY_DESC || isNull(ITM_STY_DESC) && \r",
+				"ITM_STY_ABBR_DESC == $ITM_STY_ABBR_DESC || isNull(ITM_STY_ABBR_DESC) && \r",
+				"MDSE_HIER_SEQ_NBR_S == $MDSE_HIER_SEQ_NBR_S || isNull(MDSE_HIER_SEQ_NBR_S) && \r",
+				"LGCY_IND ==$LGCY_IND || isNull(LGCY_IND) &&\r",
+				"DLT_IND == $DLT_IND || isNull(DLT_IND)  && \r",
+				"PGM_NBR == $PGM_NBR || isNull(PGM_NBR) && \r",
+				"PGM_DESC == $PGM_DESC || isNull(PGM_DESC) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFRejITMSTY union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_ID as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_ABBR_DESC as string,",
+				"          MDSE_HIER_SEQ_NBR_S as string,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          PGM_NBR as string,",
+				"          PGM_DESC as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT017BCRItemsITMSTY_PX.FF_Reject_Style.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejITMSTY1"
+			]
+		}
+	}
+}

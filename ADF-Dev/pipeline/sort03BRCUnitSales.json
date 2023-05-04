@@ -1,0 +1,111 @@
+{
+	"name": "sort03BRCUnitSales",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT031BCRSalesExtAndTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT031BCRSalesExtAndTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT032BCRSalesTrnFrm_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT031BCRSalesExtAndTrnfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT032BCRSalesTrnFrm_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT033BCRSalesMHD_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT032BCRSalesTrnFrm_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT033BCRSalesMHD_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT034BCRSalesTrnfrm_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT033BCRSalesMHD_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT034BCRSalesTrnfrm_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT035BCRSalesLoad_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT034BCRSalesTrnfrm_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT035BCRSalesLoad_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"variables": {
+			"ForEachABRecordJson2": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-12-04T04:30:27Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

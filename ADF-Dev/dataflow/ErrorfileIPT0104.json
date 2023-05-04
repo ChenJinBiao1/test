@@ -1,0 +1,135 @@
+{
+	"name": "ErrorfileIPT0104",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT103DIVTPromo_TPRML_PX_DS_TPRML_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSTPRML"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_104",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_104",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejMRHPG"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filter"
+				},
+				{
+					"name": "outMRHPG"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PMOTN_LADR_ID_S as integer (toInteger(null())),",
+				"     MDSE_HIER_LVL_SEQ_NBR_S as integer (toInteger(null())),",
+				"     PMOTN_LADR_DESC as string (toString(null())),",
+				"     DSCT_TYP_CD as string (toString(null())),",
+				"     LADR_TYP_CD as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     MKT_ID as string (toString(null())),",
+				"     CHNL_ID as integer (toInteger(null())),",
+				"     PRC_GRP_ZN_SEQ_NBR_S as integer (toInteger(null()))",
+				"}",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PMOTN_LADR_DESC as string,",
+				"          { DSCT_TYP_CD} as string,",
+				"          { LADR_TYP_CD} as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSTPRML",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PMOTN_LADR_DESC as string,",
+				"          { DSCT_TYP_CD} as string,",
+				"          { LADR_TYP_CD} as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSTPRML filter((PMOTN_LADR_ID_S == $PMOTN_LADR_ID_S || isNull(PMOTN_LADR_ID_S)) && \r",
+				"(MDSE_HIER_LVL_SEQ_NBR_S == $MDSE_HIER_LVL_SEQ_NBR_S || isNull(MDSE_HIER_LVL_SEQ_NBR_S)) && \r",
+				"(PMOTN_LADR_DESC == $PMOTN_LADR_DESC || isNull(PMOTN_LADR_DESC)) && \r",
+				"({ DSCT_TYP_CD}  == $ DSCT_TYP_CD || isNull({ DSCT_TYP_CD})) && \r",
+				"({ LADR_TYP_CD} == $ LADR_TYP_CD || isNull({ LADR_TYP_CD})) && \r",
+				"(MKT_ID == $MKT_ID || isNull(MKT_ID)) && \r",
+				"(CHNL_ID == $CHNL_ID || isNull(CHNL_ID)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(PRC_GRP_ZN_SEQ_NBR_S == $PRC_GRP_ZN_SEQ_NBR_S || isNull(PRC_GRP_ZN_SEQ_NBR_S))) ~> Filter",
+				"Filter derive(DATE_TIME = currentDate()) ~> outMRHPG",
+				"outMRHPG, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_LADR_ID_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          PMOTN_LADR_DESC as string,",
+				"          { DSCT_TYP_CD} as string,",
+				"          { LADR_TYP_CD} as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['IdIPT091DIVTZoneGrps_MRHPG_PX.FF_RejMRHPG.ASIA.txt'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFRejMRHPG"
+			]
+		}
+	}
+}

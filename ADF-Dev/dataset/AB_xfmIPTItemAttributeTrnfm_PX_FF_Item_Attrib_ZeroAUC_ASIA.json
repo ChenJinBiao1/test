@@ -1,0 +1,28 @@
+{
+	"name": "AB_xfmIPTItemAttributeTrnfm_PX_FF_Item_Attrib_ZeroAUC_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/18-ItemAttribute"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "xfmIPTItemAttributeTrnfm_PX.FF_Item_Attrib_ZeroAUC.ASIA.txt",
+				"folderPath": "destintion",
+				"fileSystem": "18itemattribute"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,77 @@
+{
+	"name": "AB_RPM_PRICE_CHANGE_225C",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RPM_PRICE_CHANGE_225C.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PRICE_CHANGE_ID",
+				"type": "String"
+			},
+			{
+				"name": "STATE",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "ZONE_ID",
+				"type": "String"
+			},
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CHANGE_AMOUNT",
+				"type": "String"
+			},
+			{
+				"name": "CREATE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CREATE_ID",
+				"type": "String"
+			},
+			{
+				"name": "APPROVAL_DATE",
+				"type": "String"
+			},
+			{
+				"name": "APPROVAL_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

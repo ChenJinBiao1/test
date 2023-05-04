@@ -1,0 +1,16 @@
+{
+	"name": "ENT_ESB_DB",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=dgphxesbdb004.phx.gapinc.dev;port=1521;sid=ESBENTI1;user id=gapchinaipt",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJlMTgwYzlhZC02MWZmLTQxN2YtYWVlOC1mY2Y3MDIzNzlmMzQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

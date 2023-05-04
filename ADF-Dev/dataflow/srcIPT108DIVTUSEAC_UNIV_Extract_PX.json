@@ -1,0 +1,63 @@
+{
+	"name": "srcIPT108DIVTUSEAC_UNIV_Extract_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "IPT_UserSecurity_Universal_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPTUserSecurityUniv"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT108DIVTUSEAC_UNIV_Extract_PX_DS_Universal_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUniversal"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as integer,",
+				"          PORTAL_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFIPTUserSecurityUniv",
+				"FFIPTUserSecurityUniv sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DIV_ID as string,",
+				"          PORTAL_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT108DIVTUSEAC_UNIV_Extract_PX.DS_Universal.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSUniversal"
+			]
+		}
+	}
+}

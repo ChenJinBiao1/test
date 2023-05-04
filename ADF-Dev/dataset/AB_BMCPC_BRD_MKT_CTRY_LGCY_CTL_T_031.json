@@ -1,0 +1,28 @@
+{
+	"name": "AB_BMCPC_BRD_MKT_CTRY_LGCY_CTL_T_031",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/03-BCRUnitSales"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "BMCPC_BRD_MKT_CTRY_LGCY_CTL_T_031.txt",
+				"folderPath": "source",
+				"fileSystem": "03bcrunitsales"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

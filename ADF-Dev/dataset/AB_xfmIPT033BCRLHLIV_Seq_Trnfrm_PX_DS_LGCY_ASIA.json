@@ -1,0 +1,28 @@
+{
+	"name": "AB_xfmIPT033BCRLHLIV_Seq_Trnfrm_PX_DS_LGCY_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/03-BCRUnitSales"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "xfmIPT033BCRLHLIV_Seq_Trnfrm_PX.DS_LGCY.ASIA.txt",
+				"folderPath": "destintion",
+				"fileSystem": "03bcrunitsales"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

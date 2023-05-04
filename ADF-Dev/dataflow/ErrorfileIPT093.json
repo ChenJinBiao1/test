@@ -1,0 +1,126 @@
+{
+	"name": "ErrorfileIPT093",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_PRGPZ_PX_DS_PRGPZLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGPZLoad"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_093",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_093",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejPRGPZ"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "outPRGPZ"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PRC_GRP_ZN_SEQ_NBR_S as integer (toInteger(null())),",
+				"     PRC_GRP_ZN_ID as integer (toInteger(null())),",
+				"     PRC_GRP_ZN_DESC as string (toString(null())),",
+				"     PRC_GRP_ZN_ABBR_DESC as string (toString(null())),",
+				"     CNCY_CD as string (toString(null())),",
+				"     PRC_GRP_SEQ_NBR_S as integer (toInteger(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_ID as integer,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRGPZLoad",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_ID as integer,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSPRGPZLoad filter((PRC_GRP_ZN_SEQ_NBR_S == $PRC_GRP_ZN_SEQ_NBR_S || isNull(PRC_GRP_ZN_SEQ_NBR_S)) && \r",
+				"(PRC_GRP_ZN_ID == $PRC_GRP_ZN_ID || isNull(PRC_GRP_ZN_ID)) && \r",
+				"(PRC_GRP_ZN_DESC == $PRC_GRP_ZN_DESC || isNull(PRC_GRP_ZN_DESC)) && \r",
+				"(PRC_GRP_ZN_ABBR_DESC == $PRC_GRP_ZN_ABBR_DESC || isNull(PRC_GRP_ZN_ABBR_DESC)) && \r",
+				"(CNCY_CD == $CNCY_CD || isNull(CNCY_CD)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(PRC_GRP_SEQ_NBR_S == $PRC_GRP_SEQ_NBR_S || isNull(PRC_GRP_SEQ_NBR_S))) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> outPRGPZ",
+				"outPRGPZ, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_ID as string,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['IdIPT093DIVTZoneGrps_PRGPZ_PX.FF_RejPRGPZ.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejPRGPZ"
+			]
+		}
+	}
+}

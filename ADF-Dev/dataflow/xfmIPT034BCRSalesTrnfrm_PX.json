@@ -1,0 +1,343 @@
+{
+	"name": "xfmIPT034BCRSalesTrnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT032BCRSalesTrnfrm_PX_DS_StoreSales_VAT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesVAT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX_DS_OUTPUT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSOUTPUT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT031BCRSalesExtAndTfrm_PX_DS_StoreSales_IPT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesIPT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT034BCRSalesTrnfrm_PX_FF_Rej_Hier_Seq_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejHierSeq"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT034BCRSalesTrnfrm_PX_DS_StoreSalesIPTUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesIPTUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT034BCRSalesTrnfrm_PX_DS_StoreSales_ISCCA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesISCCA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LVatRat"
+				},
+				{
+					"name": "DSOUTPUTSelect"
+				},
+				{
+					"name": "LVatRatDerivedColumn"
+				},
+				{
+					"name": "LVatRatSplit"
+				},
+				{
+					"name": "loVatRat"
+				},
+				{
+					"name": "RejHierSeq"
+				},
+				{
+					"name": "JStores"
+				},
+				{
+					"name": "JStoresSelect"
+				},
+				{
+					"name": "XPresales"
+				},
+				{
+					"name": "coSalesUpdate"
+				},
+				{
+					"name": "cocncycd"
+				},
+				{
+					"name": "coagg"
+				},
+				{
+					"name": "JISCCA"
+				},
+				{
+					"name": "RDSales"
+				},
+				{
+					"name": "ARtlPrcAmt"
+				},
+				{
+					"name": "rdoStoreSales"
+				},
+				{
+					"name": "joISCCA"
+				},
+				{
+					"name": "XISCCA"
+				},
+				{
+					"name": "xoISCCA"
+				},
+				{
+					"name": "RDISCCA"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          VAT_RAT as decimal(10,0),",
+				"          OPR_LOC_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSStoreSalesVAT",
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          MKT_ID as string,",
+				"          ITM_STY_NBR as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSOUTPUT",
+				"source(output(",
+				"          OPR_BRD_ID as integer,",
+				"          OPR_MKT_ID as integer,",
+				"          OPR_CHNL_ID as integer,",
+				"          OPR_STY_CD as string,",
+				"          CLR_ID as string,",
+				"          OPR_LOC_NBR as integer,",
+				"          TXN_DT as string,",
+				"          LN_TOT_UN_SLS_QTY as integer,",
+				"          LN_TOT_RTL_SLS_AMT as decimal(10,0),",
+				"          LN_TOT_XTD_WAC_CST_AMT as decimal(10,0),",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          ITM_STY_CC_NBR as string,",
+				"          CTRY_CD as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSStoreSalesIPT",
+				"DSStoreSalesVAT, DSOUTPUTSelect lookup(DSStoreSalesVAT@MDSE_HIER_LVL_SEQ_NBR_S == DSOUTPUTSelect@MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LVatRat",
+				"DSOUTPUT select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CC_NBR,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSOUTPUTSelect",
+				"LVatRat derive(IsMatch = isMatch()) ~> LVatRatDerivedColumn",
+				"LVatRatDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LVatRatSplit@(LVatRatMatch, LVatRatNotMatch)",
+				"LVatRatSplit@LVatRatMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S = LVatRatSplit@LVatRatMatch@MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CC_NBR,",
+				"          VAT_RAT,",
+				"          MKT_ID,",
+				"          OPR_LOC_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loVatRat",
+				"LVatRatSplit@LVatRatNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S = LVatRatSplit@LVatRatNotMatch@MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          VAT_RAT,",
+				"          OPR_LOC_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RejHierSeq",
+				"DSStoreSalesIPT, loVatRat join(DSStoreSalesIPT@OPR_LOC_NBR == loVatRat@OPR_LOC_NBR",
+				"     && DSStoreSalesIPT@ITM_STY_CC_NBR == loVatRat@ITM_STY_CC_NBR",
+				"     && DSStoreSalesIPT@ITM_STY_CLR_SEQ_NBR_S == loVatRat@ITM_STY_CLR_SEQ_NBR_S,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JStores",
+				"JStores select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S = DSStoreSalesIPT@ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          STR_NBR = DSStoreSalesIPT@OPR_LOC_NBR,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          VAT_RAT,",
+				"          MKT_ID,",
+				"          CTRY_CD,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> JStoresSelect",
+				"JStoresSelect derive(RTL_SLS_PRE_VAT_AMT = LN_TOT_RTL_SLS_AMT- ((VAT_RAT/100)* LN_TOT_RTL_SLS_AMT)) ~> XPresales",
+				"XPresales select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          STR_NBR,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          RTL_SLS_PRE_VAT_AMT,",
+				"          MKT_ID,",
+				"          CTRY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> coSalesUpdate",
+				"XPresales select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          STR_NBR,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          RTL_SLS_PRE_VAT_AMT,",
+				"          MKT_ID,",
+				"          CTRY_CD,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> cocncycd",
+				"XPresales select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          STR_NBR,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          RTL_SLS_PRE_VAT_AMT,",
+				"          MKT_ID,",
+				"          CTRY_CD,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> coagg",
+				"cocncycd, ARtlPrcAmt join(cocncycd@ITM_STY_CLR_SEQ_NBR_S == ARtlPrcAmt@ITM_STY_CLR_SEQ_NBR_S",
+				"     && cocncycd@CTRY_CD == ARtlPrcAmt@CTRY_CD,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JISCCA",
+				"coSalesUpdate aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          STR_NBR,",
+				"          TXN_DT),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S','STR_NBR','TXN_DT'],name)), $$ = first($$))) ~> RDSales",
+				"coagg aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          CTRY_CD),",
+				"     LN_TOT_XTD_WAC_CST_AMT = sum(LN_TOT_XTD_WAC_CST_AMT),",
+				"          LN_TOT_UN_SLS_QTY = sum(LN_TOT_UN_SLS_QTY),",
+				"          RTL_PRC_AMT = sum(RTL_PRC_AMT)) ~> ARtlPrcAmt",
+				"RDSales select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          STR_NBR,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          RTL_SLS_PRE_VAT_AMT,",
+				"          MKT_ID,",
+				"          CTRY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rdoStoreSales",
+				"JISCCA select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S = cocncycd@ITM_STY_CLR_SEQ_NBR_S,",
+				"          MKT_CTRY_CD = cocncycd@CTRY_CD,",
+				"          LN_TOT_XTD_WAC_CST_AMT = cocncycd@LN_TOT_XTD_WAC_CST_AMT,",
+				"          LN_TOT_UN_SLS_QTY = cocncycd@LN_TOT_UN_SLS_QTY,",
+				"          RTL_PRC_AMT = cocncycd@RTL_PRC_AMT,",
+				"          MKT_CNCY_CD = CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> joISCCA",
+				"joISCCA derive(CTRY_CD = MKT_CTRY_CD,",
+				"          CNCY_CD = MKT_CNCY_CD,",
+				"          ORIG_RTL_PRC_AMT = iif(LN_TOT_UN_SLS_QTY == 0, toDecimal(0), RTL_PRC_AMT/LN_TOT_UN_SLS_QTY),",
+				"          AUC_AMT = iif(LN_TOT_UN_SLS_QTY == 0, toDecimal(0), LN_TOT_XTD_WAC_CST_AMT/LN_TOT_UN_SLS_QTY)) ~> XISCCA",
+				"XISCCA select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          ORIG_RTL_PRC_AMT,",
+				"          AUC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoISCCA",
+				"xoISCCA aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          CTRY_CD),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S','CNCY_CD','CTRY_CD'],name)), $$ = first($$))) ~> RDISCCA",
+				"RejHierSeq sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT034BCRSalesTrnfrm_PX.FF_Rej_Hier_Seq.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejHierSeq",
+				"rdoStoreSales sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT034BCRSalesTrnfrm_PX.DS_StoreSalesIPTUpdate.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSStoreSalesIPTUpdate",
+				"RDISCCA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT034BCRSalesTrnfrm_PX.DS_StoreSales_ISCCA.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSStoreSalesISCCA"
+			]
+		}
+	}
+}

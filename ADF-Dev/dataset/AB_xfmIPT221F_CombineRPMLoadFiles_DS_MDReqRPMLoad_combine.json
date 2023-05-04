@@ -1,0 +1,92 @@
+{
+	"name": "AB_xfmIPT221F_CombineRPMLoadFiles_DS_MDReqRPMLoad_combine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "xfmIPT221F_CombineRPMLoadFiles.DS_MDReqRPMLoad_combine.txt",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "MD_REQ_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "PRC_GRP_ZN_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_HIER_LVL_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "MD_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "RCMD_MD_PCT_OFF_RAT",
+				"type": "String"
+			},
+			{
+				"name": "PROC_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_LVL_CD",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "MD_CNT",
+				"type": "String"
+			},
+			{
+				"name": "PNT_DT",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_NBR",
+				"type": "String"
+			},
+			{
+				"name": "MKT_DIFF1_ID",
+				"type": "String"
+			},
+			{
+				"name": "STR_NBR",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

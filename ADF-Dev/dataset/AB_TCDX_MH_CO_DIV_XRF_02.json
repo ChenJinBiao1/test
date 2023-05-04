@@ -1,0 +1,41 @@
+{
+	"name": "AB_TCDX_MH_CO_DIV_XRF_02",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TCDX_MH_CO_DIV_XRF_02.txt",
+				"folderPath": "source",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "CO_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRD_XREF_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

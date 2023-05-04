@@ -1,0 +1,76 @@
+{
+	"name": "AB_xfmIPT221F_CombineRPMLoadFiles_DS_ComplexPromoUpdate_combine",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "xfmIPT221F_CombineRPMLoadFiles.DS_ComplexPromoUpdate_combine.txt",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PMOTN_REQ_ID_S",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_END_DT",
+				"type": "String"
+			},
+			{
+				"name": "PROC_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "PRC_SYS_EXT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "EXTL_PMOTN_IND",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_LVL_CD",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_APPL_TYP_CD",
+				"type": "String"
+			},
+			{
+				"name": "MIN_QTY",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,72 @@
+{
+	"name": "ldIPT014BCRItemsItemSkuNbr_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT014BCRItemsItemSkuNbr_PX_DS_SkuNb_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSkuNbr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsItemSkuNbr_PX_ITSKU_ITM_SKU_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTITSKU"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          {SKU_NBR } as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_MDL_CD as string,",
+				"          SZ_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          MKT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSSkuNbr",
+				"DSSkuNbr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          {SKU_NBR } as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_MDL_CD as string,",
+				"          SZ_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          MKT_ID as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRItemsItemSkuNbr_PX_ITSKU_ITM_SKU_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTITSKU"
+			]
+		}
+	}
+}

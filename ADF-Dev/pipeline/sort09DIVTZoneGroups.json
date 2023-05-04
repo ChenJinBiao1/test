@@ -1,0 +1,126 @@
+{
+	"name": "sort09DIVTZoneGroups",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT095DIVTZoneGrpsPRGSL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT094DIVTZoneGrpsLOCLT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT095DIVTZoneGrpsPRGSL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrlPT096DIVTZoneGrpsISCLA",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT095DIVTZoneGrpsPRGSL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrlPT096DIVTZoneGrpsISCLA",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT094DIVTZoneGrpsLOCLT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT093DIVTZoneGrpsPRGPZ",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT094DIVTZoneGrpsLOCLT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT091DIVTZoneGrpsMRHPG",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT091DIVTZoneGrpsMRHPG",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT092DIVTZoneGrosRPCGP",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT091DIVTZoneGrpsMRHPG",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT092DIVTZoneGrosRPCGP",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrlPT093DIVTZoneGrpsPRGPZ",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT092DIVTZoneGrosRPCGP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrlPT093DIVTZoneGrpsPRGPZ",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-07T10:21:40Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

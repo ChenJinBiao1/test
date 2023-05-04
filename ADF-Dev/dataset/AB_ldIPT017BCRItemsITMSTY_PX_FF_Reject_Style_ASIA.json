@@ -1,0 +1,94 @@
+{
+	"name": "AB_ldIPT017BCRItemsITMSTY_PX_FF_Reject_Style_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('ldIPT017BCRItemsITMSTY_PX.FF_Reject_Style.',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITM_STY_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_NBR",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_DESC",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_HIER_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "LGCY_IND",
+				"type": "String"
+			},
+			{
+				"name": "DLT_IND",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "PGM_NBR",
+				"type": "String"
+			},
+			{
+				"name": "PGM_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

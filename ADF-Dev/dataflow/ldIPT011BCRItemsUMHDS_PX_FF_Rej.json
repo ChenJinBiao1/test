@@ -1,0 +1,171 @@
+{
+	"name": "ldIPT011BCRItemsUMHDS_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_PX_DS_UMHDS_UNIV_MDSE_HIER_T_Temp_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "UMHDSTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_UMHDS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "RejUMHDS"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_UMHDS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejUMHDS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     UNIV_MDSE_HIER_SEQ_NBR_S as integer (toInteger(null())),",
+				"     BRD_ID as integer (toInteger(null())),",
+				"     BRD_DESC as string (toString(null())),",
+				"     BRD_ABBR_DESC as string (toString(null())),",
+				"     DIV_ID as integer (toInteger(null())),",
+				"     DIV_DESC as string (toString(null())),",
+				"     DIV_ABBR_DESC as string (toString(null())),",
+				"     DEPT_ID as integer (toInteger(null())),",
+				"     DEPT_DESC as string (toString(null())),",
+				"     DEPT_ABBR_DESC as string (toString(null())),",
+				"     CLS_ID as integer (toInteger(null())),",
+				"     CLS_DESC as string (toString(null())),",
+				"     CLS_ABBR_DESC as string (toString(null())),",
+				"     SCLS_ID as integer (toInteger(null())),",
+				"     SCLS_DESC as string (toString(null())),",
+				"     SCLS_ABBR_DESC as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string",
+				"}",
+				"source(output(",
+				"          UNIV_MDSE_HIER_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          BRD_DESC as string,",
+				"          BRD_ABBR_DESC as string,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          DIV_ABBR_DESC as string,",
+				"          DEPT_ID as integer,",
+				"          DEPT_DESC as string,",
+				"          DEPT_ABBR_DESC as string,",
+				"          CLS_ID as integer,",
+				"          CLS_DESC as string,",
+				"          CLS_ABBR_DESC as string,",
+				"          SCLS_ID as integer,",
+				"          SCLS_DESC as string,",
+				"          SCLS_ABBR_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UMHDSTemp",
+				"source(output(",
+				"          UNIV_MDSE_HIER_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          BRD_DESC as string,",
+				"          BRD_ABBR_DESC as string,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          DIV_ABBR_DESC as string,",
+				"          DEPT_ID as integer,",
+				"          DEPT_DESC as string,",
+				"          DEPT_ABBR_DESC as string,",
+				"          CLS_ID as integer,",
+				"          CLS_DESC as string,",
+				"          CLS_ABBR_DESC as string,",
+				"          SCLS_ID as integer,",
+				"          SCLS_DESC as string,",
+				"          SCLS_ABBR_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RejUMHDS",
+				"UMHDSTemp filter(UNIV_MDSE_HIER_SEQ_NBR_S == $UNIV_MDSE_HIER_SEQ_NBR_S || isNull(UNIV_MDSE_HIER_SEQ_NBR_S)  && \r",
+				"BRD_ID == $BRD_ID || isNull(BRD_ID) && \r",
+				"BRD_DESC == $BRD_DESC || isNull(BRD_DESC) && \r",
+				"BRD_ABBR_DESC == $BRD_ABBR_DESC || isNull(BRD_ABBR_DESC) && \r",
+				"DIV_ID == $DIV_ID || isNull(DIV_ID) && \r",
+				"DIV_DESC == $DIV_DESC || isNull(DIV_DESC) && \r",
+				"DIV_ABBR_DESC ==$DIV_ABBR_DESC || isNull(DIV_ABBR_DESC) &&\r",
+				"CLS_ID == $CLS_ID || isNull(CLS_ID)  && \r",
+				"CLS_DESC == $CLS_DESC || isNull(CLS_DESC) && \r",
+				"CLS_ABBR_DESC == $CLS_ABBR_DESC || isNull(CLS_ABBR_DESC) && \r",
+				"SCLS_ID == $SCLS_ID || isNull(SCLS_ID) && \r",
+				"SCLS_DESC == $SCLS_DESC || isNull(SCLS_DESC) && \r",
+				"SCLS_ABBR_DESC == $SCLS_ABBR_DESC || isNull(SCLS_ABBR_DESC) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, RejUMHDS union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_MDSE_HIER_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          BRD_DESC as string,",
+				"          BRD_ABBR_DESC as string,",
+				"          DIV_ID as string,",
+				"          DIV_DESC as string,",
+				"          DIV_ABBR_DESC as string,",
+				"          DEPT_ID as string,",
+				"          DEPT_DESC as string,",
+				"          DEPT_ABBR_DESC as string,",
+				"          CLS_ID as string,",
+				"          CLS_DESC as string,",
+				"          CLS_ABBR_DESC as string,",
+				"          SCLS_ID as string,",
+				"          SCLS_DESC as string,",
+				"          SCLS_ABBR_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT011BCRItemsUMHDS_LMHDS_PX.FF_Rej_UMHDS.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejUMHDS"
+			]
+		}
+	}
+}

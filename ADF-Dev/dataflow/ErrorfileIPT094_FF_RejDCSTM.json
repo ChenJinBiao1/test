@@ -1,0 +1,107 @@
+{
+	"name": "ErrorfileIPT094_FF_RejDCSTM",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source1",
+					"description": "从 AB_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM_ASIA 导入数据"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_094_FF_RejDCSTM",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_094_FF_RejDCSTM",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     STR_NBR as integer,",
+				"     DC_NBR as integer,",
+				"     CRT_UPDT_USER_ID as string,",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string,",
+				"     LST_UPDT_DTTM as string",
+				"}",
+				"source(output(",
+				"          STR_NBR as integer,",
+				"          DC_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          STR_NBR as integer,",
+				"          DC_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 filter((STR_NBR == $STR_NBR || isNull(STR_NBR)) && ",
+				"(DC_NBR == $DC_NBR || isNull(DC_NBR)) && ",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && ",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && ",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && ",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM))) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          STR_NBR as string,",
+				"          DC_NBR as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['sqrIPT094DIVTZoneGrpsLOCLT.FF_RejDCSTM.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

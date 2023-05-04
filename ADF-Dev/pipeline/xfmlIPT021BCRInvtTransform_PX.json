@@ -1,0 +1,191 @@
+{
+	"name": "xfmlIPT021BCRInvtTransform_PX",
+	"properties": {
+		"activities": [
+			{
+				"name": "Oracle To Azure BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "OracleSource",
+						"oracleReaderQuery": "SELECT BRD_ID, MKT_ID, CHNL_ID, LGCY_IND FROM BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 32,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "BRD_ID",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "BRD_ID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MKT_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MKT_ID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CHNL_ID",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "CHNL_ID",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "LGCY_IND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LGCY_IND",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+						"type": "DatasetReference",
+						"parameters": {
+							"IPT_DB_SCHEMA": {
+								"value": "@pipeline().globalParameters.IPT_DB_SHCEMA",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AB_BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "xfmlIPT021BCRInvtTransform_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Oracle To Azure BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "xfmlIPT021BCRInvtTransform_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pInvocationId": "'ASIA'"
+						},
+						"datasetParameters": {
+							"InventoryExtract": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"DSGlobalCC": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"FMRejBMCBC": {
+								"pInvocaionId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"FMRejCC": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"xfmIPT021BCRInvntTransformPXASIADSDailyInventoryUpdate": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"xfmIPT021BCRInvntTransformPXASIAFFRejectLocNbr": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T08:44:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

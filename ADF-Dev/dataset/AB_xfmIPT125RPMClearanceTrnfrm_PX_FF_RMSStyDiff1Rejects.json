@@ -1,0 +1,28 @@
+{
+	"name": "AB_xfmIPT125RPMClearanceTrnfrm_PX_FF_RMSStyDiff1Rejects",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/12-PriceUpdatesRPM"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "xfmIPT125RPMClearanceTrnfrm_PX.FF_RMSStyDiff1Rejects.txt",
+				"folderPath": "destintion",
+				"fileSystem": "12priceupdatesrpm"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

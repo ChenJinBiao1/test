@@ -1,0 +1,46 @@
+{
+	"name": "sqlIPT014BCRItemsStyClrSkuLoad",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqlIPT014BCRItemsStyClrSkuLoad1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT014BCRItemsStyClrSkuLoad1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT014BCRItemsStyClrSkuLoad2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT014BCRItemsStyClrSkuLoad1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT014BCRItemsStyClrSkuLoad2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-07T14:31:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

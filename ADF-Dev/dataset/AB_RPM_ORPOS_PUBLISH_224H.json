@@ -1,0 +1,57 @@
+{
+	"name": "AB_RPM_ORPOS_PUBLISH_224H",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RPM_ORPOS_PUBLISH_224H.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CLEARANCE_ID",
+				"type": "String"
+			},
+			{
+				"name": "ITEM_PARENT",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			},
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "SELLING_RETAIL",
+				"type": "String"
+			},
+			{
+				"name": "GROUP_KEY",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

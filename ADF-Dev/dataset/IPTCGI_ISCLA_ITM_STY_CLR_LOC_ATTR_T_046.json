@@ -1,0 +1,31 @@
+{
+	"name": "IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046.txt",
+					"type": "Expression"
+				},
+				"folderPath": "score",
+				"fileSystem": "04currentpriceinbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,66 @@
+{
+	"name": "ldIPT047PromoUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT042FlattenPromoEBO_PX_IPTPromo_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPromoUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_TPROO_PMOTN_REQ_HDR_OTPT_T_047",
+						"type": "DatasetReference"
+					},
+					"name": "ABTPROOPMOTNREQHDROTPTT047"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDpromoId"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_END_DT as date,",
+				"          EXTL_PMOTN_IND as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPromoUpdate",
+				"DSPromoUpdate aggregate(groupBy(PMOTN_REQ_ID_S),",
+				"     each(match(!in(['PMOTN_REQ_ID_S'],name)), $$ = first($$))) ~> RDpromoId",
+				"RDpromoId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_END_DT as string,",
+				"          EXTL_PMOTN_IND as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[('AB_TPROO_PMOTN_REQ_HDR_OTPT_T_047.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> ABTPROOPMOTNREQHDROTPTT047"
+			]
+		}
+	}
+}

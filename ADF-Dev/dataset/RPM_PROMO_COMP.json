@@ -1,0 +1,20 @@
+{
+	"name": "RPM_PROMO_COMP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RMS_DB",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "RMSGAP",
+			"table": "RPM_PROMO_COMP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

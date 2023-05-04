@@ -1,0 +1,61 @@
+{
+	"name": "XI_IPTPriceDelete",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "XI_IPTPriceDelete.txt",
+				"folderPath": "score",
+				"fileSystem": "04currentpriceinbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LocationNbr",
+				"type": "String"
+			},
+			{
+				"name": "LocationTypeCode",
+				"type": "String"
+			},
+			{
+				"name": "PriceChgStatusCode",
+				"type": "String"
+			},
+			{
+				"name": "ItemSKUID",
+				"type": "String"
+			},
+			{
+				"name": "PriceChgId",
+				"type": "String"
+			},
+			{
+				"name": "ItemStyleId",
+				"type": "String"
+			},
+			{
+				"name": "ColorDiffID",
+				"type": "String"
+			},
+			{
+				"name": "Timestamp",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,115 @@
+{
+	"name": "ldIPT014BCRItemsBMCSK_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsBMCSK_PX_BMCSK_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTBMCSK"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDBMCSK"
+				},
+				{
+					"name": "XBMCSK"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U')",
+				"}",
+				"source(output(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_SEQ_NBR_S as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr",
+				"DSGlobalCCseqNbr aggregate(groupBy(BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          GLBL_SKU_NBR),",
+				"     each(match(!in(['BRD_ID','MKT_ID','CHNL_ID','GLBL_SKU_NBR'],name)), $$ = first($$))) ~> RDBMCSK",
+				"RDBMCSK derive(SKU_NBR = GLBL_SKU_NBR,",
+				"          ITM_STY_NBR = GLBL_ITM_STY_NBR,",
+				"          ITM_STY_CC_NBR = GLBL_ITM_STY_CC_NBR,",
+				"          CRT_UPDT_USER_ID = $jsUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $jsUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XBMCSK",
+				"XBMCSK select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          SKU_NBR,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_CC_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          SKU_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRItemsBMCSK_PX_BMCSK_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTBMCSK"
+			]
+		}
+	}
+}

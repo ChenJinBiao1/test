@@ -1,0 +1,49 @@
+{
+	"name": "AB_IPT_TPROO_UHILV_OPORI_222B1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPT_TPROO_UHILV_OPORI_222B1.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PROMO_ID",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_GRP_ID_S",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "GROUP_KEY",
+				"type": "String"
+			},
+			{
+				"name": "STATUS",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

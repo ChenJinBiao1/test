@@ -1,0 +1,127 @@
+{
+	"name": "ErrorfileIPT094_FF_RejLOCLT",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT094DIVTZoneGrps_LOCLT_PX_RD_LocNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source1",
+					"description": "从 AB_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM_ASIA 导入数据"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_094_FF_RejLOCLT",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_094_FF_RejLOCLT",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     LOC_NBR as integer,",
+				"     CHNL_ID as integer,",
+				"     CNCY_CD as string,",
+				"     LOC_CD as string,",
+				"     CTRY_CD as string,",
+				"     CRT_UPDT_USER_ID as string,",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string,",
+				"     LST_UPDT_DTTM as string,",
+				"     MKT_ID as string",
+				"}",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          CHNL_ID as integer,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          MKT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          CHML_ID as integer,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          MKT_ID as string,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 filter((LOC_NBR == $LOC_NBR || isNull(LOC_NBR)) && ",
+				"(CHNL_ID == $CHNL_ID || isNull(CHNL_ID)) && ",
+				"(CNCY_CD == $CNCY_CD || isNull(CNCY_CD)) && ",
+				"(LOC_CD == $LOC_CD || isNull(LOC_CD)) && ",
+				"(CTRY_CD == $CTRY_CD || isNull(CTRY_CD)) && ",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && ",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && ",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && ",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && ",
+				"(MKT_ID == $MKT_ID || isNull(MKT_ID))) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LOC_NBR as string,",
+				"          CHML_ID as string,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          MKT_ID as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT094DIVTZoneGrps_LOCLT_PX.FF_RejLOCLT.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

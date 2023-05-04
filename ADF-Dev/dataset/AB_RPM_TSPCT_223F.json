@@ -1,0 +1,77 @@
+{
+	"name": "AB_RPM_TSPCT_223F",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RPM_TSPCT_223F.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PROMO_ID",
+				"type": "String"
+			},
+			{
+				"name": "START_DATE",
+				"type": "String"
+			},
+			{
+				"name": "END_DATE",
+				"type": "String"
+			},
+			{
+				"name": "MERCH_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "DEPT",
+				"type": "String"
+			},
+			{
+				"name": "CLASS",
+				"type": "String"
+			},
+			{
+				"name": "SUBCLASS",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			},
+			{
+				"name": "DIVISION",
+				"type": "String"
+			},
+			{
+				"name": "GROUP_NO",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

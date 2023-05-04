@@ -1,0 +1,114 @@
+{
+	"name": "AB_IPT_Zone_Store_Mapping_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('IPT_Zone_Store_Mapping_',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "source",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Brand",
+				"type": "String"
+			},
+			{
+				"name": "Market",
+				"type": "String"
+			},
+			{
+				"name": "Channel2",
+				"type": "String"
+			},
+			{
+				"name": "DC",
+				"type": "String"
+			},
+			{
+				"name": "Store",
+				"type": "String"
+			},
+			{
+				"name": "Start Date",
+				"type": "String"
+			},
+			{
+				"name": "End Date",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "Currency",
+				"type": "String"
+			},
+			{
+				"name": "Channel9",
+				"type": "String"
+			},
+			{
+				"name": "open4",
+				"type": "String"
+			},
+			{
+				"name": "Stores",
+				"type": "String"
+			},
+			{
+				"name": "open1",
+				"type": "String"
+			},
+			{
+				"name": "Region",
+				"type": "String"
+			},
+			{
+				"name": "open2",
+				"type": "String"
+			},
+			{
+				"name": "open5",
+				"type": "String"
+			},
+			{
+				"name": "Tiny Stores",
+				"type": "String"
+			},
+			{
+				"name": "Store Type",
+				"type": "String"
+			},
+			{
+				"name": "Like Store",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

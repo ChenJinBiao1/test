@@ -1,0 +1,96 @@
+{
+	"name": "ErrorfileIPT049",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT044FlattenDeletePromoEBO_PX_IPTDeletePromo_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSIPTDeletePromo"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT049DeletePromoUpdate_PX_FF_RejTPROOUpdat_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT049DeletePromoUpdate_PX_FF_RejTPROOUpdat_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejTPROO"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FILTER"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PMOTN_REQ_ID_S as integer (toInteger(null())),",
+				"     EXTL_PRC_SYS_STAT_CD as string (toString(null())),",
+				"     PROC_STAT_CD as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          PROC_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSIPTDeletePromo",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          PROC_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSIPTDeletePromo filter((PMOTN_REQ_ID_S == $PMOTN_REQ_ID_S || isNull(PMOTN_REQ_ID_S)) && \r",
+				"(EXTL_PRC_SYS_STAT_CD == ($EXTL_PRC_SYS_STAT_CD) || isNull(EXTL_PRC_SYS_STAT_CD)) && \r",
+				"(PROC_STAT_CD == $PROC_STAT_CD || isNull(PROC_STAT_CD)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($EXTL_PRC_SYS_STAT_CD) || isNull(LST_UPDT_DTTM))) ~> FILTER",
+				"FILTER, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          PROC_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT048DeletePriceUpdate_PX.FF_ISCLAUpdateRej.ASIA'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFRejTPROO"
+			]
+		}
+	}
+}

@@ -1,0 +1,151 @@
+{
+	"name": "xfmIPT224C_Promo_ItemLocCnt_ORPOS1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_ApprPromo_SKUCount_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSkuCount"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_PUBLISH_224C",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOSPUBLISH"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_ApprovedPromo_Loc_Notin_RPM_ORPOS_ASISA",
+						"type": "DatasetReference"
+					},
+					"name": "FFCcLocSuccess"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_ApprovedPromo_SKUCount_Errors_RPM_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFCcLocError"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AGSKUCount"
+				},
+				{
+					"name": "LSkuCount"
+				},
+				{
+					"name": "xodesc"
+				},
+				{
+					"name": "inrjctCount"
+				},
+				{
+					"name": "inmatchCount"
+				},
+				{
+					"name": "Xdesc"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          PROMO_ID as integer,",
+				"          MERCH_TYPE as integer,",
+				"          DIVISION as integer,",
+				"          GROUP_NO as integer,",
+				"          DEPT as integer,",
+				"          CLASS as integer,",
+				"          SUBCLASS as integer,",
+				"          DIFF_ID as string,",
+				"          ITEM as string,",
+				"          LOCATION as integer,",
+				"          START_DATE as timestamp,",
+				"          END_DATE as timestamp,",
+				"          PROMO_ACTION as string,",
+				"          SKU_Count as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSSkuCount",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          LOCATION_ID as integer,",
+				"          Item_count as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOSPUBLISH",
+				"DSSkuCount aggregate(groupBy(PROMO_ID,",
+				"          LOCATION),",
+				"     TOTAL_SKUCount = count(SKU_Count)) ~> AGSKUCount",
+				"AGSKUCount, RPMORPOSPUBLISH lookup(AGSKUCount@PROMO_ID == RPMORPOSPUBLISH@PROMO_ID",
+				"     && LOCATION == LOCATION_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LSkuCount",
+				"Xdesc select(mapColumn(",
+				"          PROMO_ID = split1@Yes@PROMO_ID,",
+				"          LOCATION,",
+				"          SKU_COUNT_IM = TOTAL_SKUCount,",
+				"          SKU_COUNT_ORPOS = Item_count,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xodesc",
+				"split1@No select(mapColumn(",
+				"          PROMO_ID = split1@No@PROMO_ID,",
+				"          LOCATION,",
+				"          TOTAL_SKUCount",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inrjctCount",
+				"split1@Yes filter(TOTAL_SKUCount != Item_count) ~> inmatchCount",
+				"inmatchCount derive(DESCRIPTION = 'Item Count for a Promo-Location combination from Item Master is not matching with the Item Count from ORPOS Complex Promo Publish table') ~> Xdesc",
+				"LSkuCount derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"inrjctCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_ApprovedPromo-Loc_Notin_RPM_ORPOS_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFCcLocSuccess",
+				"xodesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_ApprovedPromo_SKUCount_Errors_RPM_ORPOS_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFCcLocError"
+			]
+		}
+	}
+}

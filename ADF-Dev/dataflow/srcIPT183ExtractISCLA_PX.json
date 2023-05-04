@@ -1,0 +1,126 @@
+{
+	"name": "srcIPT183ExtractISCLA_PX",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_183",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LOCLT_LOC_LIST_T_183",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_1832",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLAPenny"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_ISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_LOCLT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_ISCLA_Penny_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLAPenny"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDISCLA"
+				},
+				{
+					"name": "FPenny"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCLA",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          STR_NBR as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLOCLT",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCLAPenny",
+				"IPTISCLAPenny aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S','LOC_NBR'],name)), $$ = first($$))) ~> RDISCLA",
+				"RDISCLA filter(and(RTL_PRC_AMT== 0.01,PRC_STAT_CD=='R')) ~> FPenny",
+				"IPTISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT183ExtractISCLA_PX.DS_ISCLA.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLA",
+				"IPTLOCLT sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT183ExtractISCLA_PX.DS_LOCLT.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSLOCLT",
+				"FPenny sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT183ExtractISCLA_PX.DS_ISCLA_Penny.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLAPenny"
+			]
+		}
+	}
+}

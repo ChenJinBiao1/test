@@ -1,0 +1,53 @@
+{
+	"name": "AB_xfmIPT096DIVTZoneGrps_ISCLA_PX_DS_ISCLALoa_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "xfmIPT096DIVTZoneGrps_ISCLA_PX.DS_ISCLALoa.ASIA.txt",
+				"folderPath": "destintion",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "STR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_CLR_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "RTL_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PRC_STAT_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

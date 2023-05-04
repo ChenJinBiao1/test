@@ -1,0 +1,213 @@
+{
+	"name": "srcIPT121RPMApprPromoExtract1_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_TPROO_PMOTN_REQ_HDR_OTPT_T_121",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOPRPLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_BrandMarket_IPA",
+						"type": "DatasetReference"
+					},
+					"name": "FFBrdMktConfig"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_CCLDI_STY_CLR_LOC_DLY_INV_T_121",
+						"type": "DatasetReference"
+					},
+					"name": "IPTCCLDICCSWS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_121",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract1_PX_FF_MktIdRejects",
+						"type": "DatasetReference"
+					},
+					"name": "FFMktIdRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract1_PX_DS_ApprPromoExtract",
+						"type": "DatasetReference"
+					},
+					"name": "DSApprPromoExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract1_PX_DS_CCLDI_CCSWS",
+						"type": "DatasetReference"
+					},
+					"name": "DSCCLDICCSWS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract1_PX_DS_ISCLA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LMktIdNotMatchSelect"
+				},
+				{
+					"name": "LMktIdMatchSelect"
+				},
+				{
+					"name": "RDLatestDate"
+				},
+				{
+					"name": "RDLatestDateSelect"
+				},
+				{
+					"name": "YESLMKtid"
+				},
+				{
+					"name": "NOLMKtid"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOPRPLA",
+				"source(output(",
+				"          BrdId as string,",
+				"          MktId as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFBrdMktConfig",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTCCLDICCSWS",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCLA",
+				"NOLMKtid select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LMktIdNotMatchSelect",
+				"YESLMKtid select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LMktIdMatchSelect",
+				"IPTISCLA aggregate(groupBy(LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S),",
+				"     each(match(!in(['LOC_NBR','ITM_STY_CLR_SEQ_NBR_S'],name)), $$ = last($$))) ~> RDLatestDate",
+				"RDLatestDate select(mapColumn(",
+				"          LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          PRC_STAT_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RDLatestDateSelect",
+				"IPTTPROOPRPLA, FFBrdMktConfig exists(MKT_ID == MktId,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YESLMKtid",
+				"IPTTPROOPRPLA, FFBrdMktConfig exists(MKT_ID == MktId,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NOLMKtid",
+				"LMktIdNotMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract1_PX.FF_MktIdRejects.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFMktIdRejects",
+				"LMktIdMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract1_PX.DS_ApprPromoExtract.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSApprPromoExtract",
+				"IPTCCLDICCSWS sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract1_PX.DS_CCLDI_CCSWS.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSCCLDICCSWS",
+				"RDLatestDateSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract1_PX.DS_ISCLA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLA"
+			]
+		}
+	}
+}

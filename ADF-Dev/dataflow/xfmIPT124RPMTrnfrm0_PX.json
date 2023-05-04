@@ -1,0 +1,627 @@
+{
+	"name": "xfmIPT124RPMTrnfrm0_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_DS_NetPromoZone",
+						"type": "DatasetReference"
+					},
+					"name": "DSNetPromoZone"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TPRGP_PRGS_PMOTN_T_124",
+						"type": "DatasetReference"
+					},
+					"name": "TPRGPPRGSPMOTNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_DS_PrgsPromoZone",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrgsPromoZone"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_DS_NetPromoZone",
+						"type": "DatasetReference"
+					},
+					"name": "DSNetPromoZone1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_PRGPZ_PRC_GRP_ZN_T_124",
+						"type": "DatasetReference"
+					},
+					"name": "PRGPZPRCGRPZNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_PMOTN_REQ_ID_124",
+						"type": "DatasetReference"
+					},
+					"name": "PMOTNREQID"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMTrnfrm0_PX_FF_RejMultiCncy",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejMultiCncy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMTrnfrm0_PX_DS_Promo",
+						"type": "DatasetReference"
+					},
+					"name": "DSPromo"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMTrnfrm0_PX_DS_OPORI",
+						"type": "DatasetReference"
+					},
+					"name": "DSOPORI"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPrgsPromo"
+				},
+				{
+					"name": "FApprPromo"
+				},
+				{
+					"name": "LPrcGrpSeq"
+				},
+				{
+					"name": "LPrcGrpSeqSelect"
+				},
+				{
+					"name": "RDPmotnCncy"
+				},
+				{
+					"name": "LPmotnId"
+				},
+				{
+					"name": "CCncyCd"
+				},
+				{
+					"name": "Acount"
+				},
+				{
+					"name": "LPmotnIdSelect"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "XcountDerivedColumn"
+				},
+				{
+					"name": "CPmotnId"
+				},
+				{
+					"name": "FPmotnComp"
+				},
+				{
+					"name": "RDPmotnCncy2"
+				},
+				{
+					"name": "rdoMultiCncy"
+				},
+				{
+					"name": "LAllPmotn"
+				},
+				{
+					"name": "LPmotnSeq"
+				},
+				{
+					"name": "PMOTNREQIDDerivedColumn"
+				},
+				{
+					"name": "rdoMultiCncyAddColumn"
+				},
+				{
+					"name": "LPmotnSeqSelect"
+				},
+				{
+					"name": "LAllPmotnDerivedColumn"
+				},
+				{
+					"name": "LAllPmotnsplit2"
+				},
+				{
+					"name": "rejMultiCncy"
+				},
+				{
+					"name": "loMultiCncy"
+				},
+				{
+					"name": "xoPromoData"
+				},
+				{
+					"name": "xoOPORI"
+				},
+				{
+					"name": "xoOPORISelect"
+				},
+				{
+					"name": "RDPromo"
+				},
+				{
+					"name": "LPrgsPromoSelect"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSNetPromoZone",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TPRGPPRGSPMOTNT",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPrgsPromoZone",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSNetPromoZone1",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PRGPZPRCGRPZNT",
+				"source(output(",
+				"          PMOTN_COMP_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PMOTNREQID",
+				"DSNetPromoZone, TPRGPPRGSPMOTNT lookup(DSNetPromoZone@PMOTN_REQ_ID_S == TPRGPPRGSPMOTNT@PMOTN_REQ_ID_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPrgsPromo",
+				"DSPrgsPromoZone, LPrgsPromoSelect, DSNetPromoZone1 union(byName: true)~> FApprPromo",
+				"FApprPromo, PRGPZPRCGRPZNT lookup(FApprPromo@PRC_GRP_ZN_SEQ_NBR_S == PRGPZPRCGRPZNT@PRC_GRP_ZN_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPrcGrpSeq",
+				"split3@Y2 select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrcGrpSeqSelect",
+				"CCncyCd aggregate(groupBy(PMOTN_REQ_ID_S,",
+				"          CNCY_CD),",
+				"     each(match(!in(['PMOTN_REQ_ID_S','CNCY_CD'],name)), $$ = first($$))) ~> RDPmotnCncy",
+				"LPrcGrpSeqSelect, Acount lookup(LPrcGrpSeqSelect@PMOTN_REQ_ID_S == Acount@PMOTN_REQ_ID_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPmotnId",
+				"LPrcGrpSeqSelect select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CCncyCd",
+				"RDPmotnCncy aggregate(groupBy(PMOTN_REQ_ID_S),",
+				"     Count = count()) ~> Acount",
+				"LPmotnId select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LPrcGrpSeqSelect@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          CNCY_CD,",
+				"          PMOTN_REQ_ID_S = Acount@PMOTN_REQ_ID_S,",
+				"          Count",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPmotnIdSelect",
+				"LPmotnIdSelect split(Count > 1,",
+				"     Count == 1,",
+				"     disjoint: false) ~> split1@(XoCount2, XoCount1, XoNone)",
+				"split1@XoCount1 derive(Pmotn_Comp_Id = PMOTN_REQ_ID_S) ~> XcountDerivedColumn",
+				"split1@XoCount2 select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          CNCY_CD,",
+				"          Count",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CPmotnId",
+				"XcountDerivedColumn, loMultiCncy union(byName: true)~> FPmotnComp",
+				"CPmotnId aggregate(groupBy(PMOTN_REQ_ID_S,",
+				"          CNCY_CD),",
+				"     each(match(!in(['PMOTN_REQ_ID_S','CNCY_CD'],name)), $$ = first($$))) ~> RDPmotnCncy2",
+				"RDPmotnCncy2 select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rdoMultiCncy",
+				"CPmotnId, LPmotnSeqSelect lookup(CPmotnId@PMOTN_REQ_ID_S == LPmotnSeqSelect@PMOTN_REQ_ID_S",
+				"     && CPmotnId@CNCY_CD == LPmotnSeqSelect@CNCY_CD,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LAllPmotn",
+				"rdoMultiCncyAddColumn, PMOTNREQIDDerivedColumn lookup(rdoMultiCncyAddColumn@AddColumn == PMOTNREQIDDerivedColumn@AddColumn,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPmotnSeq",
+				"select3 derive(AddColumn = 1) ~> PMOTNREQIDDerivedColumn",
+				"rdoMultiCncy derive(AddColumn = 1) ~> rdoMultiCncyAddColumn",
+				"LPmotnSeq select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          CNCY_CD,",
+				"          Pmotn_Comp_Id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPmotnSeqSelect",
+				"LAllPmotn derive(IsMatch = isMatch()) ~> LAllPmotnDerivedColumn",
+				"LAllPmotnDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LAllPmotnsplit2@(LAllPmotnMatch, LAllPmotnNotMatch)",
+				"LAllPmotnsplit2@LAllPmotnNotMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LAllPmotnsplit2@LAllPmotnNotMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          CNCY_CD = LAllPmotnsplit2@LAllPmotnNotMatch@CNCY_CD,",
+				"          Count",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejMultiCncy",
+				"LAllPmotnsplit2@LAllPmotnMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LAllPmotnsplit2@LAllPmotnMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          CNCY_CD = LAllPmotnsplit2@LAllPmotnMatch@CNCY_CD,",
+				"          Count,",
+				"          Pmotn_Comp_Id",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMultiCncy",
+				"FPmotnComp select(mapColumn(",
+				"          PMOTN_REQ_ID_S = Pmotn_Comp_Id,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPromoData",
+				"FPmotnComp derive(PMOTN_GRP_ID_S = Pmotn_Comp_Id,",
+				"          CRT_UPDT_USER_ID = 'PIPT124U',",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'PIPT124U',",
+				"          LST_UPDT_DTTM = currentDate()) ~> xoOPORI",
+				"xoOPORI select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_GRP_ID_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoOPORISelect",
+				"xoOPORISelect aggregate(groupBy(PMOTN_REQ_ID_S,",
+				"          PMOTN_GRP_ID_S),",
+				"     each(match(!in(['PMOTN_REQ_ID_S','PMOTN_GRP_ID_S'],name)), $$ = first($$))) ~> RDPromo",
+				"split2@Y select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          PMOTN_REQ_ID_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrgsPromoSelect",
+				"select1 derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Y)",
+				"LPrgsPromo select(mapColumn(",
+				"          PMOTN_REQ_ID_S = DSNetPromoZone@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = TPRGPPRGSPMOTNT@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY = TPRGPPRGSPMOTNT@MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT = TPRGPPRGSPMOTNT@PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT = TPRGPPRGSPMOTNT@PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT = TPRGPPRGSPMOTNT@PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD = TPRGPPRGSPMOTNT@PMOTN_DSCT_CD,",
+				"          PMOTN_DESC = TPRGPPRGSPMOTNT@PMOTN_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select2 derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Y2)",
+				"LPrcGrpSeq select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = FApprPromo@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = PRGPZPRCGRPZNT@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"PMOTNREQID select(mapColumn(",
+				"          Pmotn_Comp_Id = PMOTN_COMP_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"rejMultiCncy sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT124RPMTrnfrm0_PX.FF_RejMultiCncy.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejMultiCncy",
+				"xoPromoData sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT124RPMTrnfrm0_PX.DS_Promo.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPromo",
+				"RDPromo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_GRP_ID_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['xfmIPT124RPMTrnfrm0_PX.DS_OPORI.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSOPORI"
+			]
+		}
+	}
+}

@@ -1,0 +1,483 @@
+{
+	"name": "xfmIPT224E_RPM_ApprPromo_ORPOS_Reject_Count_PX_copy1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT221F_CombineRPMLoadFiles_DS_ComplexPromo_combine",
+						"type": "DatasetReference"
+					},
+					"name": "DSComplexPromo"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_224E",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_TSPCT_224E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMTSPCT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_224E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_COUNT_224",
+						"type": "DatasetReference"
+					},
+					"name": "IPTCOUNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_TSPCT_ITEM_224E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMTSPCTITEM"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_CLEARANCE_224E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMCLEARANCE"
+				},
+				{
+					"dataset": {
+						"referenceName": "Total_ApprovedPromo_Count_IPT_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotalCount"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_Approved_Promotions_Not_Published_To_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFNotInORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Promotions_Approved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotatIPTRPMCount"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDPromoID"
+				},
+				{
+					"name": "LBrdMktChnl"
+				},
+				{
+					"name": "loBrdMktChnl"
+				},
+				{
+					"name": "fiBrdMktChnl"
+				},
+				{
+					"name": "LTSPCT"
+				},
+				{
+					"name": "lotspctPromo"
+				},
+				{
+					"name": "LORPOS"
+				},
+				{
+					"name": "loORPOS"
+				},
+				{
+					"name": "Lpayload"
+				},
+				{
+					"name": "lopayload"
+				},
+				{
+					"name": "Xdate"
+				},
+				{
+					"name": "Xdate1"
+				},
+				{
+					"name": "xodate"
+				},
+				{
+					"name": "rejORPOS"
+				},
+				{
+					"name": "LpaypromoID"
+				},
+				{
+					"name": "lopayload1"
+				},
+				{
+					"name": "rejpayload"
+				},
+				{
+					"name": "XAddDESC"
+				},
+				{
+					"name": "Fpayloadcombine"
+				},
+				{
+					"name": "AggORPOSCount"
+				},
+				{
+					"name": "Jcount"
+				},
+				{
+					"name": "jooutput"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "OUTxoORPOS"
+				},
+				{
+					"name": "OUTxoORPOS1"
+				},
+				{
+					"name": "FcountPromo"
+				},
+				{
+					"name": "foFullCount"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split3"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          PROMO_NAME as string,",
+				"          COMP_DISPLAY_ID as string,",
+				"          PROMO_COMP_ID as integer,",
+				"          PROMO_COMP_DETAIL_ID as integer,",
+				"          PROMO_COMP_DETAIL_DISPLAY_ID as string,",
+				"          THRESHOLD_ID as integer,",
+				"          THRESHOLD_DISPLAY_ID as string,",
+				"          MERCH_TYPE as integer,",
+				"          DIVISION as integer,",
+				"          GROUP_NO as integer,",
+				"          DEPT as integer,",
+				"          CLASS as integer,",
+				"          SUBCLASS as integer,",
+				"          DIFF_ID as string,",
+				"          ITEM as string,",
+				"          ATTRIBUTE_1 as string,",
+				"          ATTRIBUTE_2 as string,",
+				"          ATTRIBUTE_3 as string,",
+				"          ZONE_NODE_TYPE as integer,",
+				"          ZONE_ID as integer,",
+				"          LOCATION as integer,",
+				"          APPLY_TO_CODE as integer,",
+				"          START_DATE as timestamp,",
+				"          END_DATE as timestamp,",
+				"          IGNORE_CONSTRAINTS as integer,",
+				"          THRESHOLD_NAME as string,",
+				"          CURRENCY_CODE as string,",
+				"          QUALIFICATION_TYPE as integer,",
+				"          THRESHOLD_TYPE as integer,",
+				"          THRESHOLD_AMOUNT as decimal(15,2),",
+				"          THRESHOLD_CURRENCY as string,",
+				"          THRESHOLD_QUANTITY as decimal(15,2),",
+				"          CHANGE_TYPE as string,",
+				"          CHANGE_AMOUNT as decimal(15,2),",
+				"          CHANGE_CURRENCY as string,",
+				"          CHANGE_PERCENT as decimal(15,2),",
+				"          CHANGE_UOM as string,",
+				"          AUTO_APPROVE_IND as integer,",
+				"          PROCESS_ID as integer,",
+				"          STATUS as string,",
+				"          ERR_MSG_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSComplexPromo",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          CRT_UPDT_USER_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"source(output(",
+				"          PROMO_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMTSPCT",
+				"source(output(",
+				"          promo_id as integer,",
+				"          state as integer,",
+				"          GROUP_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOS",
+				"source(output(",
+				"          GROUO_KEY as integer,",
+				"          COUNT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTCOUNT",
+				"source(output(",
+				"          promo_id as integer,",
+				"          item as string,",
+				"          location as integer,",
+				"          start_date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMTSPCTITEM",
+				"source(output(",
+				"          item as string,",
+				"          location as integer,",
+				"          change_amount as decimal(15,2),",
+				"          effective_date as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMCLEARANCE",
+				"source(output(",
+				"          DESCRIPTION as string,",
+				"          COUNT as integer,",
+				"          ACTION_TO_BE_TAKEN as string,",
+				"          SORT_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFTotalCount",
+				"DSComplexPromo aggregate(groupBy(PROMO_ID),",
+				"     each(match(!in(['PROMO_ID'],name)), $$ = first($$))) ~> RDPromoID",
+				"RDPromoID, IPTTPROOUHILVOPORI lookup(RDPromoID@PROMO_ID == IPTTPROOUHILVOPORI@PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBrdMktChnl",
+				"LBrdMktChnl select(mapColumn(",
+				"          PROMO_ID = RDPromoID@PROMO_ID,",
+				"          PROMO_NAME,",
+				"          COMP_DISPLAY_ID,",
+				"          PROMO_COMP_ID,",
+				"          PROMO_COMP_DETAIL_ID,",
+				"          PROMO_COMP_DETAIL_DISPLAY_ID,",
+				"          THRESHOLD_ID,",
+				"          THRESHOLD_DISPLAY_ID,",
+				"          MERCH_TYPE,",
+				"          DIVISION,",
+				"          GROUP_NO,",
+				"          DEPT,",
+				"          CLASS,",
+				"          SUBCLASS,",
+				"          DIFF_ID,",
+				"          ITEM,",
+				"          ATTRIBUTE_1,",
+				"          ATTRIBUTE_2,",
+				"          ATTRIBUTE_3,",
+				"          ZONE_NODE_TYPE,",
+				"          ZONE_ID,",
+				"          LOCATION,",
+				"          APPLY_TO_CODE,",
+				"          START_DATE,",
+				"          END_DATE,",
+				"          IGNORE_CONSTRAINTS,",
+				"          THRESHOLD_NAME,",
+				"          CURRENCY_CODE,",
+				"          QUALIFICATION_TYPE,",
+				"          THRESHOLD_TYPE,",
+				"          THRESHOLD_AMOUNT,",
+				"          THRESHOLD_CURRENCY,",
+				"          THRESHOLD_QUANTITY,",
+				"          CHANGE_TYPE,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT,",
+				"          CHANGE_UOM,",
+				"          AUTO_APPROVE_IND,",
+				"          PROCESS_ID,",
+				"          STATUS,",
+				"          ERR_MSG_TXT,",
+				"          PMOTN_REQ_ID_S,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          CRT_UPDT_USER_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loBrdMktChnl",
+				"loBrdMktChnl filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> fiBrdMktChnl",
+				"fiBrdMktChnl, RPMTSPCT lookup(loBrdMktChnl@PROMO_ID == RPMTSPCT@PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LTSPCT",
+				"LTSPCT select(mapColumn(",
+				"          PROMO_ID = loBrdMktChnl@PROMO_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lotspctPromo",
+				"lotspctPromo, RPMORPOS lookup(lotspctPromo@PROMO_ID == RPMORPOS@promo_id,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LORPOS",
+				"split2@Yes select(mapColumn(",
+				"          PROMO_ID = split2@Yes@PROMO_ID,",
+				"          STATE = state,",
+				"          GROUP_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loORPOS",
+				"RPMTSPCTITEM, RPMCLEARANCE lookup(RPMTSPCTITEM@item == RPMCLEARANCE@item",
+				"     && RPMTSPCTITEM@location == RPMCLEARANCE@location,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> Lpayload",
+				"Lpayload select(mapColumn(",
+				"          promo_id,",
+				"          item = RPMTSPCTITEM@item,",
+				"          location = RPMTSPCTITEM@location,",
+				"          start_date,",
+				"          change_amount,",
+				"          effective_date",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lopayload",
+				"lopayload filter(effective_date<= start_date) ~> Xdate",
+				"Xdate derive(ERROR_DESCRIPTION = 'ONE OR MORE ITEM UNDER THIS PROMO ARE ALREADY ON CLEARANCE DURING THE EFFECTIVE PROMO PERIOD') ~> Xdate1",
+				"Xdate1 select(mapColumn(",
+				"          RPM_PROMO_ID = promo_id,",
+				"          ITEM = item,",
+				"          ERROR_DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xodate",
+				"split2@No select(mapColumn(",
+				"          PROMO_ID = split2@No@PROMO_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejORPOS",
+				"xodate, rejORPOS lookup(RPM_PROMO_ID == PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LpaypromoID",
+				"split3@Yes2 select(mapColumn(",
+				"          PROMO_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          ERROR_DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lopayload1",
+				"split3@No2 select(mapColumn(",
+				"          PROMO_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejpayload",
+				"rejpayload derive(ERROR_DESCRIPTION = 'PLEASE REACH TO RPM TEAM FOR MORE DETAILS ON FAILURE') ~> XAddDESC",
+				"XAddDESC, lopayload1 union(byName: true)~> Fpayloadcombine",
+				"loORPOS aggregate(groupBy(GROUP_KEY),",
+				"     COUNT = count()) ~> AggORPOSCount",
+				"AggORPOSCount, IPTCOUNT join(GROUP_KEY == GROUO_KEY,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> Jcount",
+				"Jcount select(mapColumn(",
+				"          COUNT = AggORPOSCount@COUNT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> jooutput",
+				"jooutput split(isNull(COUNT) || COUNT==0,",
+				"     disjoint: false) ~> split1@(xoORPOS, xoORPOS1)",
+				"split1@xoORPOS derive(DESCRIPTION = 'Number of Approved Promotions Published to ORPOS',",
+				"          COUNT = 0,",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Promotions Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_Approved_Promotions_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoORPOS",
+				"split1@xoORPOS1 derive(DESCRIPTION = 'Number of Approved Promotions Published to ORPOS',",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Promotions Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_Approved_Promotions_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoORPOS1",
+				"OUTxoORPOS, OUTxoORPOS1 union(byName: true)~> FcountPromo",
+				"FcountPromo select(mapColumn(",
+				"          DESCRIPTION,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> foFullCount",
+				"LORPOS derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes, No)",
+				"LpaypromoID derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes2, No2)",
+				"Fpayloadcombine sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_Approved_Promotions_Not_Published_To_ORPOS.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFNotInORPOS",
+				"foFullCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('Summary_Of_Promotions_Approved.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFTotatIPTRPMCount"
+			]
+		}
+	}
+}

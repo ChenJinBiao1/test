@@ -1,0 +1,61 @@
+{
+	"name": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/18-ItemAttribute"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp2.txt",
+				"folderPath": "destintion",
+				"fileSystem": "18itemattribute"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITM_STY_CLR_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "LOC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "RTL_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PRC_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "DLT_IND",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,208 @@
+{
+	"name": "ldIPT016BCRItemsUHLIV_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT016BCRItemsDistinctLevels_PX_DS_UHILV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUHILV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_IPTUHILVNReclass_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUHILVNReclass"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_IPTUHILVReclassUpdate_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUHILVReclassUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_IPTUHILVReclassInsert_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUHILVReclassInsert"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U')",
+				"}",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          change_code as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSUHILV",
+				"DSUHILV split(change_code == 5,",
+				"     change_code == 3,",
+				"     change_code == 1,",
+				"     disjoint: false) ~> split1@(inUHILVNonReclass, inUHILVReclassUpdate, inUHILVReclassInsert, inUHILVNone)",
+				"split1@inUHILVNonReclass select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          MDSE_LVL_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"split1@inUHILVReclassUpdate select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          MDSE_LVL_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"split1@inUHILVReclassInsert select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          MDSE_LVL_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT016BCRItemsUHLIV_PX_IPTUHILVNReclass_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTUHILVNReclass",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT016BCRItemsUHLIV_PX_IPTUHILVReclassUpdate_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTUHILVReclassUpdate",
+				"select3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT016BCRItemsUHLIV_PX_IPTUHILVReclassInsert_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTUHILVReclassInsert"
+			]
+		}
+	}
+}

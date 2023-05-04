@@ -1,0 +1,124 @@
+{
+	"name": "ldIPT182ItemAttributeISCCALoad_PX_FF_Rej_insert",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCCA_ITM_STY_CLR_CTRY_ATTR_T_INSERT_182_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "ISCLAINSERTTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPTItemAttributeISCCALoad_PX_FF_ISCCA_InsertRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFISCCAInsertRejects"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPTItemAttributeISCCALoad_PX_FF_ISCCA_InsertRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFISCCAInsertRejects1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (0),",
+				"     CNCY_CD as string (toString(null())),",
+				"     CTRY_CD as string (toString(null())),",
+				"     CHNL_ID as integer (0),",
+				"     ORIG_RTL_PRC_AMT as decimal(10,0) (toDecimal(0)),",
+				"     AUC_AMT as decimal(10,0) (toDecimal(0)),",
+				"     CRT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     CRT_DTTM as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          ORIG_RTL_PRC_AMT as decimal(10,0),",
+				"          AUC_AMT as decimal(10,0),",
+				"          CRT_USER_ID as string,",
+				"          CRT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ISCLAINSERTTemp",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          ORIG_RTL_PRC_AMT as decimal(10,0),",
+				"          AUC_AMT as decimal(10,0),",
+				"          CRT_USER_ID as string,",
+				"          CRT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFISCCAInsertRejects",
+				"ISCLAINSERTTemp filter(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)  && \r",
+				"CNCY_CD == $CNCY_CD || isNull(CNCY_CD)  && \r",
+				"CRT_DTTM == toDate($CRT_DTTM) || isNull(CRT_DTTM)  &&\r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)  &&\r",
+				"CTRY_CD ==$CTRY_CD  || isNull(CTRY_CD) &&\r",
+				"CHNL_ID == $CHNL_ID || isNull(CHNL_ID)  && \r",
+				"ORIG_RTL_PRC_AMT == $ORIG_RTL_PRC_AMT || isNull(ORIG_RTL_PRC_AMT)  && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)  && \r",
+				"AUC_AMT == $AUC_AMT || isNull(AUC_AMT) &&\r",
+				"CRT_USER_ID == $CRT_USER_ID || isNull(CRT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFISCCAInsertRejects union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          ORIG_RTL_PRC_AMT as string,",
+				"          AUC_AMT as string,",
+				"          CRT_USER_ID as string,",
+				"          CRT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPTItemAttributeISCCALoad_PX.FF_ISCCA_InsertRejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFISCCAInsertRejects1"
+			]
+		}
+	}
+}

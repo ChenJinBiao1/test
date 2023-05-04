@@ -1,0 +1,20 @@
+{
+	"name": "TCDX_MH_CO_DIV_XRF",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "TCDX_MH_CO_DIV_XRF"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

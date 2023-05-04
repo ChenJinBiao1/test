@@ -1,0 +1,20 @@
+{
+	"name": "IPTEGI_ITSKU_ITM_SKU",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTEGI",
+			"table": "ITSKU_ITM_SKU"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

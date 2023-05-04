@@ -1,0 +1,134 @@
+{
+	"name": "ldIPT014BCRItemsITMSCC_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsITMSCC_PX_FF_Reject_StyleColor_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTITMSCCTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsITMSCC_PX_FF_Reject_StyleColor_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTY"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsITMSCC_PX_FF_Reject_StyleColor_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTY1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_CC_NBR as string (toString(null())),",
+				"     ITM_STY_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_CLR_DESC as string (toString(null())),",
+				"     ITM_STY_CLR_ABBR_DESC as string (toString(null())),",
+				"     SEAS_CD_DESC as string (toString(null())),",
+				"     DLT_IND as string (toString(null())),",
+				"     LGCY_IND as integer (toInteger(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     CRT_UPDT_USER_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CLR_ABBR_DESC as string,",
+				"          SEAS_CD_DESC as string,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTITMSCCTemp",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CLR_ABBR_DESC as string,",
+				"          SEAS_CD_DESC as string,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFRejITMSTY",
+				"IPTITMSCCTemp filter(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)  && \r",
+				"ITM_STY_CC_NBR == $ITM_STY_CC_NBR || isNull(ITM_STY_CC_NBR) && \r",
+				"ITM_STY_SEQ_NBR_S == $ITM_STY_SEQ_NBR_S || isNull(ITM_STY_SEQ_NBR_S) && \r",
+				"ITM_STY_CLR_DESC == $ITM_STY_CLR_DESC || isNull(ITM_STY_CLR_DESC) && \r",
+				"ITM_STY_CLR_ABBR_DESC == $ITM_STY_CLR_ABBR_DESC || isNull(ITM_STY_CLR_ABBR_DESC) && \r",
+				"SEAS_CD_DESC == $SEAS_CD_DESC || isNull(SEAS_CD_DESC) && \r",
+				"LGCY_IND ==$SEAS_CD_DESC || isNull(LGCY_IND) &&\r",
+				"DLT_IND == $DLT_IND || isNull(DLT_IND)  && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFRejITMSTY union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CLR_ABBR_DESC as string,",
+				"          SEAS_CD_DESC as string,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRItemsITMSCC_PX.FF_Reject_StyleColor.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejITMSTY1"
+			]
+		}
+	}
+}

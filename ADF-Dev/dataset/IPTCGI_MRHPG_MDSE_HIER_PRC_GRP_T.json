@@ -1,0 +1,29 @@
+{
+	"name": "IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"IPT_DB_SCHEMA": {
+				"type": "string",
+				"defaultValue": "IPTCGI"
+			}
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().IPT_DB_SCHEMA",
+				"type": "Expression"
+			},
+			"table": "MRHPG_MDSE_HIER_PRC_GRP_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

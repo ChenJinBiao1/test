@@ -1,0 +1,20 @@
+{
+	"name": "IPTCGI_UHILV_UNIV_HIER_LVL_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "UHILV_UNIV_HIER_LVL_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

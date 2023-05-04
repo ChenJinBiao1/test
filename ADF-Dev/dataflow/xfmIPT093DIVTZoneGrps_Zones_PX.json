@@ -1,0 +1,637 @@
+{
+	"name": "xfmIPT093DIVTZoneGrps_Zones_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT092DIVTZoneGrps_PRCGP_PX_DS_MRHPGSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPGSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRCGP_PRC_GRP_T_TEST",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRCGP"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Validate_PX_DS_RejectedZones_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSRejectedZoneGroups"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_FF_PRCGPRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFPRCGPRej"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_FF_ZoneRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFZoneRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_DS_Zones_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZones"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_DS_PRGSL_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGSL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xoCSTM3"
+				},
+				{
+					"name": "xoCSTM4"
+				},
+				{
+					"name": "xoCSTM5"
+				},
+				{
+					"name": "xoCSTM6"
+				},
+				{
+					"name": "xoCSTM7"
+				},
+				{
+					"name": "xoCSTM8"
+				},
+				{
+					"name": "xoCSTM9"
+				},
+				{
+					"name": "xoCSTM2"
+				},
+				{
+					"name": "xoCSTM1"
+				},
+				{
+					"name": "xoCTRT"
+				},
+				{
+					"name": "xoCNCY"
+				},
+				{
+					"name": "F1"
+				},
+				{
+					"name": "F2"
+				},
+				{
+					"name": "F3"
+				},
+				{
+					"name": "F4"
+				},
+				{
+					"name": "F5"
+				},
+				{
+					"name": "F6"
+				},
+				{
+					"name": "F7"
+				},
+				{
+					"name": "F8"
+				},
+				{
+					"name": "F9"
+				},
+				{
+					"name": "XZonesCSTM9"
+				},
+				{
+					"name": "XZonesCSTM8"
+				},
+				{
+					"name": "XZonesCSTM7"
+				},
+				{
+					"name": "XZonesCSTM6"
+				},
+				{
+					"name": "XZonesCSTM5"
+				},
+				{
+					"name": "XZonesCSTM4"
+				},
+				{
+					"name": "XZonesCSTM3"
+				},
+				{
+					"name": "XZonesCSTM2"
+				},
+				{
+					"name": "XZonesCSTM1"
+				},
+				{
+					"name": "XZonesCNCY"
+				},
+				{
+					"name": "XZonesCTRT"
+				},
+				{
+					"name": "FZones"
+				},
+				{
+					"name": "LPRCGPSeqNbr"
+				},
+				{
+					"name": "LPRCGPSeqNbrFilter"
+				},
+				{
+					"name": "rejUniqueZones"
+				},
+				{
+					"name": "coPRGSL"
+				},
+				{
+					"name": "RDZoneDesc"
+				},
+				{
+					"name": "coZones"
+				},
+				{
+					"name": "outZones"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "YesExit"
+				},
+				{
+					"name": "NoExit"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMRHPGSeqNbr",
+				"source(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ID as integer,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          TEST as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRCGP",
+				"source(output(",
+				"          Zones as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSRejectedZoneGroups",
+				"F3 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM3),",
+				"          PrcGrpId = 5) ~> xoCSTM3",
+				"F4 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM4),",
+				"          PrcGrpId = 6) ~> xoCSTM4",
+				"F5 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM5),",
+				"          PrcGrpId = 7) ~> xoCSTM5",
+				"F6 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM6),",
+				"          PrcGrpId = 8) ~> xoCSTM6",
+				"F7 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM7),",
+				"          PrcGrpId = 9) ~> xoCSTM7",
+				"F8 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM8),",
+				"          PrcGrpId = 10) ~> xoCSTM8",
+				"F9 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM9),",
+				"          PrcGrpId = 11) ~> xoCSTM9",
+				"F2 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM2),",
+				"          PrcGrpId = 4) ~> xoCSTM2",
+				"F1 derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CSTM1),",
+				"          PrcGrpId = 3) ~> xoCSTM1",
+				"DSMRHPGSeqNbr derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CTRY_CD),",
+				"          PrcGrpId = 1) ~> xoCTRT",
+				"DSMRHPGSeqNbr derive(ERROR = \"A Zone Name cannot cross currencies\",",
+				"          ZoneDesc = trim(CNCY_CD),",
+				"          PrcGrpId = 2) ~> xoCNCY",
+				"DSMRHPGSeqNbr filter(trim(CSTM1) != \"\") ~> F1",
+				"DSMRHPGSeqNbr filter(trim(CSTM2) != \"\") ~> F2",
+				"DSMRHPGSeqNbr filter(trim(CSTM3) != \"\") ~> F3",
+				"DSMRHPGSeqNbr filter(trim(CSTM4) != \"\") ~> F4",
+				"DSMRHPGSeqNbr filter(trim(CSTM5) != \"\") ~> F5",
+				"DSMRHPGSeqNbr filter(trim(CSTM6) != \"\") ~> F6",
+				"DSMRHPGSeqNbr filter(trim(CSTM7) != \"\") ~> F7",
+				"DSMRHPGSeqNbr filter(trim(CSTM8) != \"\") ~> F8",
+				"DSMRHPGSeqNbr filter(trim(CSTM9) != \"\") ~> F9",
+				"xoCSTM9 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM9",
+				"xoCSTM8 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM8",
+				"xoCSTM7 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM7",
+				"xoCSTM6 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM6",
+				"xoCSTM5 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM5",
+				"xoCSTM4 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM4",
+				"xoCSTM3 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM3",
+				"xoCSTM2 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM2",
+				"xoCSTM1 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCSTM1",
+				"xoCNCY select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCNCY",
+				"xoCTRT select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CNCY_CD,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          ERROR,",
+				"          ZoneDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XZonesCTRT",
+				"XZonesCSTM9, XZonesCSTM8, XZonesCSTM7, XZonesCSTM6, XZonesCSTM5, XZonesCSTM4, XZonesCSTM3, XZonesCSTM2, XZonesCSTM1, XZonesCTRT, XZonesCNCY union(byName: true)~> FZones",
+				"FZones, IPTPRCGP lookup(PrcGrpId == PRC_GRP_ID",
+				"     && FZones@MDSE_HIER_PRC_GRP_SEQ_NBR_S == IPTPRCGP@MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"     && FZones@MKT_ID == IPTPRCGP@MKT_ID",
+				"     && FZones@CHNL_ID == IPTPRCGP@CHNL_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPRCGPSeqNbr",
+				"LPRCGPSeqNbr select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID = FZones@MKT_ID,",
+				"          CHNL_ID = FZones@CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S = FZones@MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          CNCY_CD,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          TEST,",
+				"          BRD_ID,",
+				"          ERROR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPRCGPSeqNbrFilter",
+				"NoExit select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STR_NBR,",
+				"          CNCY_CD,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          Zones = ZoneDesc,",
+				"          REASON = ERROR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejUniqueZones",
+				"YesExit select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          CNCY_CD,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> coPRGSL",
+				"coZones aggregate(groupBy(PRC_GRP_SEQ_NBR_S,",
+				"          ZoneDesc),",
+				"     each(match(!in(['PRC_GRP_SEQ_NBR_S','ZoneDesc'],name)), $$ = first($$))) ~> RDZoneDesc",
+				"YesExit select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          CNCY_CD,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> coZones",
+				"RDZoneDesc select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outZones",
+				"split1@No select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          CNCY_CD,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          BRD_ID,",
+				"          ERROR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LPRCGPSeqNbrFilter derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"split1@Yes, DSRejectedZoneGroups exists(upper(ZoneDesc) == upper(Zones),",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YesExit",
+				"split1@Yes, DSRejectedZoneGroups exists(upper(Zones) == upper(Zones),",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NoExit",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ZoneDesc as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          PrcGrpid as string,",
+				"          CNCY_CD as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          BRD_ID as string,",
+				"          ERROR as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_Zones_PX.FF_PRCGPRej.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFPRCGPRej",
+				"rejUniqueZones sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          STR_NBR as string,",
+				"          CNCY_CD as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          Zones as string,",
+				"          REASON as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_Zones_PX.FF_ZoneRejects.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFZoneRejects",
+				"outZones sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ZoneDesc as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          PrcGrpid as string,",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          TEST as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_Zones_PX.DS_Zones.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSZones",
+				"coPRGSL sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ZoneDesc as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          PrcGrpId as string,",
+				"          CNCY_CD as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_Zones_PX.DS_PRGSL.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPRGSL"
+			]
+		}
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "IPTEGI_OPORI_OUTB_PMOTN_REQ_GRP_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTEGI",
+			"table": "OPORI_OUTB_PMOTN_REQ_GRP_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,115 @@
+{
+	"name": "xfmIPT094DIVTZoneGrps_StrNbrDel_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_IPT_LOCLT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT092DIVTZoneGrps_PRCGP_PX_DS_MRHPGSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPG"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT094DIVTZoneGrps_StrNbrDel_PX_DS_StrNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStrNbr",
+					"description": "将数据导出到xfmIPT094DIVTZoneGrps_StrNbrDel_PX.DS_StrNbr.ASIA.txt"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDStrNbr"
+				},
+				{
+					"name": "RDMRHPGSeqNbr"
+				},
+				{
+					"name": "LBrand"
+				},
+				{
+					"name": "YLBrandLookup"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          STR_NBR as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          CHNL_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLOCLT",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMRHPG",
+				"IPTLOCLT aggregate(groupBy(STR_NBR),",
+				"     each(match(!in(['STR_NBR'],name)), $$ = first($$))) ~> RDStrNbr",
+				"DSMRHPG aggregate(groupBy(MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          CHNL_ID),",
+				"     each(match(!in(['MDSE_HIER_PRC_GRP_SEQ_NBR_S','CHNL_ID'],name)), $$ = first($$))) ~> RDMRHPGSeqNbr",
+				"YLBrandLookup select(mapColumn(",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LBrand",
+				"RDStrNbr, RDMRHPGSeqNbr exists(RDStrNbr@MDSE_HIER_PRC_GRP_SEQ_NBR_S == RDMRHPGSeqNbr@MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"     && RDStrNbr@CHNL_ID == RDMRHPGSeqNbr@CHNL_ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YLBrandLookup",
+				"LBrand sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          STR_NBR as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT094DIVTZoneGrps_StrNbrDel_PX.DS_StrNbr.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSStrNbr"
+			]
+		}
+	}
+}

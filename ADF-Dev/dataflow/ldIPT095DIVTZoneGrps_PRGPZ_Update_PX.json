@@ -1,0 +1,52 @@
+{
+	"name": "ldIPT095DIVTZoneGrps_PRGPZ_Update_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT095DIVTZoneGrps_PRGSL_Compare_PX_DS_Compare_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "comparedds"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRGPZ_PRC_GRP_ZN_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGPZ"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> comparedds",
+				"comparedds sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:['IPTCGI_PRGPZ_PRC_GRP_ZN_T.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTPRGPZ"
+			]
+		}
+	}
+}

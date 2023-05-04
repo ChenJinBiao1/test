@@ -1,0 +1,106 @@
+{
+	"name": "AB_IPT22_ApprPromo_SKUCount_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('IPT22_ApprPromo_SKUCount_',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "PROMO_ID",
+				"type": "String"
+			},
+			{
+				"name": "MERCH_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "DIVISION",
+				"type": "String"
+			},
+			{
+				"name": "GROUP_NO",
+				"type": "String"
+			},
+			{
+				"name": "DEPT",
+				"type": "String"
+			},
+			{
+				"name": "CLASS",
+				"type": "String"
+			},
+			{
+				"name": "SUBCLASS",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			},
+			{
+				"name": "START_DATE",
+				"type": "String"
+			},
+			{
+				"name": "END_DATE",
+				"type": "String"
+			},
+			{
+				"name": "PROMO_ACTION",
+				"type": "String"
+			},
+			{
+				"name": "SKU_Count",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

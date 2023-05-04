@@ -1,0 +1,121 @@
+{
+	"name": "ErrorfileIPT095",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT095DIVTZoneGrps_PRGSL_PX_DS_PRGSLLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGSLLoad"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_095",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_095",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejPRGSL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "inPRGSL"
+				},
+				{
+					"name": "outPRGSL"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PRC_GRP_ZN_SEQ_NBR_S as integer (toInteger(null())),",
+				"     STR_NBR as integer (toInteger(null())),",
+				"     STRT_DT as date (toDate(null())),",
+				"     END_DT as date (toDate(null())),",
+				"     LGCY_CSTM_STR_ATTR_NBR as integer (toInteger(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as date,",
+				"          END_DT as date,",
+				"          LGCY_CSTM_STR_ATTR_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRGSLLoad",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as date,",
+				"          END_DT as date,",
+				"          LGCY_CSTM_STR_ATTR_NBR as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSPRGSLLoad filter((PRC_GRP_ZN_SEQ_NBR_S == $PRC_GRP_ZN_SEQ_NBR_S || isNull(PRC_GRP_ZN_SEQ_NBR_S)) && \r",
+				"(STR_NBR == $STR_NBR || isNull(STR_NBR))&& \r",
+				"(STRT_DT == $STRT_DT || isNull(STRT_DT)) && \r",
+				"(END_DT == $END_DT || isNull(END_DT)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(LGCY_CSTM_STR_ATTR_NBR == $LGCY_CSTM_STR_ATTR_NBR || isNull(LGCY_CSTM_STR_ATTR_NBR))) ~> inPRGSL",
+				"inPRGSL derive(DATE_TIME = currentDate()) ~> outPRGSL",
+				"outPRGSL, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          STR_NBR as string,",
+				"          STRT_DT as string,",
+				"          END_DT as string,",
+				"          LGCY_CSTM_STR_ATTR_NBR as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['IPT095DIVTZoneGrps_PRGSL_PX.DS_PRGSLLoad.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejPRGSL"
+			]
+		}
+	}
+}

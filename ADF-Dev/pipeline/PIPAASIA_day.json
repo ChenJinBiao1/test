@@ -1,0 +1,356 @@
+{
+	"name": "PIPAASIA_day",
+	"properties": {
+		"activities": [
+			{
+				"name": "PIPA221U",
+				"description": "sqrIPT221PRMOutbound_Extract",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA13DU1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT221PRMOutbound_Extract",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA222U",
+				"description": "sqrIPT222PRMOutbound_Transform",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRCIPIFLOW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT222PRMOutbound_Transform",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA223U",
+				"description": "sqrIPT223RPM_Promo_Transform",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA222U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT223RPM_Promo_Transform",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA224U",
+				"description": "sqrIPT224RPM_ORPOS_Transform",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA223U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PRCIMF08DL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PRCIAD07DL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT224RPM_ORPOS_Transform",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA225U",
+				"description": "sqrIPT225IPT_Promo_MD_Check",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA224U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT261DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT225IPT_Promo_MD_Check",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "END",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "PIPA60DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA225U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA223U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA222U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA221U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA22DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			},
+			{
+				"name": "PIPA12",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPA12",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA13DU1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPA13DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=gatherSchemaStats.sh&&params=IPAProd,IPAProdprj,ESP-PIPA123U-20221219030000,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPA13DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPA60DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA13DU1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPA60DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=activityReport.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPA60DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT261DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IPT261_ESBPricingValidations",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PRCIMF08DL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_RPM",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PRCIMFFLOW_PRCIMF08DL"
+					}
+				}
+			},
+			{
+				"name": "PRCIAD07DL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_RPM",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PRCIADFLOW_PRCIAD07DL"
+					}
+				}
+			},
+			{
+				"name": "PRCIPIFLOW",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA221U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_RPM_1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PRCIPIFLOW_PRCIPIFLOW"
+					}
+				}
+			},
+			{
+				"name": "PIPA22DU",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PIPA224U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/c8f5b2843665470d98512cfc6da3284e/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=7qVJMvs0l-gaaShu0PT-heBgcAOQiBZZZccDplHeaBQ",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Summary of Promotions and Markdowns executed in IPT for GAP-CHINA-RETAIL on @{utcnow()}\",\n    \"message\": \"\nHi IPT Users,<br/><br/>\n\nThis email is being sent to all users who have access to IPT application (International Pricing Tool). User would be getting one email per BMC that they have access to.<br/><br/>\n\n<u><strong>What is this report about?</strong></u><br/><br/>\nThis provides a count of promotions and markdowns that were executed in IPT on a particular day and further processed in RPM. It would also provide a report of rejects in RPM,if there were any.<br/><br/>\n\n<u><strong>What to expect in the email?</strong></u><br/><br/>\n<li>You should see one such email for each BMC that you have access to in IPT.</li>\n<li>In case of no activity performed in IPT on a day, you wouldn’t receive this email.</li>\n<li>You would see one attachment each with counts of the promotion approval, promotion unapproval, markdown approval and markdown unapproval.</li>\n<li>In case of any errors/conflicts/failures in RPM processing, you would find details of the same in attachment named IPT222*.</li>\n<li>In case of any issues in RPM with respect to generating the publish for ORPOS, you would find details of the same in attachment named IPT224*.</li><br/><br/>\n\n<u><strong>How to read the report?</strong></u><br/><br/>\n<li>Refer to the Attachments names “Summary of Promotions Approved/UnApproved”.The counts of Promotion approval/unapproval are reported at the promo id level.</li>\n<li>Refer to the Attachments names “Summary of Markdowns Approved/UnApproved”. The counts of Markdown approval/unapproval are reported at the CC-Store level.</li>\n<li>Refer the “ACTION_TO_BE_TAKEN” column in all the attachments for more details.</li><br/><br/>\n\n<u><strong>When to reach out to IT support?</strong></u><br/><br/>\n<li>In case you find any discrepancies between the executed (based on the activity report) and reported number of promos and markdowns, please reach out to IPT IT support.</li>\n<li>Refer the attachments for more details about the errored, failed, or conflicted records. Look at “ACTION_TO_BE_TAKEN” column, to know if there is a need to reach out to the RPM IT support.</li>\n<li>If there was actually an activity performed and yet no attachment/email received describing the summary, please reach out to IPT IT support.</li><br/><br/>\nThanks,<br/>\nIPT Support<br/><br/><br/><br/>\",\n    \"receiver\": \"chen.jinbiao@trans-cosmos.com.cn\",\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "ALL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-15T08:54:43Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

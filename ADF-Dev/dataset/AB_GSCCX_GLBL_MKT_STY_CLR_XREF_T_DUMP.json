@@ -1,0 +1,28 @@
+{
+	"name": "AB_GSCCX_GLBL_MKT_STY_CLR_XREF_T_DUMP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_DUMP.txt",
+				"folderPath": "source",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

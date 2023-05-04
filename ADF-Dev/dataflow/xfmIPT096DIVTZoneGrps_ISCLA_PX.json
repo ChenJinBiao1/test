@@ -1,0 +1,244 @@
+{
+	"name": "xfmIPT096DIVTZoneGrps_ISCLA_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT096DIVTZoneGrps_LikeStr_PX_DS_ISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_ISCCA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCCA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT096DIVTZoneGrps_ISCLA_PX_DS_ISCLALoa_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLALoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Contraint"
+				},
+				{
+					"name": "stageVariables"
+				},
+				{
+					"name": "XLikeStore"
+				},
+				{
+					"name": "LISCLA"
+				},
+				{
+					"name": "loStrDtls"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "fioRec"
+				},
+				{
+					"name": "fioChina"
+				},
+				{
+					"name": "LISCCA"
+				},
+				{
+					"name": "loISCCA"
+				},
+				{
+					"name": "FAll"
+				},
+				{
+					"name": "outISCLA"
+				},
+				{
+					"name": "RDLatestSatrtDate"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "split3"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZoneGroups",
+				"source(output(",
+				"          {ITM_STY_CLR_SEQ_NBR_S } as integer,",
+				"          { LOC_NBR } as integer,",
+				"          { STRT_DT} as timestamp,",
+				"          { RTL_PRC_AMT } as decimal(10,0),",
+				"          { PRC_STAT_CD} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCLA",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCCA",
+				"stageVariables filter(svLikeStore == 1) ~> Contraint",
+				"DSZoneGroups derive(svLikeStore = iif(isNull({Like Store}), 0, 1)) ~> stageVariables",
+				"Contraint select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {Like Store}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XLikeStore",
+				"XLikeStore, DSISCLA lookup({Like Store} == { LOC_NBR },",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LISCLA",
+				"split2@Yes select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {Like Store},",
+				"          {ITM_STY_CLR_SEQ_NBR_S },",
+				"          { STRT_DT},",
+				"          { RTL_PRC_AMT },",
+				"          { PRC_STAT_CD}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loStrDtls",
+				"RDLatestSatrtDate split(MKT_ID != \"8\",",
+				"     MKT_ID == '8' && { PRC_STAT_CD} == 'M',",
+				"     disjoint: false) ~> split1@(y, yes)",
+				"split1@y select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {Like Store},",
+				"          {ITM_STY_CLR_SEQ_NBR_S },",
+				"          STRT_DT = { STRT_DT},",
+				"          RTL_PRC_AMT = { RTL_PRC_AMT },",
+				"          PRC_STAT_CD = { PRC_STAT_CD}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> fioRec",
+				"split1@yes select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {Like Store},",
+				"          {ITM_STY_CLR_SEQ_NBR_S },",
+				"          { STRT_DT},",
+				"          { RTL_PRC_AMT },",
+				"          { PRC_STAT_CD}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> fioChina",
+				"fioChina, IPTISCCA lookup({ITM_STY_CLR_SEQ_NBR_S } == ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LISCCA",
+				"split3@Yes2 select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {Like Store},",
+				"          {ITM_STY_CLR_SEQ_NBR_S },",
+				"          STRT_DT = { STRT_DT},",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loISCCA",
+				"fioRec, loISCCA union(byName: true)~> FAll",
+				"FAll select(mapColumn(",
+				"          MKT_ID,",
+				"          STR_NBR,",
+				"          {ITM_STY_CLR_SEQ_NBR_S },",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outISCLA",
+				"loStrDtls aggregate(groupBy({Like Store},",
+				"          {ITM_STY_CLR_SEQ_NBR_S }),",
+				"     each(match(!in(['Like Store','ITM_STY_CLR_SEQ_NBR_S '],name)), $$ = last($$))) ~> RDLatestSatrtDate",
+				"LISCLA derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(isMatch(),",
+				"     disjoint: false) ~> split2@(Yes)",
+				"LISCCA derive(IsMatch = isMatch()) ~> derivedColumn2",
+				"derivedColumn2 split(isMatch(),",
+				"     disjoint: false) ~> split3@(Yes2)",
+				"outISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MKT_ID as string,",
+				"          STR_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          STRT_DT as string,",
+				"          RTL_PRC_AMT as string,",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT096DIVTZoneGrps_ISCLA_PX.DS_ISCLALoa.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLALoad"
+			]
+		}
+	}
+}

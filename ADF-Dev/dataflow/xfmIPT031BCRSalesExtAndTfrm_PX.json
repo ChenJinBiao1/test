@@ -1,0 +1,554 @@
+{
+	"name": "xfmIPT031BCRSalesExtAndTfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT031BCRSalesExtract_PX_DS_SalesExtract_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSSalesExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_BMCPC_BRD_MKT_CTRY_LGCY_CTL_T_031",
+						"type": "DatasetReference"
+					},
+					"name": "BMCPCBRDMKTCTRYLGCYCTLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT031BCRSalesExtract_PX_DS_LOCLT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLOCLT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT031BCRSalesExtAndTfrm_PX_FF_Rej_BMCPC_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejBMCPC"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT031BCRSalesExtAndTfrm_PX_FF_Item_Rejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFItemRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT031BCRSalesExtAndTfrm_PX_DS_StoreSales_IPT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesIPT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT031BCRSalesExtAndTfrm_PX_FF_Store_Rejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFStoreRejects"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LLGCYIND"
+				},
+				{
+					"name": "LLGCYINDDerivedColumn"
+				},
+				{
+					"name": "LLGCYINDSplit"
+				},
+				{
+					"name": "LLGCYINDLookupMatchSelect"
+				},
+				{
+					"name": "LLGCYINDLookupNotMatchSelect"
+				},
+				{
+					"name": "FILGCY"
+				},
+				{
+					"name": "foLgcySelect"
+				},
+				{
+					"name": "LLgcy"
+				},
+				{
+					"name": "foUnivSelect"
+				},
+				{
+					"name": "LLgcyDerivedColumn"
+				},
+				{
+					"name": "LLgcySplit"
+				},
+				{
+					"name": "LLgcyLookupMatchSelect"
+				},
+				{
+					"name": "LLgcyLookupNotMatchSelect"
+				},
+				{
+					"name": "LUniv"
+				},
+				{
+					"name": "LUnivDerivedColumn"
+				},
+				{
+					"name": "LUnivSplit"
+				},
+				{
+					"name": "LUnivLookupMatchSelect"
+				},
+				{
+					"name": "LUnivLookupNotMatchSelect"
+				},
+				{
+					"name": "FStyClr"
+				},
+				{
+					"name": "FRejects"
+				},
+				{
+					"name": "CSales"
+				},
+				{
+					"name": "ASales"
+				},
+				{
+					"name": "JSales"
+				},
+				{
+					"name": "ASalesSelect"
+				},
+				{
+					"name": "JSalesSelect"
+				},
+				{
+					"name": "RDSales"
+				},
+				{
+					"name": "LCtryCode"
+				},
+				{
+					"name": "LCtryCodederivedColumn"
+				},
+				{
+					"name": "LCtryCodeSplit"
+				},
+				{
+					"name": "NotMatchSelect"
+				},
+				{
+					"name": "MatchSelect"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OPR_BRD_ID as integer,",
+				"          OPR_MKT_ID as integer,",
+				"          OPR_CHNL_ID as integer,",
+				"          OPR_STY_CD as string,",
+				"          CLR_ID as string,",
+				"          OPR_STY_CLR_NBR as string,",
+				"          OPR_LOC_NBR as integer,",
+				"          TXN_DT as string,",
+				"          LN_TOT_UN_SLS_QTY as integer,",
+				"          LN_TOT_RTL_SLS_AMT as decimal(10,0),",
+				"          LN_TOT_XTD_WAC_CST_AMT as decimal(10,0),",
+				"          RTL_PRC_AMT as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSSalesExtract",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          LGCY_IND as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BMCPCBRDMKTCTRYLGCYCTLT",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          CHNL_ID as integer,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLOCLT",
+				"DSSalesExtract, BMCPCBRDMKTCTRYLGCYCTLT lookup(OPR_BRD_ID == BRD_ID",
+				"     && OPR_MKT_ID == toInteger(MKT_ID)",
+				"     && OPR_CHNL_ID == CHNL_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLGCYIND",
+				"LLGCYIND derive(IsMatch = isMatch()) ~> LLGCYINDDerivedColumn",
+				"LLGCYINDDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LLGCYINDSplit@(LLGCYINDLookupMatch, LLGCYINDLookupNotMatch)",
+				"LLGCYINDSplit@LLGCYINDLookupMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          LGCY_IND",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLGCYINDLookupMatchSelect",
+				"LLGCYINDSplit@LLGCYINDLookupNotMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLGCYINDLookupNotMatchSelect",
+				"LLGCYINDLookupMatchSelect split(LGCY_IND == 'Y',",
+				"     LGCY_IND == 'N',",
+				"     disjoint: false) ~> FILGCY@(foLgcy, foUniv, foNone)",
+				"FILGCY@foLgcy select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> foLgcySelect",
+				"foLgcySelect, DSGlobalCCseqNbr lookup(OPR_MKT_ID == toInteger(MKT_ID)",
+				"     && OPR_CHNL_ID == CHNL_ID",
+				"     && OPR_STY_CLR_NBR == ITM_STY_CC_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLgcy",
+				"FILGCY@foUniv select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> foUnivSelect",
+				"LLgcy derive(IsMatch = isMatch()) ~> LLgcyDerivedColumn",
+				"LLgcyDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LLgcySplit@(LLgcyLookupMatch, LLgcyLookupNotMatch)",
+				"LLgcySplit@LLgcyLookupMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLgcyLookupMatchSelect",
+				"LLgcySplit@LLgcyLookupNotMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLgcyLookupNotMatchSelect",
+				"foUnivSelect, DSGlobalCCseqNbr lookup(OPR_MKT_ID == toInteger(MKT_ID)",
+				"     && OPR_CHNL_ID == CHNL_ID",
+				"     && OPR_STY_CD == ITM_STY_NBR",
+				"     && CLR_ID == MKT_DIFF1_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LUniv",
+				"LUniv derive(IsMatch = isMatch()) ~> LUnivDerivedColumn",
+				"LUnivDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LUnivSplit@(LUnivLookupMatch, LUnivLookupNotMatch)",
+				"LUnivSplit@LUnivLookupMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LUnivLookupMatchSelect",
+				"LUnivSplit@LUnivLookupNotMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LUnivLookupNotMatchSelect",
+				"LLgcyLookupMatchSelect, LUnivLookupMatchSelect union(byName: true)~> FStyClr",
+				"LUnivLookupNotMatchSelect, LLgcyLookupNotMatchSelect union(byName: true)~> FRejects",
+				"FStyClr select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CSales",
+				"CSales aggregate(groupBy(OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT),",
+				"     LN_TOT_RTL_SLS_AMT = sum(LN_TOT_RTL_SLS_AMT),",
+				"          LN_TOT_UN_SLS_QTY = toInteger(sum(LN_TOT_UN_SLS_QTY)),",
+				"          LN_TOT_XTD_WAC_CST_AMT = sum(LN_TOT_XTD_WAC_CST_AMT),",
+				"          RTL_PRC_AMT = sum(RTL_PRC_AMT),",
+				"          each(match(!in(['OPR_LOC_NBR','ITM_STY_CLR_SEQ_NBR_S','TXN_DT','LN_TOT_RTL_SLS_AMT','LN_TOT_UN_SLS_QTY','LN_TOT_XTD_WAC_CST_AMT','RTL_PRC_AMT'],name)), $$ = first($$))) ~> ASales",
+				"CSales, ASalesSelect join(CSales@OPR_LOC_NBR == ASalesSelect@OPR_LOC_NBR",
+				"     && CSales@ITM_STY_CLR_SEQ_NBR_S == ASalesSelect@ITM_STY_CLR_SEQ_NBR_S",
+				"     && CSales@TXN_DT == ASalesSelect@TXN_DT,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JSales",
+				"ASales select(mapColumn(",
+				"          OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ASalesSelect",
+				"JSales select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR = CSales@OPR_LOC_NBR,",
+				"          TXN_DT = CSales@TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY = CSales@LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT = CSales@LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT = CSales@LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT = CSales@RTL_PRC_AMT,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = CSales@ITM_STY_CLR_SEQ_NBR_S,",
+				"          OPR_LOC_NBR = ASalesSelect@OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = ASalesSelect@ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT = ASalesSelect@TXN_DT,",
+				"          LN_TOT_RTL_SLS_AMT = ASalesSelect@LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_UN_SLS_QTY = ASalesSelect@LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_XTD_WAC_CST_AMT = ASalesSelect@LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT = ASalesSelect@RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> JSalesSelect",
+				"JSalesSelect aggregate(groupBy(OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT),",
+				"     each(match(!in(['OPR_LOC_NBR','ITM_STY_CLR_SEQ_NBR_S','TXN_DT'],name)), $$ = first($$))) ~> RDSales",
+				"RDSales, DSLOCLT lookup(OPR_LOC_NBR == LOC_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LCtryCode",
+				"LCtryCode derive(IsMatch = isMatch()) ~> LCtryCodederivedColumn",
+				"LCtryCodederivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LCtryCodeSplit@(LCtryCodeLookupMatch, LCtryCodeLookupNotMatch)",
+				"LCtryCodeSplit@LCtryCodeLookupNotMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          OPR_STY_CLR_NBR,",
+				"          GLBL_ITM_STY_CC_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> NotMatchSelect",
+				"LCtryCodeSplit@LCtryCodeLookupMatch select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT,",
+				"          RTL_PRC_AMT,",
+				"          ITM_STY_CC_NBR = GLBL_ITM_STY_CC_NBR,",
+				"          CTRY_CD,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> MatchSelect",
+				"FRejects select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          TXN_DT,",
+				"          LN_TOT_UN_SLS_QTY,",
+				"          LN_TOT_RTL_SLS_AMT,",
+				"          LN_TOT_XTD_WAC_CST_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LLGCYINDLookupNotMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT031BCRSalesExtAndTfrm_PX.FF_Rej_BMCPC.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejBMCPC",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT031BCRSalesExtAndTfrm_PX.FF_Item_Rejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFItemRejects",
+				"MatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[' xfmIPT031BCRSalesExtAndTfrm_PX.DS_StoreSales_IPT.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSStoreSalesIPT",
+				"NotMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT031BCRSalesExtAndTfrm_PX.FF_Store_Rejects.ASIA.tx'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFStoreRejects"
+			]
+		}
+	}
+}

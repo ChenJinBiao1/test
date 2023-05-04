@@ -1,0 +1,86 @@
+{
+	"name": "sort18ItemAttribute",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT183ItemAttributeExtAndTrnfmISCLA_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT181ItemAttributeExtAndTrnfm_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT183ItemAttributeExtAndTrnfmISCLA_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrldIPT182ItemAttributeISCALoad_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT183ItemAttributeExtAndTrnfmISCLA_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrldIPT182ItemAttributeISCALoad_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrldIPT184ItemAttributeISCLALoad_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrldIPT182ItemAttributeISCALoad_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrldIPT184ItemAttributeISCLALoad_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT181ItemAttributeExtAndTrnfm_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT181ItemAttributeExtAndTrnfm_PX_copy1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-17T16:39:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

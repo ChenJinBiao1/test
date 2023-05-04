@@ -1,0 +1,20 @@
+{
+	"name": "Test_test_orcal",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "TEST"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

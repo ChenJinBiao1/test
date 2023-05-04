@@ -1,0 +1,74 @@
+{
+	"name": "ldIPT12BRPMSimpleUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT122RPMUnApprPromoExtract1_PX_DS_UnApprPromoExtract",
+						"type": "DatasetReference"
+					},
+					"name": "DSSimplePromoUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_STAGE_PROMO_COMP_SIMPLE_12B_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "RPMSTAGEPROMOCOMPSIMPLE"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string,",
+				"          STR_NBR as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          SCLS_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSSimplePromoUpdate",
+				"DSSimplePromoUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['RPM_STAGE_PROMO_COMP_SIMPLE_12B_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RPMSTAGEPROMOCOMPSIMPLE"
+			]
+		}
+	}
+}

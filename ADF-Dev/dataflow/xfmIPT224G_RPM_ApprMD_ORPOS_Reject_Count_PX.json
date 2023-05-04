@@ -1,0 +1,328 @@
+{
+	"name": "xfmIPT224G_RPM_ApprMD_ORPOS_Reject_Count_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_ApprovedMD_RPMStaging_Complete_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSApprMDComplete"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_PUBLISH_224G",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOSPUBLISH"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_COUNT_224",
+						"type": "DatasetReference"
+					},
+					"name": "IPTCOUNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_STAGE_CLEARANCE_224G",
+						"type": "DatasetReference"
+					},
+					"name": "RPMSTAGECLEARANCE"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Total_ApprovedMD_Count_IPT_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotalCount"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_Approved_Markdown_Not_Published_To_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFMDNotInORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Markdown_Approved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotalIPTRPMORPOSCount"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xDtToStrng"
+				},
+				{
+					"name": "LORPOS"
+				},
+				{
+					"name": "rejORPOS"
+				},
+				{
+					"name": "lomatched"
+				},
+				{
+					"name": "xStringToDt"
+				},
+				{
+					"name": "xoStringToDt"
+				},
+				{
+					"name": "LclearanceID"
+				},
+				{
+					"name": "loclearanceID"
+				},
+				{
+					"name": "AggORPOSCount"
+				},
+				{
+					"name": "JoutResult"
+				},
+				{
+					"name": "aocount"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "OUTxoDesc"
+				},
+				{
+					"name": "OUTxoDesc1"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as date,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(15,2),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSApprMDComplete",
+				"source(output(",
+				"          CLEARANCE_ID as integer,",
+				"          ITEM_PARENT as string,",
+				"          DIFF_ID as string,",
+				"          LOCATION as integer,",
+				"          EFFECTIVE_DATE as string,",
+				"          SELLING_RETAIL as decimal(15,2),",
+				"          GROUP_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOSPUBLISH",
+				"source(output(",
+				"          GROUO_KEY as integer,",
+				"          COUNT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTCOUNT",
+				"source(output(",
+				"          RPM_STAGE_CLEARANCE_ID as integer,",
+				"          REASON_CODE as integer,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          LOCATION as integer,",
+				"          ZONE_NODE_TYPE as integer,",
+				"          EFFECTIVE_DATE as date,",
+				"          OUT_OF_STOCK_DATE as date,",
+				"          RESET_DATE as date,",
+				"          CHANGE_TYPE as integer,",
+				"          CHANGE_AMOUNT as decimal(15,2),",
+				"          CHANGE_PERCENT as integer,",
+				"          PRICE_GUIDE_ID as integer,",
+				"          AUTO_APPROVE_IND as integer,",
+				"          STATUS as string,",
+				"          ERROR_MESSAGE as string,",
+				"          PROCESS_ID as integer,",
+				"          CLEARANCE_ID as integer,",
+				"          CLEARANCE_DISPLAY_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMSTAGECLEARANCE",
+				"source(output(",
+				"          DESCRIPTION as string,",
+				"          COUNT as integer,",
+				"          ACTION_TO_BE_TAKEN as string,",
+				"          SORT_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFTotalCount",
+				"DSApprMDComplete derive(STRT_DT = toString(STRT_DT),",
+				"          DESCRIPTION = 'PLEASE REACH TO RPM TEAM FOR MORE DETAILS ON FAILURE') ~> xDtToStrng",
+				"xDtToStrng, RPMORPOSPUBLISH lookup(ITM_STY_NBR == ITEM_PARENT",
+				"     && MKT_DIFF1_ID == DIFF_ID",
+				"     && STR_NBR == LOCATION",
+				"     && STRT_DT == EFFECTIVE_DATE",
+				"     && MD_PRC_AMT == SELLING_RETAIL,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LORPOS",
+				"split2@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejORPOS",
+				"split2@Yes select(mapColumn(",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          STRT_DT,",
+				"          GROUP_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lomatched",
+				"rejORPOS derive(STRT_DT = toDate(STRT_DT)) ~> xStringToDt",
+				"xStringToDt select(mapColumn(",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          STRT_DT,",
+				"          ERROR_DESCRIPTION = DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoStringToDt",
+				"xoStringToDt, RPMSTAGECLEARANCE lookup(ITM_STY_NBR == ITEM",
+				"     && MKT_DIFF1_ID == DIFF_ID",
+				"     && STR_NBR == LOCATION",
+				"     && STRT_DT == EFFECTIVE_DATE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LclearanceID",
+				"LclearanceID select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          LOCATION,",
+				"          ERROR_MESSAGE = ERROR_DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loclearanceID",
+				"lomatched aggregate(groupBy(GROUP_KEY),",
+				"     COUNT = count()) ~> AggORPOSCount",
+				"AggORPOSCount, IPTCOUNT join(GROUP_KEY == GROUO_KEY,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JoutResult",
+				"JoutResult select(mapColumn(",
+				"          COUNT = AggORPOSCount@COUNT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> aocount",
+				"aocount split(isNull(COUNT)  || COUNT == 0,",
+				"     disjoint: false) ~> split1@(xoDesc, xoDesc1)",
+				"split1@xoDesc derive(DESCRIPTION = 'Number of Approved Markdown Published to ORPOS',",
+				"          COUNT = 0,",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Markdown Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_Approved_Markdown_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoDesc",
+				"split1@xoDesc1 derive(DESCRIPTION = 'Number of Approved Markdown Published to ORPOS',",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Markdown Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_Approved_Markdown_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoDesc1",
+				"OUTxoDesc, OUTxoDesc1, FFTotalCount union(byName: true)~> union1",
+				"LORPOS derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes, No)",
+				"union1 select(mapColumn(",
+				"          DESCRIPTION,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"loclearanceID sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_Approved_Markdown_Not_Published_To_ORPOS.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFMDNotInORPOS",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('Summary_Of_Markdown_Approved.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFTotalIPTRPMORPOSCount"
+			]
+		}
+	}
+}

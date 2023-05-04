@@ -1,0 +1,29 @@
+{
+	"name": "BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"IPT_DB_SCHEMA": {
+				"type": "String",
+				"defaultValue": "IPTCGI"
+			}
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().IPT_DB_SCHEMA",
+				"type": "Expression"
+			},
+			"table": "BMCPC_BRD_MKT_CTRY_LGCY_CTL_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

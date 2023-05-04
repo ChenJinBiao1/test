@@ -1,0 +1,45 @@
+{
+	"name": "AB_IPT_ZoneGrp_MktCncy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPT_ZoneGrp_MktCncy.txt",
+				"folderPath": "source",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PrcGrpId",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "Mkt_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_CNCY_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

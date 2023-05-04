@@ -1,0 +1,37 @@
+{
+	"name": "AB_ldIPT014BCRItemsITMSCC_PX_DS_UHILV_LHILV_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('ldIPT014BCRItemsITMSCC_PX.DS_UHILV_LHILV.',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

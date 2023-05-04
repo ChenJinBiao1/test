@@ -1,0 +1,98 @@
+{
+	"name": "xfmIPT223A_RPMPromo_Rejects_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_PROMO_CMP_223A",
+						"type": "DatasetReference"
+					},
+					"name": "RPMPROMOCMP"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_223",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT223_ApprovedPromo_Errors_RPMPROMO_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "ApprPromoError"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPromoId"
+				},
+				{
+					"name": "loPromoId"
+				},
+				{
+					"name": "xAddDesc"
+				},
+				{
+					"name": "xoDesc"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          START_DATE as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMPROMOCMP",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"RPMPROMOCMP, IPTTPROOUHILVOPORI lookup(RPMPROMOCMP@PROMO_ID == IPTTPROOUHILVOPORI@PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPromoId",
+				"LPromoId select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PROMO_ID = RPMPROMOCMP@PROMO_ID,",
+				"          START_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPromoId",
+				"loPromoId filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> xAddDesc",
+				"xAddDesc derive(DESCRIPTION = 'Approved or Unapproved Promo in RPM Staging is missing or NOT active in RPM_PROMO Table') ~> xoDesc",
+				"xoDesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT223_ApprovedPromo_Errors_RPMPROMO_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> ApprPromoError"
+			]
+		}
+	}
+}

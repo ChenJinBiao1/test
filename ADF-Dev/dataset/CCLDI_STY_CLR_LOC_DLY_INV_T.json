@@ -1,0 +1,29 @@
+{
+	"name": "CCLDI_STY_CLR_LOC_DLY_INV_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"IPT_DB_SCHEMA": {
+				"type": "string",
+				"defaultValue": "IPTCGI"
+			}
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().IPT_DB_SCHEMA",
+				"type": "Expression"
+			},
+			"table": "CCLDI_STY_CLR_LOC_DLY_INV_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

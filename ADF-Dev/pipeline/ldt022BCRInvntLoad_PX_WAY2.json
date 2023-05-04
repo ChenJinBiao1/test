@@ -1,0 +1,122 @@
+{
+	"name": "ldt022BCRInvntLoad_PX_WAY2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "AB_CCLDI_STY_CLR_LOC_DLY_INV_T",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"description": "",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Lookup2",
+							"description": "SELECT\n\tCOUNT(1) AS COUNT \nFROM\n\tIPTCGI.\"CCLDI_STY_CLR_LOC_DLY_INV_T_copy\"\nWHERE\n\tITM_STY_CLR_SEQ_NBR_S = 918930 \n\tAND LOC_NBR = 7033\n\tAND INV_TXN_DT = TO_DATE('2022-10-27','yyyy-MM-dd')",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "OracleSource",
+									"oracleReaderQuery": {
+										"value": "@concat('SELECT COUNT(1) AS COUNT FROM IPTCGI.\"CCLDI_STY_CLR_LOC_DLY_INV_T_copy\"',\n' WHERE',\n' ITM_STY_CLR_SEQ_NBR_S = ', item().ITM_STY_CLR_SEQ_NBR_S,\n' AND LOC_NBR = ', item().LOC_NBR,\n' AND INV_TXN_DT =', 'TO_DATE(''',item().INV_TXN_DT,'''',',''yyyy-MM-dd'')')",
+										"type": "Expression"
+									},
+									"partitionOption": "None",
+									"convertDecimalToInteger": false,
+									"queryTimeout": "02:00:00"
+								},
+								"dataset": {
+									"referenceName": "CCLDI_STY_CLR_LOC_DLY_INV_T_copy",
+									"type": "DatasetReference",
+									"parameters": {
+										"IPT_DB_SCHEMA": {
+											"value": "@pipeline().globalParameters.IPT_DB_SHCEMA",
+											"type": "Expression"
+										}
+									}
+								}
+							}
+						},
+						{
+							"name": "IFNotExist",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Lookup2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('Lookup2').output.firstRow.COUNT, 0)",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-22T07:41:26Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

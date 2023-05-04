@@ -1,0 +1,80 @@
+{
+	"name": "ldIPT016BCRItemsLHILV_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT016BCRItemsDistinctLevels_PX_DS_LHILV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLHILV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsLHILV_PX_LHILV_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLHILV"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          LGCY_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          PGM_NBR as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          BRD_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLHILV",
+				"DSLHILV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LGCY_HIER_LVL_SEQ_NBR_S as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          PGM_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          BRD_ID as string",
+				"     ),",
+				"     partitionFileNames:[' ldIPT016BCRItemsLHILV_PX_LHILV_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTLHILV"
+			]
+		}
+	}
+}

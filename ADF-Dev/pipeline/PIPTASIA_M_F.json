@@ -1,0 +1,457 @@
+{
+	"name": "PIPTASIA_M_F",
+	"properties": {
+		"activities": [
+			{
+				"name": "PIPT04",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT09",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PRCIPE12DL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PRCIPE13DL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT04U",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT03",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT09",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PDWP176U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT03U",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT02",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT09",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PDWP179U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT02",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT04DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT04DU",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT51DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT09",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPA60DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT51DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=bmcZone.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT51DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT58DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT04",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT51DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT58DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=priceAggre.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT58DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT59DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT58DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT59DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=mdSyncUp.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT59DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT52DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT03",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT59DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT52DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=saleAggre.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT52DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT09",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA60DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT09",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT10",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT09",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT10",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "END",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "PIPT10",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT04DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT53_60_61",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			},
+			{
+				"name": "PIPA60DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPA60DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=activityReport.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPA60DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PDWP179U",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_EDW",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PDWPDALY_PDWP179U"
+					}
+				}
+			},
+			{
+				"name": "PRCIPE12DL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_RPM",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PRCIPEFLOW_PRCIPE12DL"
+					}
+				}
+			},
+			{
+				"name": "PRCIPE13DL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_RPM",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PRCIPEFLOW_PRCIPE13DL"
+					}
+				}
+			},
+			{
+				"name": "PDWP176U",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Out Files_EDW",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"location": "PDWPDALY_PDWP176U"
+					}
+				}
+			},
+			{
+				"name": "PIPT53_60_61",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT03",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT02",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "PIPT52DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PIPT53_60_61",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"variables": {
+			"state3": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"state4": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"state5": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"state6": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"state7": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"folder": {
+			"name": "ALL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-02-10T02:32:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

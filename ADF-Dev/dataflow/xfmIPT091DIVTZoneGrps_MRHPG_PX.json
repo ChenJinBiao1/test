@@ -1,0 +1,363 @@
+{
+	"name": "xfmIPT091DIVTZoneGrps_MRHPG_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_UHILV_UNIV_HIER_LVL_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUHILV"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMRHPG"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_MHIERSEQNBR_MRHPGSeqNbr",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMRHPGSeqNbr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT091DIVTZoneGrps_MRHPG_PX_DS_UHILVSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUHILVSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT091DIVTZoneGrps_MRHPG_PX_DS_Dummy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDummy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT091DIVTZoneGrps_MRHPG_PX_DS_MRHPGLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPGLoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "IPTUHILVFilter"
+				},
+				{
+					"name": "LUHILV"
+				},
+				{
+					"name": "LUHILVFilter"
+				},
+				{
+					"name": "IPTMRHPGFilter"
+				},
+				{
+					"name": "RDBrdIdFilter"
+				},
+				{
+					"name": "LMRHPGFilter"
+				},
+				{
+					"name": "LMRHPGSeqNbr"
+				},
+				{
+					"name": "ADDcolumnName"
+				},
+				{
+					"name": "ADDLMRHPGcolumnName"
+				},
+				{
+					"name": "FILTERALL"
+				},
+				{
+					"name": "RDBrdId"
+				},
+				{
+					"name": "coUHILV"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "Yexists1"
+				},
+				{
+					"name": "Nexists1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZoneGroups",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTUHILV",
+				"source(output(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTMRHPG",
+				"source(output(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTMRHPGSeqNbr",
+				"IPTUHILV select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTUHILVFilter",
+				"DSZoneGroups, IPTUHILVFilter lookup(DSZoneGroups@BRD_ID == IPTUHILVFilter@BRD_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LUHILV",
+				"split2@Yes1 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LUHILVFilter",
+				"IPTMRHPG select(mapColumn(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTMRHPGFilter",
+				"RDBrdId select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RDBrdIdFilter",
+				"Nexists1 select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LMRHPGFilter",
+				"ADDLMRHPGcolumnName, ADDcolumnName lookup(ADDLMRHPGcolumnName@a == ADDcolumnName@a,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LMRHPGSeqNbr",
+				"IPTMRHPGSeqNbr derive(a = 1) ~> ADDcolumnName",
+				"LMRHPGFilter derive(a = 1) ~> ADDLMRHPGcolumnName",
+				"LMRHPGSeqNbr select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FILTERALL",
+				"LUHILVFilter aggregate(groupBy(BRD_ID),",
+				"     each(match(!in(['BRD_ID'],name)), $$ = first($$))) ~> RDBrdId",
+				"LUHILVFilter select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> coUHILV",
+				"Yexists1 select(mapColumn(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select2 derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes1)",
+				"LUHILV select(mapColumn(",
+				"          BRD_ID = DSZoneGroups@BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9,",
+				"          {Like Store},",
+				"          UNIV_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"RDBrdIdFilter, IPTMRHPGFilter exists(UNIV_HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> Yexists1",
+				"RDBrdIdFilter, IPTMRHPGFilter exists(UNIV_HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> Nexists1",
+				"coUHILV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT091DIVTZoneGrps_MRHPG_PX.DS_UHILVSeqNbr.',$pInvocationId,'.txt') )],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSUHILVSeqNbr",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT091DIVTZoneGrps_MRHPG_PX.DS_Dummy.',$pInvocationId,'.txt') )],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSDummy",
+				"FILTERALL sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT091DIVTZoneGrps_MRHPG_PX.DS_MRHPGLoad.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSMRHPGLoad"
+			]
+		}
+	}
+}

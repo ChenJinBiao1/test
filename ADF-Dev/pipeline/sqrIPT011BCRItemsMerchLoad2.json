@@ -1,0 +1,241 @@
+{
+	"name": "sqrIPT011BCRItemsMerchLoad2",
+	"properties": {
+		"activities": [
+			{
+				"name": "ldIPT011BCRItemsUMHDS_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT011BCRItemsUMHDS_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"pInvocationId": {
+								"value": "'@{pipeline().globalParameters.pInvocationId}'",
+								"type": "Expression"
+							},
+							"jsUserId": "'PIPT014U'"
+						},
+						"datasetParameters": {
+							"DSUMHDS": {
+								"pInvocaionId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"DSHIERARCHY": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							},
+							"IPTUMHDSTemp": {
+								"pInvocationId": {
+									"value": "@pipeline().globalParameters.pInvocationId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "ldIPT011BCRItemsLMHDS_PX",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "IPT_011_2_SQL1_SIU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ldIPT011BCRItemsLMHDS_PX",
+						"type": "DataFlowReference",
+						"parameters": {
+							"jsUserId": "'PIPT014U'",
+							"pInvocationId": "\"ASIA\""
+						},
+						"datasetParameters": {
+							"DSLMHDS": {
+								"pInvocaionId": "ASIA"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Send-Emial_12",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ldIPT011BCRItemsUMHDS_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:ldIPT011BCRItemsUMHDS_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_14",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ldIPT011BCRItemsLMHDS_PX",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Data flow:ldIPT011BCRItemsLMHDS_PX failed to run\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "IPT_011_2_SQL1_SIU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ldIPT011BCRItemsUMHDS_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT_011_2_SQL1_SIU&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT_011_2_SQL1_SIU.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT_011_2_SQL1_SIU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "IPT_011_2_SQL2_SIU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ldIPT011BCRItemsLMHDS_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT_011_2_SQL2_SIU&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT_011_2_SQL2_SIU.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT_011_2_SQL2_SIU",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"Foreachjson": {
+				"type": "String"
+			},
+			"Foreachjson2": {
+				"type": "String"
+			},
+			"errorMessage": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-04-27T08:43:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

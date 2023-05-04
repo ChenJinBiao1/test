@@ -1,0 +1,95 @@
+{
+	"name": "srcIPT042PromoAggregateExtract",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_AGGR_SCRB_T_join_AGGR_DATA_T_042",
+						"type": "DatasetReference"
+					},
+					"name": "AGGRSCRBTjoinAGGRDATAT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT042PromoAggregateExtract_FF_PromoAggregateExtract_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFPromoAggregateExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT042PromoAggregateExtract_FF_LastRunTimeStamp_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFLastRunTimeStamp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xoLastRuntime"
+				},
+				{
+					"name": "xoEBOXML"
+				},
+				{
+					"name": "AGGetMaxLastRuntime"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          {REPLACE(REPLACE(AGGR_DATA_T.AGGR_MSG_BODY_IMG} as string,",
+				"          {CHR(13)} as timestamp,",
+				"          {'')2} as string,",
+				"          {CHR(10)} as string,",
+				"          {'')4} as string,",
+				"          {TO_CHAR(AGGR_DATA_T.CRT_DTTM} as string,",
+				"          {'YYYY-MM-DDHH24:MI:SS.FF')} as string,",
+				"          TXN_TYP_CD as string,",
+				"          SCRB_NM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> AGGRSCRBTjoinAGGRDATAT",
+				"AGGRSCRBTjoinAGGRDATAT select(mapColumn(",
+				"          CRT_DTTM = {CHR(13)}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoLastRuntime",
+				"AGGRSCRBTjoinAGGRDATAT select(mapColumn(",
+				"          AGGR_MSG_BODY_IMG = {REPLACE(REPLACE(AGGR_DATA_T.AGGR_MSG_BODY_IMG}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoEBOXML",
+				"xoLastRuntime aggregate(LST_RUNTM_TMST = max(CRT_DTTM)) ~> AGGetMaxLastRuntime",
+				"xoEBOXML sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT042PromoAggregateExtract.FF_PromoAggregateExtract.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFPromoAggregateExtract",
+				"AGGetMaxLastRuntime sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT042PromoAggregateExtract.FF_LastRunTimeStamp.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFLastRunTimeStamp"
+			]
+		}
+	}
+}

@@ -1,0 +1,109 @@
+{
+	"name": "AB_RPM_STAGE_CLEARANCE_224H",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RPM_STAGE_CLEARANCE_224H.txt",
+				"folderPath": "score",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "RPM_STAGE_CLEARANCE_ID",
+				"type": "String"
+			},
+			{
+				"name": "REASON_CODE",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "ZONE_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			},
+			{
+				"name": "ZONE_NODE_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "OUT_OF_STOCK_DATE",
+				"type": "String"
+			},
+			{
+				"name": "RESET_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CHANGE_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "CHANGE_AMOUNT",
+				"type": "String"
+			},
+			{
+				"name": "CHANGE_PERCENT",
+				"type": "String"
+			},
+			{
+				"name": "PRICE_GUIDE_ID",
+				"type": "String"
+			},
+			{
+				"name": "AUTO_APPROVE_IND",
+				"type": "String"
+			},
+			{
+				"name": "STATUS",
+				"type": "String"
+			},
+			{
+				"name": "ERROR_MESSAGE",
+				"type": "String"
+			},
+			{
+				"name": "PROCESS_ID",
+				"type": "String"
+			},
+			{
+				"name": "CLEARANCE_ID",
+				"type": "String"
+			},
+			{
+				"name": "CLEARANCE_DISPLAY_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

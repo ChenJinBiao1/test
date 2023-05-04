@@ -1,0 +1,45 @@
+{
+	"name": "AB_DB2_TCDX_TMCO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DB2_TCDX_TMCO.txt",
+				"folderPath": "source",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "BRD_XREF_ID",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "CO_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

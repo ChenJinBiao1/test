@@ -1,0 +1,61 @@
+{
+	"name": "srcIPT096DIVTZoneGrps_LikeStr_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT096DIVTZoneGrps_LikeStr_PX_DS_ISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          {ITM_STY_CLR_SEQ_NBR_S } as string,",
+				"          { LOC_NBR } as string,",
+				"          { STRT_DT} as string,",
+				"          { RTL_PRC_AMT } as string,",
+				"          { PRC_STAT_CD} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCLA",
+				"IPTISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {ITM_STY_CLR_SEQ_NBR_S } as string,",
+				"          { LOC_NBR } as string,",
+				"          { STRT_DT} as string,",
+				"          { RTL_PRC_AMT } as string,",
+				"          { PRC_STAT_CD} as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT096DIVTZoneGrps_LikeStr_PX.DS_ISCLA.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLA"
+			]
+		}
+	}
+}

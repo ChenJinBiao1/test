@@ -1,0 +1,180 @@
+{
+	"name": "xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT10ADIVTUSEAC_Legacy_Extract_PX_DS_Legacy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLegacy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_DB2_TCDX_TMCO",
+						"type": "DatasetReference"
+					},
+					"name": "DB2TCDXTMCO"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LMGMX_LGCY_MKT_GLBL_MKT_XREF_T_10B",
+						"type": "DatasetReference"
+					},
+					"name": "LMGMXLGCYMKTGLBLMKTXREFT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "Rejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX_DS_USEAC_Legacy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUSEACLegacy"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LBrdMktCd"
+				},
+				{
+					"name": "loBrdMktCd"
+				},
+				{
+					"name": "LMktId"
+				},
+				{
+					"name": "FRejects"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ENTP_USER_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLegacy",
+				"source(output(",
+				"          BRD_XREF_ID as integer,",
+				"          CORP_ID as string,",
+				"          CO_ID as string,",
+				"          MKT_CD as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DB2TCDXTMCO",
+				"source(output(",
+				"          LGCY_MKT_CD as integer,",
+				"          MKT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LMGMXLGCYMKTGLBLMKTXREFT",
+				"DSLegacy, DB2TCDXTMCO lookup(DSLegacy@CORP_ID == DB2TCDXTMCO@CORP_ID",
+				"     && MDSE_CO_ID == CO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBrdMktCd",
+				"split1@Yes select(mapColumn(",
+				"          CORP_ID = split1@Yes@CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          MDSE_DIV_ID,",
+				"          CHNL_ID,",
+				"          ENTP_USER_ID,",
+				"          BRD_XREF_ID,",
+				"          MKT_CD,",
+				"          EML_ADDR_TXT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loBrdMktCd",
+				"loBrdMktCd, LMGMXLGCYMKTGLBLMKTXREFT lookup(MKT_CD == LGCY_MKT_CD,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LMktId",
+				"select2, select1 union(byName: true)~> FRejects",
+				"LBrdMktCd derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"LMktId derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"split1@No select(mapColumn(",
+				"          CORP_ID = split1@No@CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          MDSE_DIV_ID,",
+				"          CHNL_ID,",
+				"          ENTP_USER_ID,",
+				"          EML_ADDR_TXT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"split2@No2 select(mapColumn(",
+				"          CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          MDSE_DIV_ID,",
+				"          CHNL_ID,",
+				"          ENTP_USER_ID,",
+				"          EML_ADDR_TXT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"FRejects sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Rejects",
+				"split2@Yes2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSUSEACLegacy"
+			]
+		}
+	}
+}

@@ -1,0 +1,139 @@
+{
+	"name": "srcIPT041FlattenPriceEBO_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "XI_IPTPrice",
+						"type": "DatasetReference"
+					},
+					"name": "XIIPTPrice"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT041FlattenPriceEBO_PX_IPTPrice_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSIPTPrice"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_FF_ESBPriceUpdate",
+						"type": "DatasetReference"
+					},
+					"name": "FFESBPriceDetails"
+				}
+			],
+			"transformations": [
+				{
+					"name": "copriceinfo"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          LocationNbr as integer,",
+				"          LocationTypeCode as string,",
+				"          CountryCode as string,",
+				"          CountryDesc as string,",
+				"          CurrencyCode as string,",
+				"          CurrencyDesc as string,",
+				"          BrandID as string,",
+				"          PriceChgStatusCode as string,",
+				"          AreaId as string,",
+				"          PriceChgId as integer,",
+				"          ItemSKUID as string,",
+				"          MerchandiseDivisionID as string,",
+				"          MerchandiseDepartmentID as string,",
+				"          MerchandiseClassID as string,",
+				"          MerchandiseSubclassID as string,",
+				"          ItemStyleID as string,",
+				"          ColorDiffID as string,",
+				"          SizeDiffID as string,",
+				"          PriceAmt as decimal(15,2),",
+				"          EffectiveDate as date,",
+				"          EndDate as date,",
+				"          Timestamp as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> XIIPTPrice",
+				"XIIPTPrice select(mapColumn(",
+				"          LocationNbr,",
+				"          LocationTypeCode,",
+				"          CountryCode,",
+				"          CountryDesc,",
+				"          CurrencyCode,",
+				"          CurrencyDesc,",
+				"          BrandID,",
+				"          PriceChgStatusCode,",
+				"          PriceChgId,",
+				"          ItemSKUID,",
+				"          ItemStyleID,",
+				"          ColorDiffID,",
+				"          PriceAmt,",
+				"          EffectiveDate,",
+				"          Timestamp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> copriceinfo",
+				"copriceinfo derive(PriceAmt = trim(toString(PriceAmt,\"suppress_zero\"))) ~> derivedColumn1",
+				"XIIPTPrice sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LocationNbr as string,",
+				"          LocationTypeCode as string,",
+				"          CountryCode as string,",
+				"          CountryDesc as string,",
+				"          CurrencyCode as string,",
+				"          CurrencyDesc as string,",
+				"          BrandID as string,",
+				"          PriceChgStatusCode as string,",
+				"          AreaId as string,",
+				"          PriceChgId as string,",
+				"          ItemSKUID as string,",
+				"          MerchandiseDivisionID as string,",
+				"          MerchandiseDepartmentID as string,",
+				"          MerchandiseClassID as string,",
+				"          MerchandiseSubclassID as string,",
+				"          ItemStyleID as string,",
+				"          ColorDiffID as string,",
+				"          SizeDiffID as string,",
+				"          PriceAmt as string,",
+				"          EffectiveDate as string,",
+				"          EndDate as string,",
+				"          Timestamp as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT041FlattenPriceEBO_PX.IPTPrice.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     quoteAll: true,",
+				"     partitionBy('hash', 1)) ~> DSIPTPrice",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('FF_ESBPriceUpdate.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFESBPriceDetails"
+			]
+		}
+	}
+}

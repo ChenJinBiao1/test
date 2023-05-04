@@ -1,0 +1,20 @@
+{
+	"name": "GSKUX_GLBL_MKT_SKU_XREF_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IM_XREF",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "XRFIM",
+			"table": "GSKUX_GLBL_MKT_SKU_XREF_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

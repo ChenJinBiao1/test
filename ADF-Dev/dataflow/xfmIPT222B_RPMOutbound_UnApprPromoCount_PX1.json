@@ -1,0 +1,284 @@
+{
+	"name": "xfmIPT222B_RPMOutbound_UnApprPromoCount_PX1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT221F_CombineRPMLoadFiles_DS_ComplexPromoUpdate_combine",
+						"type": "DatasetReference"
+					},
+					"name": "DSComplexPromoUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_222B1",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_TSPCT_222ABCD1",
+						"type": "DatasetReference"
+					},
+					"name": "RPMTSPCT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_Total_UnApprovedPromo_Count_IPT_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotalCount"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDPromoUpdt"
+				},
+				{
+					"name": "LBMC"
+				},
+				{
+					"name": "lopromoIDBMC"
+				},
+				{
+					"name": "FSplitBMC"
+				},
+				{
+					"name": "LpromoID"
+				},
+				{
+					"name": "loapprpromo"
+				},
+				{
+					"name": "ARPMCount"
+				},
+				{
+					"name": "AIPTCount"
+				},
+				{
+					"name": "FcombineCount"
+				},
+				{
+					"name": "xoStatusF"
+				},
+				{
+					"name": "xoIPTCount"
+				},
+				{
+					"name": "xoStatusE"
+				},
+				{
+					"name": "xoStatusW"
+				},
+				{
+					"name": "xoStatusC"
+				},
+				{
+					"name": "StatusC"
+				},
+				{
+					"name": "StatusW"
+				},
+				{
+					"name": "StatusE"
+				},
+				{
+					"name": "IPTCount"
+				},
+				{
+					"name": "StatusF"
+				},
+				{
+					"name": "filterC"
+				},
+				{
+					"name": "filterW"
+				},
+				{
+					"name": "filterE"
+				},
+				{
+					"name": "filterIPT"
+				},
+				{
+					"name": "filterF"
+				},
+				{
+					"name": "FcombineStatus"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MIN_QTY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSComplexPromoUpdate",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          PMOTN_GRP_ID_S as integer,",
+				"          BRD_ID as integer,",
+				"          GROUP_KEY as integer,",
+				"          STATUS as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          STATUS as string,",
+				"          GROUP_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMTSPCT",
+				"DSComplexPromoUpdate aggregate(groupBy(PMOTN_REQ_ID_S),",
+				"     each(match(!in(['PMOTN_REQ_ID_S'],name)), $$ = first($$))) ~> RDPromoUpdt",
+				"RDPromoUpdt, IPTTPROOUHILVOPORI lookup(PMOTN_REQ_ID_S == PMOTN_GRP_ID_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBMC",
+				"LBMC select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          GROUP_KEY,",
+				"          STATUS",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lopromoIDBMC",
+				"lopromoIDBMC filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> FSplitBMC",
+				"FSplitBMC, RPMTSPCT lookup(PMOTN_REQ_ID_S == PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LpromoID",
+				"LpromoID select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          STATUS = lopromoIDBMC@STATUS,",
+				"          GROUP_KEY = lopromoIDBMC@GROUP_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loapprpromo",
+				"loapprpromo aggregate(groupBy(STATUS,",
+				"          GROUP_KEY),",
+				"     COUNT = count()) ~> ARPMCount",
+				"FSplitBMC aggregate(groupBy(STATUS,",
+				"          GROUP_KEY),",
+				"     COUNT = count()) ~> AIPTCount",
+				"AIPTCount, ARPMCount union(byName: true)~> FcombineCount",
+				"filterF derive(STATUS = 'Number of UnApproved Promotions Failed in RPM',",
+				"          ACTION_TO_BE_TAKEN = 'For details refer to attached files by the names IPT222_UnApproved_Promotions_Errored_In_RPM_*',",
+				"          SORT_KEY = 3) ~> xoStatusF",
+				"filterIPT derive(STATUS = 'Number of UnApproved Promotions Successfully Processed in IPT',",
+				"          ACTION_TO_BE_TAKEN = '',",
+				"          SORT_KEY = 0) ~> xoIPTCount",
+				"filterE derive(STATUS = 'Number of UnApproved Promotions Errored Out in RPM(with Some or All components errored)',",
+				"          ACTION_TO_BE_TAKEN = 'For details refer to attached files by the names IPT222_UnApproved_Promotions_Errored_In_RPM_*',",
+				"          SORT_KEY = 2) ~> xoStatusE",
+				"filterW derive(STATUS = 'Number of UnApproved Promotions Conflicted in RPM',",
+				"          ACTION_TO_BE_TAKEN = 'For details refer to attached files by the names IPT222_UnApproved_Promotions_Errored_In_RPM_*',",
+				"          SORT_KEY = 4) ~> xoStatusW",
+				"filterC derive(STATUS = 'Number of UnApproved Promotions Successfully Processed in RPM',",
+				"          ACTION_TO_BE_TAKEN = '',",
+				"          SORT_KEY = 1) ~> xoStatusC",
+				"xoStatusC select(mapColumn(",
+				"          STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> StatusC",
+				"xoStatusW select(mapColumn(",
+				"          STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> StatusW",
+				"xoStatusE select(mapColumn(",
+				"          STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> StatusE",
+				"xoIPTCount select(mapColumn(",
+				"          STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> IPTCount",
+				"xoStatusF select(mapColumn(",
+				"          STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> StatusF",
+				"FcombineCount filter(STATUS == 'C') ~> filterC",
+				"FcombineCount filter(STATUS == 'W') ~> filterW",
+				"FcombineCount filter(STATUS == 'E') ~> filterE",
+				"FcombineCount filter(GROUP_KEY == 1) ~> filterIPT",
+				"FcombineCount filter(STATUS == 'F') ~> filterF",
+				"StatusF, IPTCount, StatusE, StatusW, StatusC union(byName: true)~> FcombineStatus",
+				"FcombineStatus select(mapColumn(",
+				"          DESCRIPTION = STATUS,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN,",
+				"          SORT_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          DESCRIPTION as string,",
+				"          COUNT as string,",
+				"          ACTION_TO_BE_TAKEN as string,",
+				"          SORT_KEY as string",
+				"     ),",
+				"     partitionFileNames:[(concat('Total_UnApprovedPromo_Count_IPT_RPM_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFTotalCount"
+			]
+		}
+	}
+}

@@ -1,0 +1,106 @@
+{
+	"name": "ErrorfileIPT091",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPGLoad"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_091",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_FILERS_091",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejMRHPG"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XMRHPG"
+				},
+				{
+					"name": "outMRHPG"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer (toInteger(null())),",
+				"     MDSE_HIER_LVL_SEQ_NBR_S as integer (toInteger(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMRHPGLoad",
+				"source(output(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSMRHPGLoad filter((MDSE_HIER_PRC_GRP_SEQ_NBR_S == $MDSE_HIER_PRC_GRP_SEQ_NBR_S || isNull(MDSE_HIER_PRC_GRP_SEQ_NBR_S)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(MDSE_HIER_LVL_SEQ_NBR_S == $MDSE_HIER_LVL_SEQ_NBR_S || isNull(MDSE_HIER_LVL_SEQ_NBR_S))) ~> XMRHPG",
+				"XMRHPG derive(DATE_TIME = currentDate()) ~> outMRHPG",
+				"outMRHPG, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['IdIPT091DIVTZoneGrps_MRHPG_PX.FF_RejMRHPG.ASIA.txt'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFRejMRHPG"
+			]
+		}
+	}
+}

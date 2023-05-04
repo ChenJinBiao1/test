@@ -1,0 +1,86 @@
+{
+	"name": "AB_xfmIPT225F_RPM_Clearance_DS_UnApprClr_Success_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/22-E2EPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('xfmIPT225F_RPM_Clearance.DS_UnApprClr_Success_',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "22e2epricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CLEARANCE_ID",
+				"type": "String"
+			},
+			{
+				"name": "STATE",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "DIFF_ID",
+				"type": "String"
+			},
+			{
+				"name": "ZONE_ID",
+				"type": "String"
+			},
+			{
+				"name": "EFFECTIVE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CHANGE_AMOUNT",
+				"type": "String"
+			},
+			{
+				"name": "CREATE_DATE",
+				"type": "String"
+			},
+			{
+				"name": "CREATE_ID",
+				"type": "String"
+			},
+			{
+				"name": "APPROVAL_DATE",
+				"type": "String"
+			},
+			{
+				"name": "APPROVAL_ID",
+				"type": "String"
+			},
+			{
+				"name": "LOCATION",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

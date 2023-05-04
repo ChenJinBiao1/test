@@ -1,0 +1,69 @@
+{
+	"name": "AB_ERROR_FILERS_095",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPT095DIVTZoneGrps_PRGSL_PX.DS_PRGSLLoad.ASIA.txt",
+				"folderPath": "error",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PRC_GRP_ZN_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "STR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "END_DT",
+				"type": "String"
+			},
+			{
+				"name": "LGCY_CSTM_STR_ATTR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "DATE_TIME",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

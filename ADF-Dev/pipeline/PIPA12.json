@@ -1,0 +1,454 @@
+{
+	"name": "PIPA12",
+	"properties": {
+		"activities": [
+			{
+				"name": "PIPA121U",
+				"description": "sqrIPT121RPMApprPromoExtract",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT121RPMApprPromoExtract",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA124U",
+				"description": "sqrIPT124RPMApprPromoTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA121U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT124RPMApprPromoTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA126U",
+				"description": "sqrIPT126RPMSimpleLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA124U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT126RPMSimpleLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA127U",
+				"description": "sqrIPT127RPMComplexLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA126U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT127RPMComplexLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA128U",
+				"description": "sqrIPT128RPMTPROOUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA127U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT128RPMTPROOUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA12CU",
+				"description": "sqrIPT12CRPMComplexUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA122U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT12CRPMComplexUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA12DU",
+				"description": "sqrIPT12DRPMTPROOUnApprUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12CU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT12DRPMTPROOUnApprUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA123U",
+				"description": "sqrIPT123RPMClearanceExtract",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12DU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT123RPMClearanceExtract",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA125U",
+				"description": "sqrIPT125RPMClearanceTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA123U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT125RPMClearanceTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA129U",
+				"description": "sqrIPT129RPMClearanceLoad1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA125U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT129RPMClearanceLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA12AU",
+				"description": "sqrIPT12ARPMMKDRQUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA129U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT12ARPMMKDRQUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA12EU",
+				"description": "sqrIPT12ERPMClrnceUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12AU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT12ERPMClrnceUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA12FU",
+				"description": "sqrIPT12FRPMMKDRQUnApprUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12EU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT12FRPMMKDRQUnApprUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPA122U",
+				"description": "sqrIPT122RPMUnApprPromoExtract",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA128U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT122RPMUnApprPromoExtract",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "12FU_to_CGI",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PIPA12FU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=upload_complete_files&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=upload_complete_files.py&&params=to_CGI%2FADF_PIPA12FU,cnadfrms9,$RFVbgt5",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "IRnEW",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "12FU_to_CGI_Archive",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "PIPA12FU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=upload_complete_files&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=upload_complete_files.py&&params=to_CGI_Archive%2FADF_PIPA12FU,cnadfrms0,$RFVbgt5",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "IRnEW",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "12CU_to_CGI",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "TruncateFiles_SFTP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=upload_complete_files&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=upload_complete_files.py&&params=to_CGI%2FADF_PIPA12CU,cnadfrms9,$RFVbgt5",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "IRnEW",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "12CU_to_CGI_Archive",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "TruncateFiles_SFTP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=upload_complete_files&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=upload_complete_files.py&&params=to_CGI_Archive%2FADF_PIPA12CU,cnadfrms0,$RFVbgt5",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "IRnEW",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "TruncateFiles_SFTP",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPA12CU",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=TruncateFiles&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=TruncateFiles.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "TruncateFiles",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-20T01:25:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,459 @@
+{
+	"name": "xfmIPT225E_RPM_Clearance_copy",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_CLEARANCE_LOC_225E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMCLEARANCELOC"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_CLEARANCE_ZONE_225E",
+						"type": "DatasetReference"
+					},
+					"name": "RPMCLEARANCEZONE"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ITEM_MASTER_225E",
+						"type": "DatasetReference"
+					},
+					"name": "ITEMMASTER"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225E_RPM_Clearance_FF_ItemRejects",
+						"type": "DatasetReference"
+					},
+					"name": "FFItemRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225E_RPM_Clearance_DS_RPM_Clearance_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSRPMClearance"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FCombine"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "LSKUCheck"
+				},
+				{
+					"name": "OUTSKUSTYLE"
+				},
+				{
+					"name": "LStyle"
+				},
+				{
+					"name": "LSKU"
+				},
+				{
+					"name": "rejSKU"
+				},
+				{
+					"name": "outSKUCC"
+				},
+				{
+					"name": "rejStyle"
+				},
+				{
+					"name": "outStyleCC"
+				},
+				{
+					"name": "LCC"
+				},
+				{
+					"name": "rejCC"
+				},
+				{
+					"name": "outCC"
+				},
+				{
+					"name": "FItems"
+				},
+				{
+					"name": "FItemRejects"
+				},
+				{
+					"name": "RDDistinctCC"
+				},
+				{
+					"name": "FiBMC"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "IsMatch3"
+				},
+				{
+					"name": "split4"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          CLEARANCE_ID as integer,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          EFFECTIVE_DATE as timestamp,",
+				"          CHANGE_AMOUNT as decimal(15,2),",
+				"          CREATE_DATE as timestamp,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as timestamp,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMCLEARANCELOC",
+				"source(output(",
+				"          CLEARANCE_ID as integer,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          EFFECTIVE_DATE as timestamp,",
+				"          CHANGE_AMOUNT as decimal(15,2),",
+				"          CREATE_DATE as timestamp,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as timestamp,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMCLEARANCEZONE",
+				"source(output(",
+				"          ITEM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ITEMMASTER",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr1",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr2",
+				"RPMCLEARANCELOC, RPMCLEARANCEZONE union(byName: true)~> FCombine",
+				"FCombine split(isNull(DIFF_ID),",
+				"     disjoint: false) ~> split1@(SKUStyle, CC)",
+				"split1@SKUStyle, ITEMMASTER lookup(split1@SKUStyle@ITEM == ITEMMASTER@ITEM,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LSKUCheck",
+				"LSKUCheck select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM = split1@SKUStyle@ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> OUTSKUSTYLE",
+				"OUTSKUSTYLE, DSGlobalCCseqNbr2 lookup(ITEM == ITM_STY_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LStyle",
+				"OUTSKUSTYLE, DSGlobalCCseqNbr lookup(ITEM == ITM_STY_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LSKU",
+				"split2@No select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejSKU",
+				"split2@Yes select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outSKUCC",
+				"split3@No2 select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejStyle",
+				"split3@Yes2 select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outStyleCC",
+				"split1@CC, DSGlobalCCseqNbr1 lookup(ITEM == ITM_STY_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCC",
+				"split4@No3 select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejCC",
+				"split4@Yes3 select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outCC",
+				"outSKUCC, outStyleCC, outCC union(byName: true)~> FItems",
+				"rejSKU, rejStyle, rejCC union(byName: true)~> FItemRejects",
+				"FItems aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOCATION,",
+				"          EFFECTIVE_DATE),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S','LOCATION','EFFECTIVE_DATE'],name)), $$ = first($$))) ~> RDDistinctCC",
+				"RDDistinctCC filter(BRD_ID == $pBrandId &&  MKT_ID == $pMarketId && CHNL_ID == $pChnlId) ~> FiBMC",
+				"FiBMC select(mapColumn(",
+				"          CLEARANCE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LSKU derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes, No)",
+				"LStyle derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes2, No2)",
+				"LCC derive(IsMatch = isMatch()) ~> IsMatch3",
+				"IsMatch3 split(IsMatch==true(),",
+				"     disjoint: false) ~> split4@(Yes3, No3)",
+				"FItemRejects sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT225E_RPM_Clearance_FF_ItemRejects.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFItemRejects",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CLEARANCE_ID as string,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as string,",
+				"          EFFECTIVE_DATE as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CREATE_DATE as string,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as string,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as string,",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT225E_RPM_Clearance.DS_RPM_Clearance_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSRPMClearance"
+			]
+		}
+	}
+}

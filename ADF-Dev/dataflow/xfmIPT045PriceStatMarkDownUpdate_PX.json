@@ -1,0 +1,192 @@
+{
+	"name": "xfmIPT045PriceStatMarkDownUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045PriceTrnfrm_PX_PriceUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPriceUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T",
+						"type": "DatasetReference"
+					},
+					"name": "OraIPAISCLAITMSTYCLRLOCATTRT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTEGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T",
+						"type": "DatasetReference"
+					},
+					"name": "OraIPEISCLAITMSTYCLRLOCATTRT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045PriceStatExtract_Regular_reject_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejRegular"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045PriceStatMarkDownUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMarkDownUpdate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FReqular"
+				},
+				{
+					"name": "FISCLA"
+				},
+				{
+					"name": "LPriceStatCode"
+				},
+				{
+					"name": "inRegular"
+				},
+				{
+					"name": "rejRegular"
+				},
+				{
+					"name": "xoMarkDownUpdate"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          LocationNbr as integer,",
+				"          PriceChgStatusCode as string,",
+				"          LocationTypeCode as string,",
+				"          CountryCode as string,",
+				"          CountryDesc as string,",
+				"          CurrencyCode as string,",
+				"          CurrencyDesc as string,",
+				"          BrandID as string,",
+				"          AreaId as string,",
+				"          PriceChgId as integer,",
+				"          ItemSKUID as string,",
+				"          MerchandiseDivisionID as string,",
+				"          MerchandiseDepartmentID as string,",
+				"          MerchandiseClassID as string,",
+				"          MerchandiseSubclassID as string,",
+				"          ItemStyleID as string,",
+				"          ColorDiffID as string,",
+				"          SizeDiffID as string,",
+				"          PriceAmt as string,",
+				"          EffectiveDate as date,",
+				"          EndDate as date,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          Timestamp as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPriceUpdate",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          STRT_DT as date,",
+				"          RTL_PRC_AMT as decimal(15,2),",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OraIPAISCLAITMSTYCLRLOCATTRT",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          STRT_DT as date,",
+				"          RTL_PRC_AMT as decimal(15,2),",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OraIPEISCLAITMSTYCLRLOCATTRT",
+				"DSPriceUpdate filter(PriceChgStatusCode=='R') ~> FReqular",
+				"OraIPAISCLAITMSTYCLRLOCATTRT, OraIPEISCLAITMSTYCLRLOCATTRT union(byName: true)~> FISCLA",
+				"inRegular, FISCLA lookup(inRegular@ITM_STY_CLR_SEQ_NBR_S == FISCLA@ITM_STY_CLR_SEQ_NBR_S",
+				"     && LocationNbr == LOC_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPriceStatCode",
+				"FReqular select(mapColumn(",
+				"          LocationNbr,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inRegular",
+				"split1@No select(mapColumn(",
+				"          LocationNbr,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejRegular",
+				"split1@Yes select(mapColumn(",
+				"          LocationNbr,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoMarkDownUpdate",
+				"LPriceStatCode derive(IsMatch = isMatch()) ~> IsMatch",
+				"select1 split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"IsMatch select(mapColumn(",
+				"          LocationNbr,",
+				"          ITM_STY_CLR_SEQ_NBR_S = inRegular@ITM_STY_CLR_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"rejRegular sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045PriceStatExtract_Regular_reject.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejRegular",
+				"xoMarkDownUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045PriceStatMarkDownUpdate.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSMarkDownUpdate"
+			]
+		}
+	}
+}

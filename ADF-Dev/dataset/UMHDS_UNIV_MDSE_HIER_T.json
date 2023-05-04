@@ -1,0 +1,29 @@
+{
+	"name": "UMHDS_UNIV_MDSE_HIER_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"IPT_DB_SCHEMA": {
+				"type": "String",
+				"defaultValue": "IPTCGI"
+			}
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().IPT_DB_SCHEMA",
+				"type": "Expression"
+			},
+			"table": "UMHDS_UNIV_MDSE_HIER_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

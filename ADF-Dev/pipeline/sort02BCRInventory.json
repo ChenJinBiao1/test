@@ -1,0 +1,46 @@
+{
+	"name": "sort02BCRInventory",
+	"properties": {
+		"activities": [
+			{
+				"name": "021_BCRInvntExtAndTrnfrm",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqr021BCRInvntExtAndTrnfrm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "022_BCRInvntLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "021_BCRInvntExtAndTrnfrm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqr022BCRInvntLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-14T09:12:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

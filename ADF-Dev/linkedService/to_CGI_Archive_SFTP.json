@@ -1,0 +1,20 @@
+{
+	"name": "to_CGI_Archive_SFTP",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Sftp",
+		"typeProperties": {
+			"host": "10.58.8.38",
+			"port": 22,
+			"skipHostKeyValidation": true,
+			"authenticationType": "Basic",
+			"userName": "cnadfrms0",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJiYTQ5ZWNmMy01NmYwLTRmMTItYmQxMy1iYWJkNjc0NjE4MDgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

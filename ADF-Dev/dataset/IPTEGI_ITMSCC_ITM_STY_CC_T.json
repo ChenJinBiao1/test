@@ -1,0 +1,20 @@
+{
+	"name": "IPTEGI_ITMSCC_ITM_STY_CC_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTEGI",
+			"table": "ITMSCC_ITM_STY_CC_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

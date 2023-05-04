@@ -1,0 +1,141 @@
+{
+	"name": "ldIPT094DIVTZoneGrps_LOCLT_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT094DIVTZoneGrps_LOCLT_PX_RD_LocNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "RDLocNbrSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xoDCIDAddColumn"
+				},
+				{
+					"name": "xoStoreNumberAddColumn"
+				},
+				{
+					"name": "XoStoreNumber"
+				},
+				{
+					"name": "xoDCID"
+				},
+				{
+					"name": "FStrDC"
+				},
+				{
+					"name": "RDLocNbr"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string ('PIPT091U'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZoneGroups",
+				"DSZoneGroups derive(LOC_CD = 'DC',",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> xoDCIDAddColumn",
+				"DSZoneGroups derive(LOC_CD = 'ST',",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> xoStoreNumberAddColumn",
+				"xoStoreNumberAddColumn select(mapColumn(",
+				"          LOC_NBR = STR_NBR,",
+				"          CHNL_ID,",
+				"          CNCY_CD,",
+				"          LOC_CD,",
+				"          CTRY_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XoStoreNumber",
+				"xoDCIDAddColumn select(mapColumn(",
+				"          LOC_NBR = DC_ID,",
+				"          CHNL_ID,",
+				"          CNCY_CD,",
+				"          LOC_CD,",
+				"          CTRY_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoDCID",
+				"XoStoreNumber, xoDCID union(byName: true)~> FStrDC",
+				"FStrDC aggregate(groupBy(LOC_NBR),",
+				"     each(match(!in(['LOC_NBR'],name)), $$ = first($$))) ~> RDLocNbr",
+				"RDLocNbr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LOC_NBR as string,",
+				"          CHNL_ID as string,",
+				"          CNCY_CD as string,",
+				"          LOC_CD as string,",
+				"          CTRY_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          MKT_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('ldIPT094DIVTZoneGrps_LOCLT.PX_RD_LocNbr.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RDLocNbrSink"
+			]
+		}
+	}
+}

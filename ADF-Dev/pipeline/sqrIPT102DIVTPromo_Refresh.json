@@ -1,0 +1,66 @@
+{
+	"name": "sqrIPT102DIVTPromo_Refresh",
+	"properties": {
+		"activities": [
+			{
+				"name": "IPT102_SQL2_DELETE",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "IPT102_SQL1_DELETE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT102_SQL2_DELETE&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT102_SQL2_DELETE.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT102_SQL2_DELETE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "IPT102_SQL1_DELETE",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT102_SQL1_DELETE&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT102_SQL1_DELETE.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT102_SQL1_DELETE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-14T08:25:44Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

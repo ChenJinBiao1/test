@@ -1,0 +1,101 @@
+{
+	"name": "ErrorfileIPT047",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_TPROO_PMOTN_REQ_HDR_OTPT_T_047",
+						"type": "DatasetReference"
+					},
+					"name": "DSPromoUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT047PromoUpdate_PX_FF_RejTPROO_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT047PromoUpdate_PX_FF_RejTPROO_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPARejISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FILTER"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PMOTN_REQ_ID_S as integer (toInteger(null())),",
+				"     PMOTN_END_DT as string (toString(null())),",
+				"     EXTL_PMOTN_IND as string (toString(null())),",
+				"     EXTL_PRC_SYS_STAT_CD as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_END_DT as date,",
+				"          EXTL_PMOTN_IND as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPromoUpdate",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_END_DT as date,",
+				"          EXTL_PMOTN_IND as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"DSPromoUpdate filter((PMOTN_REQ_ID_S == $PMOTN_REQ_ID_S || isNull(PMOTN_REQ_ID_S)) && \r",
+				"(PMOTN_END_DT == toDate($PMOTN_END_DT) || isNull(PMOTN_END_DT)) && \r",
+				"(EXTL_PMOTN_IND == $EXTL_PMOTN_IND || isNull(EXTL_PMOTN_IND)) && \r",
+				"(EXTL_PRC_SYS_STAT_CD == $EXTL_PRC_SYS_STAT_CD || isNull(EXTL_PRC_SYS_STAT_CD)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM))) ~> FILTER",
+				"FILTER, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_END_DT as string,",
+				"          EXTL_PMOTN_IND as string,",
+				"          EXTL_PRC_SYS_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT046PriceUpdate_PX.FF_IPA_RejISCLA.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFIPARejISCLA"
+			]
+		}
+	}
+}

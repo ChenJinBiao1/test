@@ -1,0 +1,130 @@
+{
+	"name": "srcIPT181ItemAttributeExtract_PX",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_Item_Attributes_BCR_to_IPT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFBCRItemAttributes"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ISCCA_ITM_STY_CLR_CTRY_ATTR_T_181",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCCA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPTItemAttributeExtract_PX_DS_ItemAttributes_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSItemAttributes"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT181ItemAttributeExtract_PX_DS_ISCCA_Previous_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCCA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "inItemAttri"
+				},
+				{
+					"name": "XNullHandle"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OPR_BRD_ID as integer,",
+				"          OPR_MKT_ID as integer,",
+				"          OPR_CHNL_ID as integer,",
+				"          CTRY_CD as string,",
+				"          LCL_CNCY_CD as string,",
+				"          CORP_ID as string,",
+				"          COMP_ID as string,",
+				"          OPR_BRD_STY_ID as string,",
+				"          CLR_ID as string,",
+				"          OPR_STY_CLR_NBR as string,",
+				"          RTL_PRC_AMT as string,",
+				"          CTRY_WAC_CST_AMT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFBCRItemAttributes",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          AUC_AMT as double,",
+				"          ORIG_RTL_PRC_AMT as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCCA",
+				"FFBCRItemAttributes select(mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          CTRY_CD,",
+				"          CNCY_CD = LCL_CNCY_CD,",
+				"          CORP_ID,",
+				"          CO_ID = COMP_ID,",
+				"          OPR_STY_CD = OPR_BRD_STY_ID,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          ORIG_RTL_PRC_AMT = RTL_PRC_AMT,",
+				"          AUC_AMT = CTRY_WAC_CST_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inItemAttri",
+				"inItemAttri derive(CORP_ID = iif(isNull(CORP_ID), '', CORP_ID),",
+				"          CO_ID = iif(isNull(CO_ID), '', CO_ID),",
+				"          OPR_STY_CD = iif(isNull(OPR_STY_CD), '', OPR_STY_CD),",
+				"          CLR_ID = iif(isNull(CLR_ID), '', CLR_ID),",
+				"          OPR_STY_CLR_NBR = iif(isNull(OPR_STY_CLR_NBR), '', OPR_STY_CLR_NBR),",
+				"          ORIG_RTL_PRC_AMT = iif(isNull(ORIG_RTL_PRC_AMT), toDecimal(0), toDecimal(ORIG_RTL_PRC_AMT)),",
+				"          AUC_AMT = iif(isNull(AUC_AMT), toDecimal(0), toDecimal(AUC_AMT))) ~> XNullHandle",
+				"XNullHandle sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPTItemAttributeExtract_PX.DS_ItemAttributes.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSItemAttributes",
+				"IPTISCCA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          AUC_AMT as string,",
+				"          ORIG_RTL_PRC_AMT as string",
+				"     ),",
+				"     partitionFileNames:['srcIPT181ItemAttributeExtract_PX.DS_ISCCA_Previous.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCCA"
+			]
+		}
+	}
+}

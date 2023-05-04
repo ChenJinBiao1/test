@@ -1,0 +1,134 @@
+{
+	"name": "ldIPT035BCRSalesLoad_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_CCSDS_STY_CLR_STR_DLY_SLS_T_035_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "CCSDSSTYCLRSTRDLYSLSTTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT035BCRSalesLoad_PX_FF_CCSDSRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFCCSDSRejects"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT035BCRSalesLoad_PX_FF_CCSDSRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFCCSDSRejects1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     RTL_SLS_TXN_DT as string,",
+				"     STR_NBR as integer (toInteger(null())),",
+				"     RTL_SLS_QTY as integer (toInteger(null())),",
+				"     RTL_SLS_AMT as decimal(10,0) (toDecimal(null())),",
+				"     RTL_PRC_AMT as decimal(10,0) (toDecimal(null())),",
+				"     CST_SLS_AMT as decimal(10,0) (toDecimal(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     RTL_SLS_PRE_VAT_AMT as decimal(10,0) (toDecimal(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          RTL_SLS_TXN_DT as date,",
+				"          STR_NBR as integer,",
+				"          RTL_SLS_QTY as integer,",
+				"          RTL_SLS_AMT as decimal(10,0),",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          CST_SLS_AMT as decimal(10,0),",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          RTL_SLS_PRE_VAT_AMT as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CCSDSSTYCLRSTRDLYSLSTTemp",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          RTL_SLS_TXN_DT as date,",
+				"          STR_NBR as integer,",
+				"          RTL_SLS_QTY as integer,",
+				"          RTL_SLS_AMT as decimal(10,0),",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          CST_SLS_AMT as decimal(10,0),",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          RTL_SLS_PRE_VAT_AMT as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFCCSDSRejects",
+				"CCSDSSTYCLRSTRDLYSLSTTemp filter(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)  && \r",
+				"RTL_SLS_TXN_DT == toDate($RTL_SLS_TXN_DT) || isNull(RTL_SLS_TXN_DT) && \r",
+				"STR_NBR == $STR_NBR || isNull(STR_NBR) && \r",
+				"RTL_SLS_QTY == $RTL_SLS_QTY || isNull(RTL_SLS_QTY) && \r",
+				"RTL_SLS_AMT == $RTL_SLS_AMT || isNull(RTL_SLS_AMT) && \r",
+				"RTL_PRC_AMT == $RTL_PRC_AMT || isNull(RTL_PRC_AMT) && \r",
+				"CST_SLS_AMT ==$CST_SLS_AMT || isNull(CST_SLS_AMT) &&\r",
+				"RTL_SLS_PRE_VAT_AMT == $RTL_SLS_PRE_VAT_AMT || isNull($RTL_SLS_PRE_VAT_AMT) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFCCSDSRejects union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          RTL_SLS_TXN_DT as string,",
+				"          STR_NBR as string,",
+				"          RTL_SLS_QTY as string,",
+				"          RTL_SLS_AMT as string,",
+				"          RTL_PRC_AMT as string,",
+				"          CST_SLS_AMT as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          RTL_SLS_PRE_VAT_AMT as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT035BCRSalesLoad_PX.FF_CCSDSRejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFCCSDSRejects1"
+			]
+		}
+	}
+}

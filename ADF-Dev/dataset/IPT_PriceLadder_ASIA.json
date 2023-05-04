@@ -1,0 +1,66 @@
+{
+	"name": "IPT_PriceLadder_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_FTP_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTFile/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "ZONE_NAME",
+				"type": "String"
+			},
+			{
+				"name": "DIV_ID",
+				"type": "String"
+			},
+			{
+				"name": "LADR_Name",
+				"type": "String"
+			},
+			{
+				"name": "LADR_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "PCT_OFF",
+				"type": "String"
+			},
+			{
+				"name": "AMT_OFF",
+				"type": "String"
+			},
+			{
+				"name": "NET_PRICE",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

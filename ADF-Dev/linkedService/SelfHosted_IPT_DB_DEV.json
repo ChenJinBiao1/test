@@ -1,0 +1,16 @@
+{
+	"name": "SelfHosted_IPT_DB_DEV",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=10.58.8.38;port=1521;servicename=p_iscprci2;user id=IPCAPP",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjMDcyYjM1ZS0wNjEwLTQ3NzEtYjY3OS0zMjExMzlkMmZiMmQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

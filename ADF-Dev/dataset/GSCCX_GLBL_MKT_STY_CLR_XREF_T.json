@@ -1,0 +1,20 @@
+{
+	"name": "GSCCX_GLBL_MKT_STY_CLR_XREF_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IM_XREF",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "XRFIM",
+			"table": "GSCCX_GLBL_MKT_STY_CLR_XREF_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

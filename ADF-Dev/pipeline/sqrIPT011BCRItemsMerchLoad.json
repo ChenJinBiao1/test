@@ -1,0 +1,46 @@
+{
+	"name": "sqrIPT011BCRItemsMerchLoad",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT011BCRItemsMerchLoad1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT011BCRItemsMerchLoad1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT011BCRItemsMerchLoad2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT011BCRItemsMerchLoad1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT011BCRItemsMerchLoad2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-12-21T07:48:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

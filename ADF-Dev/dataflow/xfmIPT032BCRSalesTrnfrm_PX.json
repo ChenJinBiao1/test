@@ -1,0 +1,166 @@
+{
+	"name": "xfmIPT032BCRSalesTrnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_PGZVT_PRC_GRP_ZN_VAT_T_032",
+						"type": "DatasetReference"
+					},
+					"name": "PGZVTPRCGRPZNVATT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_PRGSL_PRC_GRP_ZN_STR_T_032",
+						"type": "DatasetReference"
+					},
+					"name": "PRGSLPRCGRPZNSTRT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT032BCRSalesTrnfrm_PX_FF_Rejects_Loc_NBR_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejectsLocNBR"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT032BCRSalesTrnfrm_PX_DS_StoreSales_VAT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesVAT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT032BCRSalesTrnfrm_PX_FF_HieSeq_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFHieSeq"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDZoneSeqNo"
+				},
+				{
+					"name": "LPRCGRP"
+				},
+				{
+					"name": "LPRCGRPDerivedColumn"
+				},
+				{
+					"name": "LPRCGRPSplit1"
+				},
+				{
+					"name": "LPRCGRPLookupMatchSelect"
+				},
+				{
+					"name": "LPRCGRPLookupNotMatchSelect"
+				},
+				{
+					"name": "CStoreSales"
+				},
+				{
+					"name": "CStoreSales1"
+				},
+				{
+					"name": "RDHierSeqNbr"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          VAT_RAT as decimal(10,0),",
+				"          STRT_DT as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PGZVTPRCGRPZNVATT",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PRGSLPRCGRPZNSTRT",
+				"PGZVTPRCGRPZNVATT aggregate(groupBy(MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STRT_DT),",
+				"     each(match(!in(['MDSE_HIER_LVL_SEQ_NBR_S','PRC_GRP_ZN_SEQ_NBR_S','STRT_DT'],name)), $$ = first($$))) ~> RDZoneSeqNo",
+				"RDZoneSeqNo, PRGSLPRCGRPZNSTRT lookup(RDZoneSeqNo@PRC_GRP_ZN_SEQ_NBR_S == PRGSLPRCGRPZNSTRT@PRC_GRP_ZN_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPRCGRP",
+				"LPRCGRP derive(IsMatch = isMatch()) ~> LPRCGRPDerivedColumn",
+				"LPRCGRPDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LPRCGRPSplit1@(LPRCGRPLookupMatch, LPRCGRPLookupNotMatch)",
+				"LPRCGRPSplit1@LPRCGRPLookupMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = LPRCGRPSplit1@LPRCGRPLookupMatch@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          VAT_RAT,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = LPRCGRPSplit1@LPRCGRPLookupMatch@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPRCGRPLookupMatchSelect",
+				"LPRCGRPSplit1@LPRCGRPLookupNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = LPRCGRPSplit1@LPRCGRPLookupNotMatch@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          VAT_RAT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPRCGRPLookupNotMatchSelect",
+				"LPRCGRPLookupMatchSelect select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          VAT_RAT,",
+				"          OPR_LOC_NBR = STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CStoreSales",
+				"LPRCGRPLookupMatchSelect select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> CStoreSales1",
+				"CStoreSales1 aggregate(groupBy(MDSE_HIER_LVL_SEQ_NBR_S),",
+				"     each(match(!in(['MDSE_HIER_LVL_SEQ_NBR_S'],name)), $$ = first($$))) ~> RDHierSeqNbr",
+				"LPRCGRPLookupNotMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT032BCRSalesTrnfrm_PX.FF_Rejects_Loc_NBR.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejectsLocNBR",
+				"CStoreSales sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT032BCRSalesTrnfrm_PX.DS_StoreSales_VAT.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSStoreSalesVAT",
+				"RDHierSeqNbr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT032BCRSalesTrnfrm_PX.FF_HieSeq.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFHieSeq"
+			]
+		}
+	}
+}

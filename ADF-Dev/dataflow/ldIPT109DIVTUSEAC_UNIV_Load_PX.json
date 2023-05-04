@@ -1,0 +1,76 @@
+{
+	"name": "ldIPT109DIVTUSEAC_UNIV_Load_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT108DIVTUSEAC_UNIV_Extract_PX_DS_Universal_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUniversal"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_USEAC_UNIV_USER_ACS_T_109",
+						"type": "DatasetReference"
+					},
+					"name": "USEACUNIVUSERACST"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xiUnivSec"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string ('PIPT091U')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as integer,",
+				"          PORTAL_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSUniversal",
+				"DSUniversal derive(CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          EML_ADDR_TXT = concat(find(split(EML_ADDR_TXT, '@'),isNull(split(EML_ADDR_TXT, '@'))),'@gap.com')) ~> xiUnivSec",
+				"xiUnivSec sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          { MKT_ID} as string,",
+				"          { CHNL_ID} as string,",
+				"          { DIV_ID} as string,",
+				"          { ENTP_DIR_USER_ID} as string,",
+				"          { CRT_UPDT_USER_ID} as string,",
+				"          { CRT_UPDT_DTTM} as string,",
+				"          { LST_UPDT_USER_ID} as string,",
+				"          { LST_UPDT_DTTM} as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     partitionFileNames:[('USEAC_UNIV_USER_ACS_T_109.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> USEACUNIVUSERACST"
+			]
+		}
+	}
+}

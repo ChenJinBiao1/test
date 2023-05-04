@@ -1,0 +1,349 @@
+{
+	"name": "xfmIPT224D_RPMMD_ORPOS_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_MD_Success_RPM_Base_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "ApprMDSuccessItem"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_UnapproveMD_Success_RPM_Base_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "UnApprMDSuccessItem"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ITEM_MASTER_224D",
+						"type": "DatasetReference"
+					},
+					"name": "RPMITEMMASTER"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_PUBLISH_224D",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOSPUBLISH"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_MD_CC_Notin_IM_Errors_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFCCNotinIM"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_MD_Item_Loc_Errors_RPM_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "CCLocErrors"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_MD_CC_Loc_Success_RPM_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "CCLocSuccess"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xAddAction"
+				},
+				{
+					"name": "xAddAction1"
+				},
+				{
+					"name": "LStyDiff"
+				},
+				{
+					"name": "loStyDiff1"
+				},
+				{
+					"name": "ccreject"
+				},
+				{
+					"name": "xDtToStrng"
+				},
+				{
+					"name": "inreject"
+				},
+				{
+					"name": "inmatch"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "YesLSkuLocPrcDt"
+				},
+				{
+					"name": "NoLSkuLocPrcDt"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as date,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(15,2),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer,",
+				"          CHANGE_AMOUNT as integer,",
+				"          CHANGE_CURRENCY as string,",
+				"          CHANGE_PERCENT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ApprMDSuccessItem",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as date,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer,",
+				"          CHANGE_AMOUNT as integer,",
+				"          CHANGE_CURRENCY as string,",
+				"          CHANGE_PERCENT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UnApprMDSuccessItem",
+				"source(output(",
+				"          DIV as integer,",
+				"          GROUP_NO as integer,",
+				"          DEPT as integer,",
+				"          CLASS as integer,",
+				"          SUBCLASS as integer,",
+				"          STYLE as string,",
+				"          DIFF_1 as string,",
+				"          SKU as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMITEMMASTER",
+				"source(output(",
+				"          ITEM as string,",
+				"          LOCATION as integer,",
+				"          EFFECTIVE_DATE as string,",
+				"          SELLING_RETAIL as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOSPUBLISH",
+				"ApprMDSuccessItem derive(ACTION = 'Approved Markdown',",
+				"          CHANGE_AMOUNT = iif(isNull(CHANGE_AMOUNT), 0, CHANGE_AMOUNT),",
+				"          CHANGE_CURRENCY = iif(isNull(CHANGE_CURRENCY), '', CHANGE_CURRENCY),",
+				"          CHANGE_PERCENT = iif(isNull(CHANGE_PERCENT), 0, CHANGE_PERCENT)) ~> xAddAction",
+				"UnApprMDSuccessItem derive(ACTION = 'Un-Approved Markdown',",
+				"          CHANGE_AMOUNT = iif(isNull(CHANGE_AMOUNT), 0, CHANGE_AMOUNT),",
+				"          CHANGE_CURRENCY = iif(isNull(CHANGE_CURRENCY), '', CHANGE_CURRENCY),",
+				"          CHANGE_PERCENT = iif(isNull(CHANGE_PERCENT), 0, CHANGE_PERCENT)) ~> xAddAction1",
+				"xAddAction, RPMITEMMASTER lookup(ITM_STY_NBR == STYLE",
+				"     && MKT_DIFF1_ID == DIFF_1,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LStyDiff",
+				"split1@Yes select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT,",
+				"          ACTION,",
+				"          DIV,",
+				"          GROUP_NO,",
+				"          DEPT,",
+				"          CLASS,",
+				"          SUBCLASS,",
+				"          SKU",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loStyDiff1",
+				"split1@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT,",
+				"          ACTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ccreject",
+				"loStyDiff1 derive(DESCRIPTION = 'SKU-Loc-EffDate-MDPrice is not found OR not matching with ORPOS Price Change Publish table for an Approved/Unapproved MD',",
+				"          STRT_DT = toString(STRT_DT)) ~> xDtToStrng",
+				"NoLSkuLocPrcDt select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT,",
+				"          ACTION,",
+				"          DIV,",
+				"          GROUP_NO,",
+				"          DEPT,",
+				"          CLASS,",
+				"          SUBCLASS,",
+				"          SKU,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inreject",
+				"YesLSkuLocPrcDt select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT,",
+				"          ACTION,",
+				"          DIV,",
+				"          GROUP_NO,",
+				"          DEPT,",
+				"          CLASS,",
+				"          SUBCLASS,",
+				"          SKU",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inmatch",
+				"LStyDiff derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"xDtToStrng, RPMORPOSPUBLISH exists(SKU == ITEM",
+				"     && STR_NBR == LOCATION",
+				"     && STRT_DT == EFFECTIVE_DATE",
+				"     && MD_REQ_SEQ_NBR_S == SELLING_RETAIL,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YesLSkuLocPrcDt",
+				"xDtToStrng, RPMORPOSPUBLISH exists(SKU == ITEM",
+				"     && STR_NBR == LOCATION",
+				"     && STRT_DT == EFFECTIVE_DATE",
+				"     && MD_PRC_AMT == SELLING_RETAIL,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NoLSkuLocPrcDt",
+				"ccreject sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_MD_CC_Notin_IM_Errors_RPM_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFCCNotinIM",
+				"inreject sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_MD_Item-Loc_Errors_RPM_ORPOS_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CCLocErrors",
+				"inmatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_MD_CC-Loc_Success_RPM_ORPOS_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CCLocSuccess"
+			]
+		}
+	}
+}

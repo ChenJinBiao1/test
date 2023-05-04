@@ -1,0 +1,20 @@
+{
+	"name": "TSPCT_STG_PMOTN_CMPLX_THLD_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RMS_DB",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "XGAP",
+			"table": "TSPCT_STG_PMOTN_CMPLX_THLD_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

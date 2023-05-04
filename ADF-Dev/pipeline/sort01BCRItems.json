@@ -1,0 +1,196 @@
+{
+	"name": "sort01BCRItems",
+	"properties": {
+		"activities": [
+			{
+				"name": "011-BCRItemsHierUpdate",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "011-BCRItemsMerchLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [
+					{
+						"name": "Age",
+						"value": "11"
+					}
+				],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT011BCRItemsHierUpdate",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "011-BCRItemsMerchLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT011BCRItemsMerchLoad1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT012BCRItemsGlobalCC",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "011-BCRItemsHierUpdate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT012BCRItemsGlobalCC",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT013BCRItemsStyClrSeqNbr",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT012BCRItemsGlobalCC",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT013BCRItemsStyClrSeqNbr",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT014BCRItemsStyClrSkuLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT013BCRItemsStyClrSeqNbr",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT014BCRItemsStyClrSkuLoad1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT015BCRItemsHierLevel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT014BCRItemsStyClrSkuLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT015BCRItemsHierLevel2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT016BCRItemsLevelTbIsLoad",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT015BCRItemsHierLevel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT016BCRItemsLevelTbIsLoad",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT018BCRItemsDataset",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT016BCRItemsLevelTbIsLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT018BCRItemsDataset",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqlIPT01XREFDumpData",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqlIPT018BCRItemsDataset",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqlIPT01XREFDumpData",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"variables": {
+			"receiver2": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-07T14:31:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,31 @@
+{
+	"name": "AB_srcIPT261A_ESB_IPTValidation_DS_Match",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/26-ESBPricingValidations"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('srcIPT261A_ESB_IPTValidation.DS_Match')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "26esbpricingvalidations"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

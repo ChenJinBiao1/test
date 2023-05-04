@@ -1,0 +1,20 @@
+{
+	"name": "DIV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DIVS_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "STG_ADM",
+			"table": "TZFLT_FIL_LIST_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

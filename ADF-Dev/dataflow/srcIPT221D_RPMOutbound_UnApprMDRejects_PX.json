@@ -1,0 +1,473 @@
+{
+	"name": "srcIPT221D_RPMOutbound_UnApprMDRejects_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_MKDRQ_221D",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMKDRQ"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_MKDRQ_UHILV_221D",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMKDRQUHILV"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT12FRPMMKDRQUnApprUpdate_PX_FF_RejMKDRQ",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejMKDRQ"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IdIPT12ERPMClrnceUpdate_PX_FF_MKDRQRej",
+						"type": "DatasetReference"
+					},
+					"name": "FFMKDRQRej"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMCmplxSeqNbrGen_PX_DS_Currency",
+						"type": "DatasetReference"
+					},
+					"name": "DSCurrency"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMCmplxSeqNbrGen_PX_DS_Brd",
+						"type": "DatasetReference"
+					},
+					"name": "DSBRD"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT221RPMOutbound_UnApproved_MDRejects_FF_UnapprovedMDDummy1_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUnapprovedMDDummy1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT221RPMOutbound_UnApproved_MDRejects_FF_UnapprovedMDDummy2_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUnapprovedMDDummy2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT221RPMOutbound_UnApproved_MDRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "APPMDErrorITEMS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "loUnapprovedMDDummy1"
+				},
+				{
+					"name": "loUnapprovedMDDummy2"
+				},
+				{
+					"name": "rejUnapprovedMD1"
+				},
+				{
+					"name": "rejUnapprovedMD2"
+				},
+				{
+					"name": "LBRDrejMKDRQ"
+				},
+				{
+					"name": "LBRDMKDRQ"
+				},
+				{
+					"name": "loMKDRQ"
+				},
+				{
+					"name": "lorejMKDRQ"
+				},
+				{
+					"name": "xoMKDRQDesc"
+				},
+				{
+					"name": "XAddDesc"
+				},
+				{
+					"name": "XAddDesc2"
+				},
+				{
+					"name": "xorejMKDRQDesc"
+				},
+				{
+					"name": "fuAllMKDRQ"
+				},
+				{
+					"name": "LMerchDesc"
+				},
+				{
+					"name": "loMerDesc"
+				},
+				{
+					"name": "LCurrency"
+				},
+				{
+					"name": "inItemmasterZone"
+				},
+				{
+					"name": "RMDUPITEMS"
+				},
+				{
+					"name": "inItemsZone"
+				},
+				{
+					"name": "YLClearanceID1"
+				},
+				{
+					"name": "NLClearanceID1"
+				},
+				{
+					"name": "YLClearanceID2"
+				},
+				{
+					"name": "NLClearanceID2",
+					"description": "添加用于在源之间匹配数据的列\n"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA'),",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8')",
+				"}",
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTMKDRQ",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTMKDRQUHILV",
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(15,2),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFRejMKDRQ",
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(15,2),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFMKDRQRej",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSCurrency",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          BRD_DESC as string,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          DEPT_ID as integer,",
+				"          DEPT_DESC as string,",
+				"          CLS_ID as integer,",
+				"          CLS_DESC as string,",
+				"          SCLS_ID as integer,",
+				"          SCLS_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSBRD",
+				"YLClearanceID1 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loUnapprovedMDDummy1",
+				"YLClearanceID2 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loUnapprovedMDDummy2",
+				"NLClearanceID1 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejUnapprovedMD1",
+				"NLClearanceID2 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejUnapprovedMD2",
+				"IPTMKDRQUHILV, rejUnapprovedMD2 lookup(UNIV_HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBRDrejMKDRQ",
+				"IPTMKDRQUHILV, rejUnapprovedMD1 lookup(UNIV_HIER_LVL_SEQ_NBR_S == MDSE_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBRDMKDRQ",
+				"LBRDMKDRQ select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMKDRQ",
+				"LBRDrejMKDRQ select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lorejMKDRQ",
+				"XAddDesc derive(DESCRIPTION = 'Unapproved MD Record rejected by Oracle while updating in RPM Staging in job ldIPT12ERPMClrnceUpdate_PX') ~> xoMKDRQDesc",
+				"loMKDRQ filter((BRD_ID == $pBrandId || BRD_ID == 0) && CHNL_ID == $pChnlId && MKT_DIFF1_ID == $pMarketId) ~> XAddDesc",
+				"lorejMKDRQ filter((BRD_ID == $pBrandId || BRD_ID == 0) && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> XAddDesc2",
+				"XAddDesc2 derive(DESCRIPTION = 'Unapproved MD Record rejected by Oracle while updating the status back in IPT in job ldIPT12FRPMMKDRQUnApprUpdate_PX') ~> xorejMKDRQDesc",
+				"xoMKDRQDesc, xorejMKDRQDesc union(byName: true)~> fuAllMKDRQ",
+				"fuAllMKDRQ, DSBRD lookup(fuAllMKDRQ@BRD_ID == DSBRD@BRD_ID",
+				"     && fuAllMKDRQ@DIV_ID == DSBRD@DIV_ID",
+				"     && fuAllMKDRQ@DEPT_ID == DSBRD@DEPT_ID",
+				"     && fuAllMKDRQ@CLS_ID == DSBRD@CLS_ID",
+				"     && fuAllMKDRQ@SCLS_ID == DSBRD@SCLS_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LMerchDesc",
+				"LMerchDesc select(mapColumn(",
+				"          BRD_ID = fuAllMKDRQ@BRD_ID,",
+				"          BRD_DESC,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          DIV_ID = fuAllMKDRQ@DIV_ID,",
+				"          DIV_DESC,",
+				"          DEPT_ID = fuAllMKDRQ@DEPT_ID,",
+				"          DEPT_DESC,",
+				"          CLS_ID = fuAllMKDRQ@CLS_ID,",
+				"          CLS_DESC,",
+				"          SCLS_ID = fuAllMKDRQ@SCLS_ID,",
+				"          SCLS_DESC,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          MD_PRC_AMT,",
+				"          STRT_DT,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMerDesc",
+				"loMerDesc, DSCurrency lookup(loMerDesc@PRC_GRP_ZN_SEQ_NBR_S == DSCurrency@PRC_GRP_ZN_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCurrency",
+				"LCurrency select(mapColumn(",
+				"          BRD_ID,",
+				"          BRD_DESC,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          CLEARANCE_ID = MD_REQ_SEQ_NBR_S,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          DEPT_ID,",
+				"          DEPT_DESC,",
+				"          CLS_ID,",
+				"          CLS_DESC,",
+				"          SCLS_ID,",
+				"          SCLS_DESC,",
+				"          ITM_STY_NBR,",
+				"          DIFF_1_ID = MKT_DIFF1_ID,",
+				"          MD_PRC_AMT,",
+				"          STRT_DT,",
+				"          PRC_GRP_ZN_SEQ_NBR_S = loMerDesc@PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inItemmasterZone",
+				"inItemmasterZone aggregate(groupBy(ITM_STY_NBR,",
+				"          DIFF_1_ID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CLEARANCE_ID),",
+				"     each(match(!in(['ITM_STY_NBR','DIFF_1_ID','PRC_GRP_ZN_SEQ_NBR_S','CLEARANCE_ID'],name)), $$ = first($$))) ~> RMDUPITEMS",
+				"RMDUPITEMS select(mapColumn(",
+				"          BRD_ID,",
+				"          CLEARANCE_ID,",
+				"          BRD_DESC,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          DEPT_ID,",
+				"          DEPT_DESC,",
+				"          CLS_ID,",
+				"          CLS_DESC,",
+				"          SCLS_ID,",
+				"          SCLS_DESC,",
+				"          ITM_STY_NBR,",
+				"          DIFF_1_ID,",
+				"          MD_PRC_AMT,",
+				"          STRT_DT,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inItemsZone",
+				"FFMKDRQRej, IPTMKDRQ exists(FFMKDRQRej@MD_REQ_SEQ_NBR_S == IPTMKDRQ@MD_REQ_SEQ_NBR_S,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YLClearanceID1",
+				"FFMKDRQRej, IPTMKDRQ exists(FFMKDRQRej@MD_REQ_SEQ_NBR_S == IPTMKDRQ@MD_REQ_SEQ_NBR_S,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NLClearanceID1",
+				"FFRejMKDRQ, IPTMKDRQ exists(FFRejMKDRQ@MD_REQ_SEQ_NBR_S == IPTMKDRQ@MD_REQ_SEQ_NBR_S,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YLClearanceID2",
+				"FFRejMKDRQ, IPTMKDRQ exists(FFRejMKDRQ@MD_REQ_SEQ_NBR_S == IPTMKDRQ@MD_REQ_SEQ_NBR_S,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NLClearanceID2",
+				"loUnapprovedMDDummy1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT221RPMOutbound_UnApproved_MDRejects_FF_UnapprovedMDDummy1_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFUnapprovedMDDummy1",
+				"loUnapprovedMDDummy2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT221RPMOutbound_UnApproved_MDRejects_FF_UnapprovedMDDummy2_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFUnapprovedMDDummy2",
+				"inItemsZone sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT221RPMOutbound_UnApproved_MDRejects_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> APPMDErrorITEMS"
+			]
+		}
+	}
+}

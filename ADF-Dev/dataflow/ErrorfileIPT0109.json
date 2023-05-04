@@ -1,0 +1,125 @@
+{
+	"name": "ErrorfileIPT0109",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_USEAC_UNIV_USER_ACS_T_109",
+						"type": "DatasetReference"
+					},
+					"name": "USEACUNIVUSERACST"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT109DIVTUSEAC_UNIV_Load_PX_FF_RejUseac_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT109DIVTUSEAC_UNIV_Load_PX_FF_RejUseac_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUSEACRej"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Filter"
+				},
+				{
+					"name": "outMRHPG"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     BRD_ID as integer (toInteger(null())),",
+				"     MKT_ID as string (toString(null())),",
+				"     CHNL_ID as integer (toInteger(null())),",
+				"     DIV_ID as integer (toInteger(null())),",
+				"     ENTP_DIR_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     EML_ADDR_TXT as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          { MKT_ID} as string,",
+				"          { CHNL_ID} as integer,",
+				"          { DIV_ID} as integer,",
+				"          { ENTP_DIR_USER_ID} as string,",
+				"          { CRT_UPDT_USER_ID} as string,",
+				"          { CRT_UPDT_DTTM} as date,",
+				"          { LST_UPDT_USER_ID} as string,",
+				"          { LST_UPDT_DTTM} as date,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> USEACUNIVUSERACST",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          { MKT_ID} as string,",
+				"          { CHNL_ID} as integer,",
+				"          { DIV_ID} as integer,",
+				"          { ENTP_DIR_USER_ID} as string,",
+				"          { CRT_UPDT_USER_ID} as string,",
+				"          { CRT_UPDT_DTTM} as date,",
+				"          { LST_UPDT_USER_ID} as string,",
+				"          { LST_UPDT_DTTM} as date,",
+				"          EML_ADDR_TXT as string,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"USEACUNIVUSERACST filter((BRD_ID == $BRD_ID || isNull(BRD_ID)) && \r",
+				"({ MKT_ID} == $MKT_ID || isNull({ MKT_ID})) && \r",
+				"({ CHNL_ID} == $CHNL_ID || isNull({ CHNL_ID})) && \r",
+				"({ DIV_ID}  == $ DIV_ID || isNull({ DIV_ID})) && \r",
+				"({ ENTP_DIR_USER_ID} == $ ENTP_DIR_USER_ID || isNull({ ENTP_DIR_USER_ID})) && \r",
+				"({ CRT_UPDT_DTTM} == toDate($CRT_UPDT_DTTM) || isNull({ CRT_UPDT_DTTM})) && \r",
+				"({ CRT_UPDT_USER_ID} == $CRT_UPDT_USER_ID || isNull({ CRT_UPDT_USER_ID})) && \r",
+				"({ LST_UPDT_DTTM} == toDate($LST_UPDT_DTTM) || isNull({ LST_UPDT_DTTM})) && \r",
+				"({ LST_UPDT_USER_ID} == $LST_UPDT_USER_ID || isNull({ LST_UPDT_USER_ID})) && \r",
+				"(EML_ADDR_TXT == $EML_ADDR_TXT || isNull(EML_ADDR_TXT))) ~> Filter",
+				"Filter derive(DATE_TIME = currentDate()) ~> outMRHPG",
+				"outMRHPG, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          { MKT_ID} as string,",
+				"          { CHNL_ID} as string,",
+				"          { DIV_ID} as string,",
+				"          { ENTP_DIR_USER_ID} as string,",
+				"          { CRT_UPDT_USER_ID} as string,",
+				"          { CRT_UPDT_DTTM} as string,",
+				"          { LST_UPDT_USER_ID} as string,",
+				"          { LST_UPDT_DTTM} as string,",
+				"          EML_ADDR_TXT as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['IdIPT091DIVTZoneGrps_MRHPG_PX.FF_RejMRHPG.ASIA.txt'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFUSEACRej"
+			]
+		}
+	}
+}

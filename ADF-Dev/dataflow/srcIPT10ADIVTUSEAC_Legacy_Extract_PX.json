@@ -1,0 +1,81 @@
+{
+	"name": "srcIPT10ADIVTUSEAC_Legacy_Extract_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "IPT_UserSecurity_Legacy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPTUserSecLegacy"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT10ADIVTUSEAC_Legacy_Extract_PX_DS_Legacy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLegacy"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Xvalidation"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ENTP_USER_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFIPTUserSecLegacy",
+				"FFIPTUserSecLegacy derive(CORP_ID = right(concat('00', CORP_ID), 2)) ~> Xvalidation",
+				"Xvalidation select(mapColumn(",
+				"          CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          MDSE_DIV_ID,",
+				"          CHNL_ID,",
+				"          ENTP_DIR_USER_ID = ENTP_USER_ID,",
+				"          EML_ADDR_TXT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          CHNL_ID as string,",
+				"          ENTP_USER_ID as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT10ADIVTUSEAC_Legacy_Extract_PX.DS_Legacy.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSLegacy"
+			]
+		}
+	}
+}

@@ -1,0 +1,366 @@
+{
+	"name": "srcIPT123RPMClearanceExtract_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_MKDRQ_MD_REQ_T_123",
+						"type": "DatasetReference"
+					},
+					"name": "MKDRQMDREQT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_UHILV_UNIV_HIER_LVL_T_123",
+						"type": "DatasetReference"
+					},
+					"name": "UHILVUNIVHIERLVLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCseqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_UIACX_UNIV_INTR_APPL_XREF_T_123",
+						"type": "DatasetReference"
+					},
+					"name": "UIACXUNIVINTRAPPLXREFT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT123RPMClearanceExtract_PX_FF_BrdIdRejects",
+						"type": "DatasetReference"
+					},
+					"name": "FFBrdIdRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT125RPMClearanceTrnfrm_PX_FF_RMSStyDiff1Rejects",
+						"type": "DatasetReference"
+					},
+					"name": "FFRMSStyDiff1Rejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT123RPMClearanceExtract_PX_DS_MDReqRPMExtract",
+						"type": "DatasetReference"
+					},
+					"name": "DSMDReqRPMExtract"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LBrdId"
+				},
+				{
+					"name": "LBrdIdDerivedColumn"
+				},
+				{
+					"name": "LBrdIdSplit"
+				},
+				{
+					"name": "loBrdId"
+				},
+				{
+					"name": "rejBrdId"
+				},
+				{
+					"name": "LRMSStyDiff1"
+				},
+				{
+					"name": "LRMSStyDiff1Select1"
+				},
+				{
+					"name": "LRMSStyDiff1DerivedColumn"
+				},
+				{
+					"name": "LRMSStyDiff1split1"
+				},
+				{
+					"name": "rejRMSStyDiff1"
+				},
+				{
+					"name": "loRMSStyDiff1"
+				},
+				{
+					"name": "LUIACX"
+				},
+				{
+					"name": "LUIACXDerivedColumn"
+				},
+				{
+					"name": "LUIACXsplit1"
+				},
+				{
+					"name": "loUIACX"
+				},
+				{
+					"name": "rejBrand"
+				},
+				{
+					"name": "FBrandId"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as long,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> MKDRQMDREQT",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILVUNIVHIERLVLT",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCseqNbr",
+				"source(output(",
+				"          BRAND_ID as integer,",
+				"          INTR_APPL_BRD_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UIACXUNIVINTRAPPLXREFT",
+				"MKDRQMDREQT, UHILVUNIVHIERLVLT lookup(MDSE_HIER_LVL_SEQ_NBR_S == UNIV_HIER_LVL_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LBrdId",
+				"LBrdId derive(IsMatch = isMatch()) ~> LBrdIdDerivedColumn",
+				"LBrdIdDerivedColumn split(IsMatch==true(),",
+				"     disjoint: true) ~> LBrdIdSplit@(LBrdIdNotMatch, LBrdIdMatch1)",
+				"LBrdIdSplit@LBrdIdNotMatch select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loBrdId",
+				"LBrdIdSplit@LBrdIdMatch1 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejBrdId",
+				"loBrdId, DSGlobalCCseqNbr lookup(loBrdId@BRD_ID == DSGlobalCCseqNbr@BRD_ID",
+				"     && loBrdId@MKT_ID == DSGlobalCCseqNbr@MKT_ID",
+				"     && loBrdId@CHNL_ID == DSGlobalCCseqNbr@CHNL_ID",
+				"     && loBrdId@ITM_STY_CLR_SEQ_NBR_S == DSGlobalCCseqNbr@ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LRMSStyDiff1",
+				"LRMSStyDiff1 select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID = loBrdId@MKT_ID,",
+				"          CHNL_ID = loBrdId@CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID = loBrdId@BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S = loBrdId@ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S = loBrdId@ITM_STY_CLR_SEQ_NBR_S,",
+				"          BRD_ID = DSGlobalCCseqNbr@BRD_ID,",
+				"          MKT_ID = DSGlobalCCseqNbr@MKT_ID,",
+				"          CHNL_ID = DSGlobalCCseqNbr@CHNL_ID,",
+				"          ITM_STY_NBR,",
+				"          ITM_STY_CC_NBR,",
+				"          ITM_SKU_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          GLBL_ITM_STY_NBR,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          GLBL_SKU_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = DSGlobalCCseqNbr@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = DSGlobalCCseqNbr@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LRMSStyDiff1Select1",
+				"LRMSStyDiff1Select1 derive(IsMatch = isMatch()) ~> LRMSStyDiff1DerivedColumn",
+				"LRMSStyDiff1DerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LRMSStyDiff1split1@(LRMSStyDiff1Match, LRMSStyDiff1NotMatch)",
+				"LRMSStyDiff1split1@LRMSStyDiff1NotMatch select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejRMSStyDiff1",
+				"LRMSStyDiff1split1@LRMSStyDiff1Match select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loRMSStyDiff1",
+				"loRMSStyDiff1, UIACXUNIVINTRAPPLXREFT lookup(BRD_ID == INTR_APPL_BRD_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LUIACX",
+				"LUIACX derive(IsMatch = isMatch()) ~> LUIACXDerivedColumn",
+				"LUIACXDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LUIACXsplit1@(LUIACXMatch, LUIACXNotMatch)",
+				"LUIACXsplit1@LUIACXMatch select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loUIACX",
+				"LUIACXsplit1@LUIACXNotMatch select(mapColumn(",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          BRD_ID,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejBrand",
+				"loUIACX, rejBrand union(byName: true)~> FBrandId",
+				"rejBrdId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT123RPMClearanceExtract_PX.FF_BrdIdRejects.txt'],",
+				"     umask: 0677,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFBrdIdRejects",
+				"rejRMSStyDiff1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT125RPMClearanceTrnfrm_PX.FF_RMSStyDiff1Rejects.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRMSStyDiff1Rejects",
+				"FBrandId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT123RPMClearanceExtract_PX.DS_MDReqRPMExtract.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSMDReqRPMExtract"
+			]
+		}
+	}
+}

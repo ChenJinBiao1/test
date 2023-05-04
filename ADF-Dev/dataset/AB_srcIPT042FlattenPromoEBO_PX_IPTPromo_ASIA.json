@@ -1,0 +1,62 @@
+{
+	"name": "AB_srcIPT042FlattenPromoEBO_PX_IPTPromo_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('srcIPT042FlattenPromoEBO_PX.IPTPromo.',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "04currentpriceinbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PMOTN_REQ_ID_S",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_END_DT",
+				"type": "String"
+			},
+			{
+				"name": "EXTL_PMOTN_IND",
+				"type": "String"
+			},
+			{
+				"name": "EXTL_PRC_SYS_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,331 @@
+{
+	"name": "GetEmailFile_22DU",
+	"properties": {
+		"folder": {
+			"name": "Email_22DU_096"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT222_Approved_Promotions_Errored_In_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT222_UnApproved_Promotions_Errored_In_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT222_Approved_Markdown_Errored_In_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT222_UnApproved_Markdown_Errored_In_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_Approved_Promotions_Not_Published_To_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source5"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_UnApproved_Promotions_Not_Published_To_ORPOS",
+						"type": "DatasetReference"
+					},
+					"name": "source6"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_Approved_Markdown_Not_Published_To_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source7"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_UnApproved_Markdown_Not_Published_To_ORPOS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source8"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Promotions_Approved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source9"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Promotions_UnApproved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source10"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Markdown_Approved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source11"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Markdown_UnApproved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source12"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename1",
+					"description": "将数据导出到 SendEmailSource\nSendEmailSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename2"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename3"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename4"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename5"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename6"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename7"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename8"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename9"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename10"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename11"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_22DU",
+						"type": "DatasetReference"
+					},
+					"name": "Filename12"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source3",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source4",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source5",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source6",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source7",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source8",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source9",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source10",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source11",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source12",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT222_Approved_Promotions_Errored_In_RPM.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename1",
+				"source2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT222_UnApproved_Promotions_Errored_In_RPM.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename2",
+				"source3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT222_Approved_Markdown_Errored_In_RPM.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename3",
+				"source4 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT222_UnApproved_Markdown_Errored_In_RPM.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename4",
+				"source5 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT224_Approved_Promotions_Not_Published_To_ORPOS.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename5",
+				"source6 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT224_UnApproved_Promotions_Not_Published_To_ORPOS.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename6",
+				"source7 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT224_Approved_Markdown_Not_Published_To_ORPOS.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename7",
+				"source8 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPT224_UnApproved_Markdown_Not_Published_To_ORPOS.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename8",
+				"source9 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('Summary_Of_Promotions_Approved.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename9",
+				"source10 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('Summary_Of_Promotions_UnApproved.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename10",
+				"source11 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('Summary_Of_Markdown_Approved.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename11",
+				"source12 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('Summary_Of_Markdown_UnApproved.csv')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Filename12"
+			]
+		}
+	}
+}

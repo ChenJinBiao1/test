@@ -1,0 +1,123 @@
+{
+	"name": "srcIPT101DIVTPromo_TPRML_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_PriceLadder_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPTPriceLadder"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT101DIVTPromo_TPRML_PX_DS_TPRML_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSTPRML"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XValidation"
+				},
+				{
+					"name": "xoTPRML"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          {Brand ID} as integer,",
+				"          {Market ID} as string,",
+				"          Channel as integer,",
+				"          {Zone Name} as string,",
+				"          Division as string,",
+				"          {Ladder Name} as string,",
+				"          {Ladder Type} as string,",
+				"          {% Off} as string,",
+				"          {Amount Off} as string,",
+				"          {Net Price} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFIPTPriceLadder",
+				"select2 derive(CHNL_ID = iif(isNull(CHNL_ID), 0, CHNL_ID),",
+				"          DIV_ID = iif(isNull(DIV_ID), 0, toInteger(DIV_ID)),",
+				"          PCT_OFF = iif(isNull(PCT_OFF), 0, toInteger(PCT_OFF)),",
+				"          AMT_OFF = iif(isNull(AMT_OFF), 0, toInteger(AMT_OFF)),",
+				"          NET_PRICE = iif(isNull(NET_PRICE), 0, toInteger(NET_PRICE))) ~> XValidation",
+				"XValidation cast(output(",
+				"          PCT_OFF as decimal(10,0),",
+				"          AMT_OFF as decimal(10,0),",
+				"          NET_PRICE as decimal(10,0)",
+				"     ),",
+				"     errors: true) ~> xoTPRML",
+				"xoTPRML select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME = LADR_Name,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"FFIPTPriceLadder select(mapColumn(",
+				"          BRD_ID = {Brand ID},",
+				"          MKT_ID = {Market ID},",
+				"          CHNL_ID = Channel,",
+				"          ZONE_NAME = {Zone Name},",
+				"          DIV_ID = Division,",
+				"          LADR_Name = {Ladder Name},",
+				"          LADR_TYPE = {Ladder Type},",
+				"          PCT_OFF = {% Off},",
+				"          AMT_OFF = {Amount Off},",
+				"          NET_PRICE = {Net Price}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          ZONE_NAME as string,",
+				"          DIV_ID as string,",
+				"          LADR_Name as string,",
+				"          LADR_TYPE as string,",
+				"          PCT_OFF as string,",
+				"          AMT_OFF as string,",
+				"          NET_PRICE as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT101DIVTPromo_TPRML_PX.DS_TPRML.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSTPRML"
+			]
+		}
+	}
+}

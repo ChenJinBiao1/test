@@ -1,0 +1,111 @@
+{
+	"name": "srcIPT043FlattenDeletePriceEBO_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "XI_IPTPriceDelete",
+						"type": "DatasetReference"
+					},
+					"name": "XIIPTPriceDelete"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT043FlattenDeletePriceEBO_PX_IPTDeletePrice_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSIPTDeletePrice"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_FF_ESBPriceDelete",
+						"type": "DatasetReference"
+					},
+					"name": "FFESBPriceDelete"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xoIPTPriceDelete"
+				},
+				{
+					"name": "xoIPTPriceDelete2"
+				},
+				{
+					"name": "coDeletESBPriceInfo"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          LocationNbr as string,",
+				"          LocationTypeCode as string,",
+				"          PriceChgStatusCode as string,",
+				"          ItemSKUID as string,",
+				"          PriceChgId as string,",
+				"          ItemStyleId as string,",
+				"          ColorDiffID as string,",
+				"          Timestamp as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> XIIPTPriceDelete",
+				"XIIPTPriceDelete select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID = PriceChgId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoIPTPriceDelete",
+				"xoIPTPriceDelete derive(LST_UPDT_USER_ID = 'PIPT041U',",
+				"          LST_UPDT_DTTM = currentDate()) ~> xoIPTPriceDelete2",
+				"XIIPTPriceDelete select(mapColumn(",
+				"          LocationNbr,",
+				"          LocationTypeCode,",
+				"          PriceChgStatusCode,",
+				"          ItemSKUID,",
+				"          PriceChgId,",
+				"          ItemStyleId,",
+				"          ColorDiffID,",
+				"          Timestamp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> coDeletESBPriceInfo",
+				"xoIPTPriceDelete2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LocationNbr as string,",
+				"          ItemSKUID as string,",
+				"          PRC_CHG_ID as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT043FlattenDeletePriceEBO_PX.IPTDeletePrice.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSIPTDeletePrice",
+				"coDeletESBPriceInfo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('FF_ESBPriceDelete.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFESBPriceDelete"
+			]
+		}
+	}
+}

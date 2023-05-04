@@ -1,0 +1,338 @@
+{
+	"name": "srcIPT091DIVTZoneGrps_Validate_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Validate_PX_DS_RejectedZones_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSRejectedZones"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter9"
+				},
+				{
+					"name": "AddERROR"
+				},
+				{
+					"name": "AGGZoneName"
+				},
+				{
+					"name": "FIZones"
+				},
+				{
+					"name": "RemoveCount"
+				},
+				{
+					"name": "Count"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "filter3"
+				},
+				{
+					"name": "filter4"
+				},
+				{
+					"name": "filter5"
+				},
+				{
+					"name": "filter6"
+				},
+				{
+					"name": "filter7"
+				},
+				{
+					"name": "filter8"
+				},
+				{
+					"name": "union1"
+				},
+				{
+					"name": "Add8"
+				},
+				{
+					"name": "Add7"
+				},
+				{
+					"name": "Add6"
+				},
+				{
+					"name": "Add5"
+				},
+				{
+					"name": "Add4"
+				},
+				{
+					"name": "Add3"
+				},
+				{
+					"name": "Add2"
+				},
+				{
+					"name": "Add1"
+				},
+				{
+					"name": "Add9"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select3"
+				},
+				{
+					"name": "select4"
+				},
+				{
+					"name": "select5"
+				},
+				{
+					"name": "select6"
+				},
+				{
+					"name": "select7"
+				},
+				{
+					"name": "select8"
+				},
+				{
+					"name": "select9"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZoneGroups",
+				"DSZoneGroups filter(trim(CSTM9) != '') ~> filter9",
+				"union1 derive(ERROR = 'A Zone Name cannot cannot cross currencies') ~> AddERROR",
+				"AddERROR aggregate(groupBy(Zones,",
+				"          CNCY_CD),",
+				"     Count = count(),",
+				"          each(match(!in(['Zones','CNCY_CD'],name)), $$ = first($$))) ~> AGGZoneName",
+				"Count filter(Count>1) ~> FIZones",
+				"FIZones select(mapColumn(",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RemoveCount",
+				"AGGZoneName aggregate(groupBy(Zones),",
+				"     Count = count()) ~> Count",
+				"DSZoneGroups filter(trim(CSTM1) != '') ~> filter1",
+				"DSZoneGroups filter(trim(CSTM2) != '') ~> filter2",
+				"DSZoneGroups filter(trim(CSTM3) != '') ~> filter3",
+				"DSZoneGroups filter(trim(CSTM4) != '') ~> filter4",
+				"DSZoneGroups filter(trim(CSTM5) != '') ~> filter5",
+				"DSZoneGroups filter(trim(CSTM6) != '') ~> filter6",
+				"DSZoneGroups filter(trim(CSTM7) != '') ~> filter7",
+				"DSZoneGroups filter(trim(CSTM8) != '') ~> filter8",
+				"select9, select1, select2, select3, select4, select5, select6, select7, select8 union(byName: true)~> union1",
+				"filter8 derive(Zones = upper(CSTM8)) ~> Add8",
+				"filter7 derive(Zones = upper(CSTM7)) ~> Add7",
+				"filter6 derive(Zones = upper(CSTM6)) ~> Add6",
+				"filter5 derive(Zones = upper(CSTM5)) ~> Add5",
+				"filter4 derive(Zones = upper(CSTM4)) ~> Add4",
+				"filter3 derive(Zones = upper(CSTM3)) ~> Add3",
+				"filter2 derive(Zones = upper(CSTM2)) ~> Add2",
+				"filter1 derive(Zones = upper(CSTM1)) ~> Add1",
+				"filter9 derive(Zones = upper(CSTM9)) ~> Add9",
+				"Add1 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"Add2 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"Add3 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select3",
+				"Add4 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select4",
+				"Add5 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select5",
+				"Add6 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select6",
+				"Add7 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select7",
+				"Add8 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select8",
+				"Add9 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          {Like Store},",
+				"          Zones",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select9",
+				"RemoveCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Zones as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT091DIVTZoneGrps_Validate_PX.DS_RejectedZones.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSRejectedZones"
+			]
+		}
+	}
+}

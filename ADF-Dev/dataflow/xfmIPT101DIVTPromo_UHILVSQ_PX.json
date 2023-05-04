@@ -1,0 +1,591 @@
+{
+	"name": "xfmIPT101DIVTPromo_UHILVSQ_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT101DIVTPromo_TPRML_PX_DS_TPRML_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSTPRML"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_UHILV_UNIV_HIER_LVL_T_101_1",
+						"type": "DatasetReference"
+					},
+					"name": "UHILV1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_UHILV_UNIV_HIER_LVL_T_101_2",
+						"type": "DatasetReference"
+					},
+					"name": "UHILV2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TCDX_MH_CO_DIV_XRF_01",
+						"type": "DatasetReference"
+					},
+					"name": "DB2TCDX1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TCDX_MH_CO_DIV_XRF_02",
+						"type": "DatasetReference"
+					},
+					"name": "DB2TCDX2"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LHILV_LGCY_HIER_LVL_T_01",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLHILV01"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LHILV_LGCY_HIER_LVL_T_02",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLHILV02"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_UHILVSQ_PX_Rejects1_Corp_Co_Id_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "Rejects1CorpCoId"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_UHILVSQ_PX_Rejects_Corp_Co_Id_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "RejectsCorpCoId"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_UHILVSQ_PX_DS_LVL_SEQ_NO_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLVLSEQNO"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xBrandDiv"
+				},
+				{
+					"name": "xoLBrandDiv"
+				},
+				{
+					"name": "LBrandDiv"
+				},
+				{
+					"name": "xoLBrand"
+				},
+				{
+					"name": "LBrand"
+				},
+				{
+					"name": "FLVLSLQNO"
+				},
+				{
+					"name": "LCorpCo"
+				},
+				{
+					"name": "loCorpCo"
+				},
+				{
+					"name": "LLHILV"
+				},
+				{
+					"name": "rej1CorpCoid"
+				},
+				{
+					"name": "LCorp"
+				},
+				{
+					"name": "LoCorp"
+				},
+				{
+					"name": "LLHILV1"
+				},
+				{
+					"name": "rejCorpCoid"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "split4"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "split5"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "select5"
+				},
+				{
+					"name": "select6"
+				},
+				{
+					"name": "select7"
+				},
+				{
+					"name": "split6"
+				},
+				{
+					"name": "select8"
+				},
+				{
+					"name": "select9"
+				},
+				{
+					"name": "select10"
+				},
+				{
+					"name": "select11"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ZONE_NAME as string,",
+				"          DIV_ID as integer,",
+				"          LADR_NAME as string,",
+				"          LADR_TYPE as string,",
+				"          PCT_OFF as decimal(10,0),",
+				"          AMT_OFF as decimal(10,0),",
+				"          NET_PRICE as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSTPRML",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILV1",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILV2",
+				"source(output(",
+				"          DIVISION as integer,",
+				"          CORP_ID as string,",
+				"          CO_ID as string,",
+				"          BRD_XREF_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DB2TCDX1",
+				"source(output(",
+				"          CORP_ID as string,",
+				"          CO_ID as string,",
+				"          BRD_XREF_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DB2TCDX2",
+				"source(output(",
+				"          LGCY_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          { MDSE_CO_ID} as string,",
+				"          { MDSE_DIV_ID} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLHILV01",
+				"source(output(",
+				"          LGCY_HIER_LVL_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          { MDSE_CO_ID} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLHILV02",
+				"DSTPRML derive(CORP_ID = '',",
+				"          MDSE_CO_ID = '') ~> xBrandDiv",
+				"xBrandDiv, UHILV1 lookup(DSTPRML@BRD_ID == UHILV1@BRD_ID",
+				"     && DSTPRML@DIV_ID == UHILV1@DIV_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> xoLBrandDiv",
+				"split2@Yes2 select(mapColumn(",
+				"          BRD_ID = split2@Yes2@BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LBrandDiv",
+				"xBrandDiv, UHILV2 lookup(DSTPRML@BRD_ID == UHILV2@BRD_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> xoLBrand",
+				"split1@Yes select(mapColumn(",
+				"          BRD_ID = split1@Yes@BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LBrand",
+				"LBrandDiv, LBrand, select8, select7 union(byName: true)~> FLVLSLQNO",
+				"select10, DB2TCDX1 lookup(DIV_ID == DIVISION",
+				"     && BRD_ID == BRD_XREF_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCorpCo",
+				"split5@Yes5 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          CORP_ID,",
+				"          CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loCorpCo",
+				"loCorpCo, IPTLHILV01 lookup(loCorpCo@CORP_ID == IPTLHILV01@CORP_ID",
+				"     && CO_ID == { MDSE_CO_ID}",
+				"     && toString(DIV_ID) == { MDSE_DIV_ID},",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LLHILV",
+				"select5 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_Name = LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID = { MDSE_CO_ID}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rej1CorpCoid",
+				"select9, DB2TCDX2 lookup(BRD_ID == BRD_XREF_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCorp",
+				"split3@Yes3 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          CORP_ID,",
+				"          CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LoCorp",
+				"LoCorp, IPTLHILV02 lookup(LoCorp@CORP_ID == IPTLHILV02@CORP_ID",
+				"     && CO_ID == { MDSE_CO_ID},",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LLHILV1",
+				"split4@No4 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = split4@No4@CORP_ID,",
+				"          MDSE_CO_ID = { MDSE_CO_ID}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejCorpCoid",
+				"FLVLSLQNO select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP = LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"xoLBrand derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"xoLBrandDiv derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"LCorp derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"select11 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes3)",
+				"LLHILV1 derive(IsMatch = isMatch()) ~> derivedColumn2",
+				"derivedColumn2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split4@(Yes4, No4)",
+				"LCorpCo derive(IsMatch = isMatch()) ~> derivedColumn3",
+				"select6 split(isMatch(),",
+				"     disjoint: false) ~> split5@(Yes5)",
+				"LLHILV derive(IsMatch = isMatch()) ~> derivedColumn4",
+				"split6@No6 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          CO_ID,",
+				"          LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = split6@No6@CORP_ID,",
+				"          { MDSE_CO_ID},",
+				"          MDSE_DIV_ID = { MDSE_DIV_ID},",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select5",
+				"derivedColumn3 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          MDSE_CO_ID,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          IsMatch,",
+				"          DIVISION,",
+				"          CORP_ID = DB2TCDX1@CORP_ID,",
+				"          CO_ID,",
+				"          BRD_XREF_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select6",
+				"split4@Yes4 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = split4@Yes4@CORP_ID,",
+				"          MDSE_CO_ID = { MDSE_CO_ID}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select7",
+				"derivedColumn4 split(IsMatch==true(),",
+				"     disjoint: false) ~> split6@(Yes6, No6)",
+				"split6@Yes6 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S = LGCY_HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = split6@Yes6@CORP_ID,",
+				"          MDSE_CO_ID = { MDSE_CO_ID}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select8",
+				"split1@No select(mapColumn(",
+				"          BRD_ID = split1@No@BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select9",
+				"split2@No2 select(mapColumn(",
+				"          BRD_ID = split2@No2@BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID = split2@No2@DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          DIV_ID = split2@No2@DIV_ID,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select10",
+				"derivedColumn1 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          DIV_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYPE,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          MDSE_CO_ID,",
+				"          UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          IsMatch,",
+				"          CORP_ID = DB2TCDX2@CORP_ID,",
+				"          CO_ID,",
+				"          BRD_XREF_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select11",
+				"rej1CorpCoid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_UHILVSQ_PX.Rejects1_Corp_Co_Id.',$pInvocationId,'.txt')\r",
+				")],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Rejects1CorpCoId",
+				"rejCorpCoid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_UHILVSQ_PX.Rejects_Corp_Co_Id.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RejectsCorpCoId",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          ZONE_NAME as string,",
+				"          LADR_NAME as string,",
+				"          LADR_TYP as string,",
+				"          PCT_OFF as string,",
+				"          AMT_OFF as string,",
+				"          NET_PRICE as string,",
+				"          HIER_LVL_SEQ_NBR_S as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_UHILVSQ_PX.DS_LVL_SEQ_NO.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSLVLSEQNO"
+			]
+		}
+	}
+}

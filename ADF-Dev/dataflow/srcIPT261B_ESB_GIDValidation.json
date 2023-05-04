@@ -1,0 +1,151 @@
+{
+	"name": "srcIPT261B_ESB_GIDValidation",
+	"properties": {
+		"folder": {
+			"name": "26-ESBPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ESB_ENTERPRISE_AGGR_261_GSD",
+						"type": "DatasetReference"
+					},
+					"name": "ESBENTERPRISEAGGR"
+				},
+				{
+					"dataset": {
+						"referenceName": "LOCLT_261_GSD",
+						"type": "DatasetReference"
+					},
+					"name": "LOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "ESB_ENTERPRISE_STR_RTR_261_GSD",
+						"type": "DatasetReference"
+					},
+					"name": "ESBENTERPRISESTRRTR"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT261_ESB_GIDvalidations_match",
+						"type": "DatasetReference"
+					},
+					"name": "DSmatch"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT261_ESB_GIDvalidations_Count_mismatch",
+						"type": "DatasetReference"
+					},
+					"name": "FFrejectGID"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LLocNbr"
+				},
+				{
+					"name": "locount"
+				},
+				{
+					"name": "LtxnTypCd"
+				},
+				{
+					"name": "lotxnTypCd"
+				},
+				{
+					"name": "Aggcount"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Aggr_Count as integer,",
+				"          txn_typ_cd as string,",
+				"          str_nbr as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ESBENTERPRISEAGGR",
+				"source(output(",
+				"          LOC_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LOCLT",
+				"source(output(",
+				"          Count as integer,",
+				"          txn_typ_cd as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ESBENTERPRISESTRRTR",
+				"ESBENTERPRISEAGGR, LOCLT lookup(str_nbr == LOC_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LLocNbr",
+				"LLocNbr select(mapColumn(",
+				"          Aggr_Count,",
+				"          txn_typ_cd,",
+				"          str_nbr",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> locount",
+				"Aggcount, ESBENTERPRISESTRRTR lookup(upper(Aggcount@txn_typ_cd) == upper(ESBENTERPRISESTRRTR@txn_typ_cd),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LtxnTypCd",
+				"LtxnTypCd select(mapColumn(",
+				"          StrRtrCount = Count,",
+				"          ESBAggrCount = Aggr_Count,",
+				"          txn_typ_cd = Aggcount@txn_typ_cd",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lotxnTypCd",
+				"locount aggregate(groupBy(txn_typ_cd),",
+				"     Aggr_Count = count()) ~> Aggcount",
+				"lotxnTypCd split(ESBAggrCount == StrRtrCount && isNull(txn_typ_cd) == false(),",
+				"     disjoint: false) ~> split1@(xomatch, lorjctCount)",
+				"split1@xomatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT261_ESB_GIDvalidations_match'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSmatch",
+				"split1@lorjctCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_STRT_DT as string,",
+				"          PMOTN_END_DT as string,",
+				"          PROC_STAT_DESC as string,",
+				"          {DESCRIPTION } as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('IPT261_ESB_GIDvalidations_Count_mismatch'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFrejectGID"
+			]
+		}
+	}
+}

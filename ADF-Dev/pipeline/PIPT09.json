@@ -1,0 +1,408 @@
+{
+	"name": "PIPT09",
+	"properties": {
+		"activities": [
+			{
+				"name": "sqrIPT091DIVTZoneGrpsMRHPG",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT090U",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT091DIVTZoneGrpsMRHPG",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT092DIVTZoneGrosRPCGP",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT091DIVTZoneGrpsMRHPG",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT092DIVTZoneGrosRPCGP",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrlPT093DIVTZoneGrpsPRGPZ",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT092DIVTZoneGrosRPCGP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrlPT093DIVTZoneGrpsPRGPZ",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT095DIVTZoneGrpsPRGSL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT094DIVTZoneGrpsLOCLT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT095DIVTZoneGrpsPRGSL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrlPT096DIVTZoneGrpsISCLA",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrIPT095DIVTZoneGrpsPRGSL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrlPT096DIVTZoneGrpsISCLA",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "sqrIPT094DIVTZoneGrpsLOCLT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT093DIVTZoneGrpsPRGPZ",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "sqrIPT094DIVTZoneGrpsLOCLT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PIPT090U",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT090U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&scriptName=PIPT090U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT090U-20221207183604,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT090U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT097U",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT096DIVTZoneGrpsISCLA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT097U&&scriptPath=@{pipeline().globalParameters.Pro_para}&&scriptName=PIPT097U.sh&&params=IPAProd,IPAProdprj,ESP-PIPT097U-20221207183604,ASIA",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT097U",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "091",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT096DIVTZoneGrpsISCLA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "srcIPT091DIVTZoneGrps_Extr_PX.FF_RejDateOverlap.txt",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "SendEmailSource_096U",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "093",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "sqrlPT096DIVTZoneGrpsISCLA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "xfmIPT093DIVTZoneGrps_Zones_PX.FF_ZoneRejects.txt",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "SendEmailSource_096U",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "If Condition1",
+				"description": "091 AND 093 >0",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "091",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "093",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(greater(activity('091').output.count,0),greater(activity('093').output.count,0) )",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Fail1",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "next",
+								"errorCode": "100"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Send-Emial",
+							"description": "",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "customFactoryName",
+									"value": "''"
+								}
+							],
+							"typeProperties": {
+								"url": "https://prod-30.chinanorth2.logic.azure.cn:443/workflows/084bd64548654ac8a426586eff64370c/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=6qe9iFzJCTmzoKz4fqBIFRtPZVuov061dMJztE6ItW8",
+								"method": "POST",
+								"body": {
+									"value": "{\n    \"receiver\": \"chen.jinbiao@trans-cosmos.com.cn\",\n}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "If Condition2",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "If Condition1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(activity('091').output.count,0)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Send-Emial_copy1_copy1",
+							"description": "",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "customFactoryName",
+									"value": "''"
+								}
+							],
+							"typeProperties": {
+								"url": "https://prod-30.chinanorth2.logic.azure.cn:443/workflows/6041796e8e1f4f9aaff3ee37c5105a1b/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LOnEQFW0tLO-RFIqkyU1hTvx7vpYJ8LE3HNtRxcgCMg",
+								"method": "POST",
+								"body": {
+									"value": "{\n    \"receiver\": \"chen.jinbiao@trans-cosmos.com.cn\",\n}",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Send-Emial_copy1",
+							"description": "",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "customFactoryName",
+									"value": "''"
+								}
+							],
+							"typeProperties": {
+								"url": "https://prod-29.chinanorth2.logic.azure.cn:443/workflows/2f209281db184d27bac6ff3cfa4858a4/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kLG6gc-UabTaS1LVcuRfBol1WECs76WRsh16NieEtMY",
+								"method": "POST",
+								"body": {
+									"value": "{\n    \"receiver\": \"chen.jinbiao@trans-cosmos.com.cn\",\n}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-30T02:28:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,20 @@
+{
+	"name": "PRPLA_PMOTN_REQ_PMOTN_LVL_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "PRPLA_PMOTN_REQ_PMOTN_LVL_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

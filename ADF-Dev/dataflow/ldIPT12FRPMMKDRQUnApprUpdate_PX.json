@@ -1,0 +1,84 @@
+{
+	"name": "ldIPT12FRPMMKDRQUnApprUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT125RPMClearanceTrnfrm_PX_DS_UnApprMDReqRPMUpdate",
+						"type": "DatasetReference"
+					},
+					"name": "DSMDReqRPMExtract"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_MKDRQ_MD_REQ_T_12F_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "MKDRQMDREQT"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDMDReqRPM"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as long,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMDReqRPMExtract",
+				"DSMDReqRPMExtract aggregate(groupBy(MD_REQ_SEQ_NBR_S),",
+				"     each(match(!in(['MD_REQ_SEQ_NBR_S'],name)), $$ = first($$))) ~> RDMDReqRPM",
+				"RDMDReqRPM sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MD_REQ_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          STRT_DT as string,",
+				"          MD_PRC_AMT as string,",
+				"          RCMD_MD_PCT_OFF_RAT as string,",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as string,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as string",
+				"     ),",
+				"     partitionFileNames:['MKDRQ_MD_REQ_T_12F_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> MKDRQMDREQT"
+			]
+		}
+	}
+}

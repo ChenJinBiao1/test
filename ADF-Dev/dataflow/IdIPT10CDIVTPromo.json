@@ -1,0 +1,81 @@
+{
+	"name": "IdIPT10CDIVTPromo",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT10BDIVTUSEAC_Legacy_Trnfrm_PX_DS_USEAC_Legacy",
+						"type": "DatasetReference"
+					},
+					"name": "DSUSEACLegacy"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_LUSAS_LGCY_USER_ACS_T_10C",
+						"type": "DatasetReference"
+					},
+					"name": "LUSASLGCYUSERACST"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xiLegacy"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string ('PIPT091U'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          ENTP_DIR_USER_ID as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MKT_ID as integer,",
+				"          BRD_ID as integer,",
+				"          CHNL_ID as integer,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSUSEACLegacy",
+				"DSUSEACLegacy derive(EML_ADDR_TXT = concat(find(split(EML_ADDR_TXT,'@'),isNull(split(EML_ADDR_TXT,'@'))), '@gap.com'),",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> xiLegacy",
+				"xiLegacy sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ENTP_DIR_USER_ID as string,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MKT_ID as string,",
+				"          BRD_ID as string,",
+				"          CHNL_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          EML_ADDR_TXT as string",
+				"     ),",
+				"     partitionFileNames:['LUSAS_LGCY_USER_ACS_T_10C.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> LUSASLGCYUSERACST"
+			]
+		}
+	}
+}

@@ -1,0 +1,138 @@
+{
+	"name": "ldIPT016BCRItemsUHLIV_PX_FF_UpdRej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_IPTUHILVReclassUpdate_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "UHILVReclassUpdateTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_FF_UHILV_UpdRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUHILVUpdRej"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT016BCRItemsUHLIV_PX_FF_UHILV_UpdRej_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFUHILVUpdRej1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     UNIV_HIER_LVL_SEQ_NBR_S as integer (toInteger(null())),",
+				"     BRD_ID as integer (toInteger(null())),",
+				"     DIV_ID as integer (toInteger(null())),",
+				"     DEPT_ID as integer (toInteger(null())),",
+				"     CLS_ID as integer (toInteger(null())),",
+				"     SCLS_ID as integer (toInteger(null())),",
+				"     ITM_STY_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     MDSE_LVL_CD as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string",
+				"}",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILVReclassUpdateTemp",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFUHILVUpdRej",
+				"UHILVReclassUpdateTemp filter(UNIV_HIER_LVL_SEQ_NBR_S == $UNIV_HIER_LVL_SEQ_NBR_S || isNull(UNIV_HIER_LVL_SEQ_NBR_S)  && \r",
+				"BRD_ID == $BRD_ID || isNull(BRD_ID) && \r",
+				"DIV_ID == $DIV_ID || isNull(DIV_ID) && \r",
+				"DEPT_ID == $DEPT_ID || isNull(DEPT_ID) && \r",
+				"CLS_ID == $CLS_ID || isNull(CLS_ID) && \r",
+				"SCLS_ID ==$SCLS_ID || isNull(SCLS_ID) &&\r",
+				"ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S) && \r",
+				"ITM_STY_SEQ_NBR_S == $ITM_STY_SEQ_NBR_S || isNull(ITM_STY_SEQ_NBR_S) && \r",
+				"MDSE_LVL_CD == $MDSE_LVL_CD || isNull(MDSE_LVL_CD) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFUHILVUpdRej union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as string,",
+				"          CLS_ID as string,",
+				"          SCLS_ID as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT016BCRItemsUHLIV_PX.FF_UHILV_UpdRej.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFUHILVUpdRej1"
+			]
+		}
+	}
+}

@@ -1,0 +1,102 @@
+{
+	"name": "ldIPT092DIVTZoneGrps_PRCGP_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT092DIVTZoneGrps_PRCGP_PX_DS_PRCGPLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRCGPLoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRCGP_PRC_GRP_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRCGP"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XPRCGP"
+				},
+				{
+					"name": "xoPRCGP"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string (\"PIPT091U\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          PrcGrpDesc as string,",
+				"          PrcGrpId as integer,",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          MKT_CNCY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRCGPLoad",
+				"DSPRCGPLoad derive(CRT_UPDT_DTTM = currentDate(),",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          PRC_GRP_TYP_CD = iif(PrcGrpId == 1, 'CTRY', iif(PrcGrpId == 2, 'CNCY', 'CSTM')),",
+				"          PRC_GRP_ABBR_DESC = PrcGrpDesc) ~> XPRCGP",
+				"XPRCGP select(mapColumn(",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          PRC_GRP_ID = PrcGrpId,",
+				"          PRC_GRP_DESC = PrcGrpDesc,",
+				"          PRC_GRP_ABBR_DESC,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PRC_GRP_TYP_CD,",
+				"          MKT_CNCY_CD,",
+				"          MKT_ID,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          CHNL_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPRCGP",
+				"xoPRCGP sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          PRC_GRP_ID as string,",
+				"          PRC_GRP_DESC as string,",
+				"          PRC_GRP_ABBR_DESC as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          PRC_GRP_TYP_CD as string,",
+				"          MKT_CNCY_CD as string,",
+				"          MKT_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          CHNL_ID as string",
+				"     ),",
+				"     partitionFileNames:['IPTCGI_PRCGP_PRC_GRP_T_OUT.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTPRCGP"
+			]
+		}
+	}
+}

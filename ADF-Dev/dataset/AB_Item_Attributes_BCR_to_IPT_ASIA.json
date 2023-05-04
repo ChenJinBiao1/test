@@ -1,0 +1,77 @@
+{
+	"name": "AB_Item_Attributes_BCR_to_IPT_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTFile/18-ItemAttribute"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Item_Attributes_BCR_to_IPT_ASIA.txt",
+				"folderPath": "source",
+				"fileSystem": "18itemattribute"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OPR_BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "CTRY_CD",
+				"type": "String"
+			},
+			{
+				"name": "LCL_CNCY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "COMP_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_BRD_STY_ID",
+				"type": "String"
+			},
+			{
+				"name": "CLR_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CLR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "RTL_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "CTRY_WAC_CST_AMT",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

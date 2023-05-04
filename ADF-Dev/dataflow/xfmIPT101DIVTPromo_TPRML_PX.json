@@ -1,0 +1,568 @@
+{
+	"name": "xfmIPT101DIVTPromo_TPRML_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_UHILVSQ_PX_DS_LVL_SEQ_NO_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLVLSEQNO"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_PRC_GRP_SEQ_NBR_S",
+						"type": "DatasetReference"
+					},
+					"name": "UHILVPRCPGMRHPG"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LHILV_PRCGP_MRHPG",
+						"type": "DatasetReference"
+					},
+					"name": "LHILVPRCGPMRHPG"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_PRGPZ_PRC_GRP_ZN_T",
+						"type": "DatasetReference"
+					},
+					"name": "PRGPZPRCGRPZNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TLADT_LADR_TYP_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTLADT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TDISY_DSCT_TYP_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTDISY"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TPRML_PMOTN_LADR_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPRML"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_FF_Rej_Hier_Seq_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejHierSeq"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_FF_Rej_ZoneName",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejZoneName"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_DS_ALL_data_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSALLdata"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_DS_Distinct_LadrID_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDistinctLadrID"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT101DIVTPromo_TPRML_PX_DS_Reject_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSReject"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XCaseInsensitive"
+				},
+				{
+					"name": "LPrcGrpSeq"
+				},
+				{
+					"name": "LPrcGrpSeqOut"
+				},
+				{
+					"name": "lPrcGrpSeq1"
+				},
+				{
+					"name": "FPrcGrpSeq"
+				},
+				{
+					"name": "RejPrcGrpSeq"
+				},
+				{
+					"name": "RejPrcGrpSeq1"
+				},
+				{
+					"name": "loPrcGrpSeq1"
+				},
+				{
+					"name": "LPrcGrpZN"
+				},
+				{
+					"name": "LPrcGrpZNOut"
+				},
+				{
+					"name": "RejZoneName"
+				},
+				{
+					"name": "LLADRTYPCD"
+				},
+				{
+					"name": "loDSCTTYPCD"
+				},
+				{
+					"name": "LDSCTTYPCD"
+				},
+				{
+					"name": "loalldata"
+				},
+				{
+					"name": "RDinputdata"
+				},
+				{
+					"name": "rdoinputdata"
+				},
+				{
+					"name": "outladrid"
+				},
+				{
+					"name": "rejladrid"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "IsMatch3"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split5"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "split6"
+				},
+				{
+					"name": "Yexists1"
+				},
+				{
+					"name": "Nexists2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ZONE_NAME as string,",
+				"          LADR_NAME as string,",
+				"          LADR_TYP as string,",
+				"          PCT_OFF as decimal(15,2),",
+				"          AMT_OFF as decimal(15,2),",
+				"          NET_PRICE as decimal(15,2),",
+				"          HIER_LVL_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLVLSEQNO",
+				"source(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          BRD_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> UHILVPRCPGMRHPG",
+				"source(output(",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          CORP_ID as string,",
+				"          MDSE_CO_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LHILVPRCGPMRHPG",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> PRGPZPRCGRPZNT",
+				"source(output(",
+				"          LADR_TYP_CD as string,",
+				"          LADR_TYP_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTLADT",
+				"source(output(",
+				"          DSCT_TYP_CD as string,",
+				"          DSCT_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTDISY",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPRML",
+				"DSLVLSEQNO derive(ZONE_NAME = trim(ZONE_NAME),",
+				"          LADR_NAME = trim(LADR_NAME),",
+				"          LADR_TYP = trim(LADR_TYP)) ~> XCaseInsensitive",
+				"XCaseInsensitive, UHILVPRCPGMRHPG lookup(DSLVLSEQNO@MKT_ID == UHILVPRCPGMRHPG@MKT_ID",
+				"     && DSLVLSEQNO@CHNL_ID == UHILVPRCPGMRHPG@CHNL_ID",
+				"     && DSLVLSEQNO@BRD_ID == UHILVPRCPGMRHPG@BRD_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto',",
+				"     pickup: 'any')~> LPrcGrpSeq",
+				"split1@Yes select(mapColumn(",
+				"          MKT_ID = split1@Yes@MKT_ID,",
+				"          BRD_ID = split1@Yes@BRD_ID,",
+				"          CHNL_ID = split1@Yes@CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrcGrpSeqOut",
+				"RejPrcGrpSeq, LHILVPRCGPMRHPG lookup(RejPrcGrpSeq@MKT_ID == LHILVPRCGPMRHPG@MKT_ID",
+				"     && RejPrcGrpSeq@CHNL_ID == LHILVPRCGPMRHPG@CHNL_ID",
+				"     && RejPrcGrpSeq@CORP_ID == LHILVPRCGPMRHPG@CORP_ID",
+				"     && RejPrcGrpSeq@MDSE_CO_ID == LHILVPRCGPMRHPG@MDSE_CO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lPrcGrpSeq1",
+				"LPrcGrpSeqOut, loPrcGrpSeq1 union(byName: true)~> FPrcGrpSeq",
+				"split1@No select(mapColumn(",
+				"          BRD_ID = split1@No@BRD_ID,",
+				"          MKT_ID = split1@No@MKT_ID,",
+				"          CHNL_ID = split1@No@CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          MDSE_CO_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RejPrcGrpSeq",
+				"split2@No2 select(mapColumn(",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          CORP_ID = split2@No2@CORP_ID,",
+				"          MDSE_CO_ID = split2@No2@MDSE_CO_ID,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          CORP_ID = split2@No2@CORP_ID,",
+				"          MDSE_CO_ID = split2@No2@MDSE_CO_ID,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RejPrcGrpSeq1",
+				"split2@Yes2 select(mapColumn(",
+				"          MKT_ID = split2@Yes2@MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID = split2@Yes2@CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPrcGrpSeq1",
+				"FPrcGrpSeq, PRGPZPRCGRPZNT lookup(upper(ZONE_NAME) == upper(PRC_GRP_ZN_DESC)",
+				"     && FPrcGrpSeq@PRC_GRP_SEQ_NBR_S == PRGPZPRCGRPZNT@PRC_GRP_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPrcGrpZN",
+				"LPrcGrpZN select(mapColumn(",
+				"          MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_SEQ_NBR_S = PRGPZPRCGRPZNT@PRC_GRP_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LPrcGrpZNOut",
+				"split3@No3 select(mapColumn(",
+				"          MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> RejZoneName",
+				"select2, IPTTLADT lookup(upper(LADR_NAME) == upper(LADR_TYP_DESC),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LLADRTYPCD",
+				"split5@Yes5 select(mapColumn(",
+				"          MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LADR_TYP_CD",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loDSCTTYPCD",
+				"loDSCTTYPCD, IPTTDISY lookup(upper(LADR_TYP) == upper(DSCT_DESC),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LDSCTTYPCD",
+				"split6@Yes6 select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          CHNL_ID,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          LADR_TYP_CD,",
+				"          DSCT_TYP_CD,",
+				"          HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loalldata",
+				"loalldata aggregate(groupBy(HIER_LVL_SEQ_NBR_S,",
+				"          MKT_ID,",
+				"          CHNL_ID),",
+				"     each(match(!in(['HIER_LVL_SEQ_NBR_S','MKT_ID','CHNL_ID'],name)), $$ = first($$))) ~> RDinputdata",
+				"RDinputdata select(mapColumn(",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          MKT_ID,",
+				"          CHNL_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rdoinputdata",
+				"Yexists1 select(mapColumn(",
+				"          PMOTN_LADR_ID_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outladrid",
+				"Nexists2 select(mapColumn(",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          HIER_LVL_SEQ_NBR_S = MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejladrid",
+				"loalldata select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          LADR_TYP_CD,",
+				"          DSCT_TYP_CD,",
+				"          HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"LPrcGrpSeq derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"lPrcGrpSeq1 derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"LPrcGrpZNOut derive(IsMatch = isMatch()) ~> IsMatch3",
+				"IsMatch3 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes3, No3)",
+				"split3@Yes3 select(mapColumn(",
+				"          MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          ZONE_NAME,",
+				"          LADR_NAME,",
+				"          LADR_TYP,",
+				"          PCT_OFF,",
+				"          AMT_OFF,",
+				"          NET_PRICE,",
+				"          HIER_LVL_SEQ_NBR_S,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"LLADRTYPCD derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(IsMatch==true(),",
+				"     disjoint: false) ~> split5@(Yes5)",
+				"LDSCTTYPCD derive(IsMatch = isMatch()) ~> derivedColumn2",
+				"derivedColumn2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split6@(Yes6)",
+				"IPTTPRML, rdoinputdata exists(MDSE_HIER_LVL_SEQ_NBR_S == HIER_LVL_SEQ_NBR_S",
+				"     && IPTTPRML@MKT_ID == rdoinputdata@MKT_ID",
+				"     && IPTTPRML@CHNL_ID == rdoinputdata@CHNL_ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> Yexists1",
+				"IPTTPRML, rdoinputdata exists(MDSE_HIER_LVL_SEQ_NBR_S == HIER_LVL_SEQ_NBR_S",
+				"     && IPTTPRML@MKT_ID == rdoinputdata@MKT_ID",
+				"     && IPTTPRML@CHNL_ID == rdoinputdata@CHNL_ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> Nexists2",
+				"RejPrcGrpSeq1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.FF_Rej_Hier_Seq.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejHierSeq",
+				"RejZoneName sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.FF_Rej_ZoneName.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejZoneName",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MKT_ID as string,",
+				"          BRD_ID as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          CHNL_ID as string,",
+				"          LADR_NAME as string,",
+				"          LADR_TYP as string,",
+				"          PCT_OFF as string,",
+				"          AMT_OFF as string,",
+				"          NET_PRICE as string,",
+				"          HIER_LVL_SEQ_NBR_S as string,",
+				"          LADR_TYP_CD as string,",
+				"          DSCT_TYP_CD as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.DS_ALL_data.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSALLdata",
+				"outladrid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.DS_Distinct_LadrID.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSDistinctLadrID",
+				"rejladrid sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT101DIVTPromo_TPRML_PX.DS_Reject.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSReject"
+			]
+		}
+	}
+}

@@ -1,0 +1,516 @@
+{
+	"name": "Out Files_EDW_1",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetTime1",
+				"description": "yyyy-mm-dd",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "NowDayone",
+					"value": {
+						"value": "@split(startOfDay(utcnow()),'T')[0]",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get LAstDate",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetTime1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "lastdate",
+					"value": {
+						"value": "@startOfDay(utcnow())",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Date",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Get LAstDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Source_EDW",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "FtpReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false,
+						"useBinaryTransfer": true,
+						"disableChunking": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Date').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get name1",
+							"description": "name[0]",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "If Condition1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "name1",
+								"value": {
+									"value": "@split(item().name,'_')[0]",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Get name2",
+							"description": "name[1]",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "If Condition1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "name2",
+								"value": {
+									"value": "@split(item().name,'_')[1]",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Get Metadata1",
+							"type": "GetMetadata",
+							"dependsOn": [
+								{
+									"activity": "Get name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "Source_EDW_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"lastModified"
+								],
+								"storeSettings": {
+									"type": "FtpReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false,
+									"useBinaryTransfer": true,
+									"disableChunking": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Set variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(variables('compare'),variables('NowDayone') )",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Fail1",
+										"type": "Fail",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"message": "111",
+											"errorCode": "500"
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Success",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "name",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Metadata1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "compare",
+								"value": {
+									"value": "@split(startOfDay(activity('Get Metadata1').output.lastModified),'T')[0]",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "true",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Get name1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Get name2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@and(equals(concat(variables('name1'),'_',variables('name2')),pipeline().parameters.location),greater(activity('Get Metadata1').output.lastModified,variables('lastdate')))",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Fail2",
+										"type": "Fail",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"message": "1",
+											"errorCode": "1"
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "LastTime",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "lastdate",
+											"value": {
+												"value": "@activity('Get Metadata1').output.lastModified",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "OutPutName",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "LastTime",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "OutPutName",
+											"value": {
+												"value": "@variables('name')",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Lookup",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "FtpReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false,
+							"useBinaryTransfer": true,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Source_EDW_File",
+						"type": "DatasetReference",
+						"parameters": {
+							"Filename": {
+								"value": "@variables('OutPutName')",
+								"type": "Expression"
+							}
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Check File",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "NEXT OR FAIL",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@or(equals(item().Prop_0, 'complete'),equals(item().Prop_0, 'Complete') )",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Fail",
+										"type": "Fail",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"message": {
+												"value": "文件为空",
+												"type": "Expression"
+											},
+											"errorCode": {
+												"value": "500",
+												"type": "Expression"
+											}
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Next",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "Lookup",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 300
+				}
+			},
+			{
+				"name": "Fail3",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Wait1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": "123",
+					"errorCode": "123"
+				}
+			}
+		],
+		"parameters": {
+			"location": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"name": {
+				"type": "String"
+			},
+			"NowDayone": {
+				"type": "String"
+			},
+			"name1": {
+				"type": "String"
+			},
+			"name2": {
+				"type": "String"
+			},
+			"lastdate": {
+				"type": "String"
+			},
+			"compare": {
+				"type": "String"
+			},
+			"OutPutName": {
+				"type": "String"
+			},
+			"state": {
+				"type": "String",
+				"defaultValue": "‘0’"
+			}
+		},
+		"folder": {
+			"name": "ALL/external"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-02-21T07:19:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,21 @@
+{
+	"name": "EDW",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FtpServer",
+		"typeProperties": {
+			"host": "10.58.8.38",
+			"port": 21,
+			"enableSsl": false,
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Basic",
+			"userName": "cnadfin1",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIwMzFkZTY3ZC1kMTQyLTQ3MTEtYmUyZC03MDY0NjlhYjlmOWIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

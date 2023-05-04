@@ -1,0 +1,20 @@
+{
+	"name": "IPTGIC_PRGSL_PRC_GRP_ZN_STR_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "PRGSL_PRC_GRP_ZN_STR_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

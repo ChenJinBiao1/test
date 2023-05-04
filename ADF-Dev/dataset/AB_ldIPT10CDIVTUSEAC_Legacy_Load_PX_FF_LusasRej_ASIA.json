@@ -1,0 +1,81 @@
+{
+	"name": "AB_ldIPT10CDIVTUSEAC_Legacy_Load_PX_FF_LusasRej_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ldIPT10CDIVTUSEAC_Legacy_Load_PX.FF_LusasRej.ASIA.txt",
+				"folderPath": "error",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ENTP_DIR_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CO_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_DIV_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "EML_ADDR_TXT",
+				"type": "String"
+			},
+			{
+				"name": "DATE_TIME",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

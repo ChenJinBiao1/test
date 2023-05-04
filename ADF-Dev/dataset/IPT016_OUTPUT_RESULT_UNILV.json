@@ -1,0 +1,20 @@
+{
+	"name": "IPT016_OUTPUT_RESULT_UNILV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "IPT016_OUTPUT_RESULT_UNILV"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

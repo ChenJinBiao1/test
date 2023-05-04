@@ -1,0 +1,269 @@
+{
+	"name": "xfmIPT045DeletePriceTrnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_IPTEGI_LOCLT_LOC_LIST_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPALOCLTLOCLISTT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTEGI_IPTEGI_LOCLT_LOC_LIST_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPELOCLTLOCLISTT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT043FlattenDeletePriceEBO_PX_IPTDeletePrice_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSIPTDeletePrice"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_GlobalCC_seqNbr_EU_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCCSeqNbr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045DeletePriceTrnfrm_FF_MktIdRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFMktIdRejects"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045DeletePriceTrnfrm_FF_GlblSeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFGlblSeqNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045DeletePriceTrnfrm_PX_DS_DltPrcTrnfrm_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDltPrcTrnfrm"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FLOCLT"
+				},
+				{
+					"name": "LLocNbr"
+				},
+				{
+					"name": "loLocNbr"
+				},
+				{
+					"name": "rejMktId"
+				},
+				{
+					"name": "LGlblSeqNbr"
+				},
+				{
+					"name": "rejGlblSeqNbr"
+				},
+				{
+					"name": "loCCSeqNbr"
+				},
+				{
+					"name": "RDSeqNbr"
+				},
+				{
+					"name": "roDeletePrice"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          MKT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPALOCLTLOCLISTT",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          MKT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPELOCLTLOCLISTT",
+				"source(output(",
+				"          LocationNbr as integer,",
+				"          ItemSKUID as string,",
+				"          PRC_CHG_ID as integer,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSIPTDeletePrice",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCCSeqNbr",
+				"IPALOCLTLOCLISTT, IPELOCLTLOCLISTT union(byName: true)~> FLOCLT",
+				"DSIPTDeletePrice, FLOCLT lookup(LocationNbr == LOC_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LLocNbr",
+				"split1@Yes select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loLocNbr",
+				"split1@No select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejMktId",
+				"loLocNbr, DSGlobalCCSeqNbr lookup(toString(loLocNbr@MKT_ID) == DSGlobalCCSeqNbr@MKT_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LGlblSeqNbr",
+				"split2@No2 select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejGlblSeqNbr",
+				"split2@Yes2 select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loCCSeqNbr",
+				"loCCSeqNbr aggregate(groupBy(GLBL_ITM_STY_CC_NBR,",
+				"          LocationNbr),",
+				"     each(match(!in(['GLBL_ITM_STY_CC_NBR','LocationNbr'],name)), $$ = last($$))) ~> RDSeqNbr",
+				"RDSeqNbr select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LocationNbr,",
+				"          PRC_CHG_ID,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> roDeletePrice",
+				"LLocNbr derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(isMatch(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"select1 derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(isMatch(),",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"LGlblSeqNbr select(mapColumn(",
+				"          LocationNbr,",
+				"          ItemSKUID,",
+				"          PRC_CHG_ID,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          MKT_ID = loLocNbr@MKT_ID,",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_NBR,",
+				"          ITM_STY_CC_NBR,",
+				"          ITM_SKU_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          GLBL_ITM_STY_NBR,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          GLBL_SKU_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"rejMktId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045DeletePriceTrnfrm.FF_MktIdRejects.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFMktIdRejects",
+				"rejGlblSeqNbr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045DeletePriceTrnfrm.FF_GlblSeqNbr.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFGlblSeqNbr",
+				"roDeletePrice sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045DeletePriceTrnfrm_PX.DS_DltPrcTrnfrm.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSDltPrcTrnfrm"
+			]
+		}
+	}
+}

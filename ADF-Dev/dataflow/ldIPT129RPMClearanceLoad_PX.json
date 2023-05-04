@@ -1,0 +1,131 @@
+{
+	"name": "ldIPT129RPMClearanceLoad_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT125RPMClearanceTrnfrm_PX_DS_MDReqRPMLoad",
+						"type": "DatasetReference"
+					},
+					"name": "DSMDReqRPMLoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_STAGE_CLEARANCE_129_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "RPMSTAGECLEARANCE"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XRPMClearanceLoad"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MD_REQ_SEQ_NBR_S as long,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(10,0),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(10,0),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMDReqRPMLoad",
+				"DSMDReqRPMLoad derive(REASON_CODE = 2,",
+				"          ITEM = ITM_STY_NBR,",
+				"          DIFF_ID = MKT_DIFF1_ID,",
+				"          ZONE_ID = toInteger(null()),",
+				"          LOCATION = STR_NBR,",
+				"          ZONE_NODE_TYPE = iif(length(toString(STR_NBR)) < 5, 0, 2),",
+				"          EFFECTIVE_DATE = STRT_DT,",
+				"          OUT_OF_STOCK_DATE = toTimestamp(null()),",
+				"          RESET_DATE = toTimestamp(null()),",
+				"          CHANGE_TYPE = 2,",
+				"          CHANGE_AMOUNT = MD_PRC_AMT,",
+				"          CHANGE_PERCENT = toDecimal(null()),",
+				"          PRICE_GUIDE_ID = toInteger(null()),",
+				"          AUTO_APPROVE_IND = 1,",
+				"          STATUS = 'N',",
+				"          ERROR_MESSAGE = toString(null()),",
+				"          PROCESS_ID = toInteger(null()),",
+				"          CLEARANCE_ID = MD_REQ_SEQ_NBR_S,",
+				"          CLEARANCE_DISPLAY_ID = toString(null())) ~> XRPMClearanceLoad",
+				"XRPMClearanceLoad select(mapColumn(",
+				"          REASON_CODE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          LOCATION,",
+				"          ZONE_NODE_TYPE,",
+				"          EFFECTIVE_DATE,",
+				"          OUT_OF_STOCK_DATE,",
+				"          RESET_DATE,",
+				"          CHANGE_TYPE,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_PERCENT,",
+				"          PRICE_GUIDE_ID,",
+				"          AUTO_APPROVE_IND,",
+				"          STATUS,",
+				"          ERROR_MESSAGE,",
+				"          PROCESS_ID,",
+				"          CLEARANCE_ID,",
+				"          CLEARANCE_DISPLAY_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          REASON_CODE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as string,",
+				"          LOCATION as string,",
+				"          ZONE_NODE_TYPE as string,",
+				"          EFFECTIVE_DATE as string,",
+				"          OUT_OF_STOCK_DATE as string,",
+				"          RESET_DATE as string,",
+				"          CHANGE_TYPE as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CHANGE_PERCENT as string,",
+				"          PRICE_GUIDE_ID as string,",
+				"          AUTO_APPROVE_IND as string,",
+				"          STATUS as string,",
+				"          ERROR_MESSAGE as string,",
+				"          PROCESS_ID as string,",
+				"          CLEARANCE_ID as string,",
+				"          CLEARANCE_DISPLAY_ID as string",
+				"     ),",
+				"     partitionFileNames:['RPM_STAGE_CLEARANCE_129_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RPMSTAGECLEARANCE"
+			]
+		}
+	}
+}

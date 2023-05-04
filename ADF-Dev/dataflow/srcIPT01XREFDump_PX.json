@@ -1,0 +1,149 @@
+{
+	"name": "srcIPT01XREFDump_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_GSCCX_GLBL_MKT_STY_CLR_XREF_T_DUMP",
+						"type": "DatasetReference"
+					},
+					"name": "IPTGSCCX"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_GAP_CHINA",
+						"type": "DatasetReference"
+					},
+					"name": "FFGSCCXGAPChina"
+				},
+				{
+					"dataset": {
+						"referenceName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_GAP_EU",
+						"type": "DatasetReference"
+					},
+					"name": "FFGSCCXGAPEU"
+				},
+				{
+					"dataset": {
+						"referenceName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_BR_EU",
+						"type": "DatasetReference"
+					},
+					"name": "FFGSCCXBREU"
+				},
+				{
+					"dataset": {
+						"referenceName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_ON_CHINA",
+						"type": "DatasetReference"
+					},
+					"name": "FFGSCCXONChina"
+				},
+				{
+					"dataset": {
+						"referenceName": "GSCCX_GLBL_MKT_STY_CLR_XREF_T_OUTLET_CHINA",
+						"type": "DatasetReference"
+					},
+					"name": "FFGSCCXOutletChina"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XGAPChinaSplit"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          MKT_ITM_STY_NBR as string,",
+				"          MKT_DIFF_1_ID as string,",
+				"          STY_CD as integer,",
+				"          STY_CLR_CD as integer,",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTGSCCX",
+				"IPTGSCCX split(and(BRD_ID == 1, MKT_ID == '8'),",
+				"     and(and(BRD_ID == 1, MKT_ID == '5' ), $pInvocationId == 'EU'),",
+				"     and(and(BRD_ID == 2, MKT_ID == '5' ), $pInvocationId == 'EU'),",
+				"     and(BRD_ID == 3, MKT_ID == '8'),",
+				"     and(BRD_ID == 4, MKT_ID == '8'),",
+				"     disjoint: true) ~> XGAPChinaSplit@(xoGChina, xoGEU, xoBREU, xoONChina, xoOTChina)",
+				"XGAPChinaSplit@xoGChina sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GSCCX_GLBL_MKT_STY_CLR_XREF_T_GAP_CHINA.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFGSCCXGAPChina",
+				"XGAPChinaSplit@xoGEU sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GSCCX_GLBL_MKT_STY_CLR_XREF_T_GAP_EU.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFGSCCXGAPEU",
+				"XGAPChinaSplit@xoOTChina sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GSCCX_GLBL_MKT_STY_CLR_XREF_T_BR_EU.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFGSCCXBREU",
+				"XGAPChinaSplit@xoONChina sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GSCCX_GLBL_MKT_STY_CLR_XREF_T_ON_CHINA.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFGSCCXONChina",
+				"XGAPChinaSplit@xoBREU sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GSCCX_GLBL_MKT_STY_CLR_XREF_T_OUTLET_CHINA.csv'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          GLBL_ITM_STY_NBR,",
+				"          MKT_ITM_STY_NBR,",
+				"          MKT_DIFF_1_ID,",
+				"          STY_CD,",
+				"          STY_CLR_CD,",
+				"          CRT_UPDT_DTTM,",
+				"          CRT_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> FFGSCCXOutletChina"
+			]
+		}
+	}
+}

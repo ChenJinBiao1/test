@@ -1,0 +1,253 @@
+{
+	"name": "xfmIPT093DIVTZoneGrps_PRGPZ_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_DS_Zones_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZones"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRGPZ_PRC_GRP_ZN_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGPZ"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_MHIERSEQNBR_ZoneId",
+						"type": "DatasetReference"
+					},
+					"name": "IPTZoneId"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_MHIERSEQNBR_PRGPZSeqNbr",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGPZSeqNbr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_PRGPZ_PX_DS_Dummy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDummy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_PRGPZ_PX_DS_PRGPZLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGPZLoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "loDummy"
+				},
+				{
+					"name": "ADDTEST"
+				},
+				{
+					"name": "rejPRGPZ"
+				},
+				{
+					"name": "LZoneId"
+				},
+				{
+					"name": "LPRGPZSeqNbr"
+				},
+				{
+					"name": "loZnId"
+				},
+				{
+					"name": "relevancecolumn"
+				},
+				{
+					"name": "loPRGPZ"
+				},
+				{
+					"name": "XZoneID"
+				},
+				{
+					"name": "xoZones"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "derivedColumn6"
+				},
+				{
+					"name": "split3"
+				},
+				{
+					"name": "YesExut"
+				},
+				{
+					"name": "NoExit"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string (\"PIPT091U\"),",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          ZoneDesc as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          PrcGrpid as integer,",
+				"          PRC_GRP_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          TEST as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZones",
+				"source(output(",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRGPZ",
+				"source(output(",
+				"          MAXZNID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTZoneId",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRGPZSeqNbr",
+				"YesExut select(mapColumn(",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loDummy",
+				"IPTZoneId derive(TEST = 1) ~> ADDTEST",
+				"NoExit select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpid,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          TEST",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejPRGPZ",
+				"rejPRGPZ, ADDTEST lookup(rejPRGPZ@TEST == ADDTEST@TEST,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LZoneId",
+				"loZnId, relevancecolumn lookup(loZnId@A == relevancecolumn@A,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPRGPZSeqNbr",
+				"split2@Yes2 derive(A = 1) ~> loZnId",
+				"IPTPRGPZSeqNbr derive(A = 1) ~> relevancecolumn",
+				"split3@Yes3 select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpid,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          CNCY_CD,",
+				"          MaxZnId = MAXZNID,",
+				"          PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPRGPZ",
+				"loPRGPZ derive(CRT_UPDT_USER_ID = $pUserId,",
+				"          PRC_GRP_ZN_ID = MaxZnId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          PRC_GRP_ZN_ABBR_DESC = ZoneDesc) ~> XZoneID",
+				"XZoneID select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_ID,",
+				"          PRC_GRP_ZN_DESC = ZoneDesc,",
+				"          PRC_GRP_ZN_ABBR_DESC,",
+				"          CNCY_CD,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoZones",
+				"LZoneId derive(IsMatch = isMatch()) ~> derivedColumn5",
+				"derivedColumn5 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2)",
+				"LPRGPZSeqNbr derive(IsMatch = isMatch()) ~> derivedColumn6",
+				"derivedColumn6 split(IsMatch==true(),",
+				"     disjoint: false) ~> split3@(Yes3)",
+				"DSZones, IPTPRGPZ exists(upper(ZoneDesc) == upper(PRC_GRP_ZN_DESC)",
+				"     && DSZones@PRC_GRP_SEQ_NBR_S == IPTPRGPZ@PRC_GRP_SEQ_NBR_S,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> YesExut",
+				"DSZones, IPTPRGPZ exists(upper(ZoneDesc) == upper(PRC_GRP_ZN_DESC)",
+				"     && DSZones@PRC_GRP_SEQ_NBR_S == IPTPRGPZ@PRC_GRP_SEQ_NBR_S,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> NoExit",
+				"loDummy sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MKT_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_PRGPZ_PX.DS_Dummy.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSDummy",
+				"xoZones sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_ID as string,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_ZN_ABBR_DESC as string,",
+				"          CNCY_CD as string,",
+				"          PRC_GRP_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT093DIVTZoneGrps_PRGPZ_PX.DS_PRGPZLoad.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPRGPZLoad"
+			]
+		}
+	}
+}

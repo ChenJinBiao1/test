@@ -1,0 +1,114 @@
+{
+	"name": "GetEmailFile_096U",
+	"properties": {
+		"folder": {
+			"name": "Email_22DU_096"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_FF_RejDateOverlap_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "srcIPT091DIVTZoneGrps"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_FF_ZoneRejects_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "xfmIPT093DIVTZoneGrps"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_096U",
+						"type": "DatasetReference"
+					},
+					"name": "OutsrcIPT091DIVTZoneGrps"
+				},
+				{
+					"dataset": {
+						"referenceName": "SendEmailSource_096U",
+						"type": "DatasetReference"
+					},
+					"name": "OutxfmIPT093DIVTZoneGrps"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				},
+				{
+					"name": "split2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as integer,",
+				"          Reason as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcIPT091DIVTZoneGrps",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          STR_NBR as integer,",
+				"          CNCY_CD as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          Zones as string,",
+				"          REASON as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> xfmIPT093DIVTZoneGrps",
+				"srcIPT091DIVTZoneGrps split(BRD_ID==1,",
+				"     disjoint: false) ~> split1@(ID1)",
+				"xfmIPT093DIVTZoneGrps split(BRD_ID == 1,",
+				"     disjoint: false) ~> split2@(IDIS1)",
+				"split1@ID1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('srcIPT091DIVTZoneGrps_Extr_PX.FF_RejDateOverlap.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutsrcIPT091DIVTZoneGrps",
+				"split2@IDIS1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('xfmIPT093DIVTZoneGrps_Zones_PX.FF_ZoneRejects.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutxfmIPT093DIVTZoneGrps"
+			]
+		}
+	}
+}

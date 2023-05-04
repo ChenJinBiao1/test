@@ -1,0 +1,109 @@
+{
+	"name": "ldIPT126RPMOPORILoad_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_OPORI_OUTB_PMOTN_REQ_GRP_T_126_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "OPORITemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT126RPMOPORILoad_PX_FF_RejOPORI",
+						"type": "DatasetReference"
+					},
+					"name": "FFOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT126RPMOPORILoad_PX_FF_RejOPORI",
+						"type": "DatasetReference"
+					},
+					"name": "FFOPORI1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PMOTN_REQ_ID_S as integer (toInteger(null())),",
+				"     PMOTN_GRP_ID_S as integer (toInteger(null())),",
+				"     PRC_GRP_ZN_SEQ_NBR_S as integer (toInteger(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string",
+				"}",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_GRP_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> OPORITemp",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_GRP_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFOPORI",
+				"OPORITemp filter(PMOTN_REQ_ID_S == $PMOTN_REQ_ID_S || isNull(PMOTN_REQ_ID_S)  && \r",
+				"PMOTN_GRP_ID_S == $PMOTN_GRP_ID_S || isNull(PMOTN_GRP_ID_S) && \r",
+				"PRC_GRP_ZN_SEQ_NBR_S == $PRC_GRP_ZN_SEQ_NBR_S || isNull(PRC_GRP_ZN_SEQ_NBR_S) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFOPORI union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_GRP_ID_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT126RPMOPORILoad_PX.FF_RejOPORI.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFOPORI1"
+			]
+		}
+	}
+}

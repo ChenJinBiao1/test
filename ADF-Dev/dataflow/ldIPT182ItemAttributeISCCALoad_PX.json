@@ -1,0 +1,101 @@
+{
+	"name": "ldIPT182ItemAttributeISCCALoad_PX",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesISCCA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCCA_ITM_STY_CLR_CTRY_ATTR_T_update_182_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "UpdateISCCA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ISCCA_ITM_STY_CLR_CTRY_ATTR_T_INSERT_182_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "InsertISCCA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          ORIG_RTL_PRC_AMT as decimal(10,0),",
+				"          AUC_AMT as decimal(10,0)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSStoreSalesISCCA",
+				"DSStoreSalesISCCA split(CHNL_ID == 3,",
+				"     CHNL_ID == 1,",
+				"     disjoint: false) ~> split1@(xoUpdateISCCA, xoInsrtISCCA)",
+				"split1@xoUpdateISCCA derive(CRT_USER_ID = 'IPT18',",
+				"          CRT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'IPT18',",
+				"          LST_UPDT_DTTM = currentDate()) ~> derivedColumn1",
+				"split1@xoInsrtISCCA derive(CRT_USER_ID = 'IPT18',",
+				"          CRT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'IPT18',",
+				"          LST_UPDT_DTTM = currentDate()) ~> derivedColumn2",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as string,",
+				"          ORIG_RTL_PRC_AMT as string,",
+				"          AUC_AMT as string,",
+				"          CRT_USER_ID as string,",
+				"          CRT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ISCCA_ITM_STY_CLR_CTRY_ATTR_T_update_182_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> UpdateISCCA",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['ISCCA_ITM_STY_CLR_CTRY_ATTR_T_INSERT_182_Temp.txt'],",
+				"     umask: 0737,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> InsertISCCA"
+			]
+		}
+	}
+}

@@ -1,0 +1,113 @@
+{
+	"name": "xfmIPT181ItemAttributeTrnfm_PX_2_Inset_Update",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RD_ISCCA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrevISCCA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_Insert_update",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCCAItemInsert"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_Insert_update",
+						"type": "DatasetReference"
+					},
+					"name": "Insert"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_Insert_update",
+						"type": "DatasetReference"
+					},
+					"name": "Update"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"     CNCY_CD as string,",
+				"     CTRY_CD as string,",
+				"     CHNL_ID as integer,",
+				"     AUC_AMT as decimal(15,2),",
+				"     ORIG_RTL_PRC_AMT as decimal(15,2)",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer,",
+				"          AUC_AMT as decimal(15,2),",
+				"          ORIG_RTL_PRC_AMT as decimal(15,2)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPrevISCCA",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCCAItemInsert",
+				"DSPrevISCCA split(ITM_STY_CLR_SEQ_NBR_S != $ITM_STY_CLR_SEQ_NBR_S || CNCY_CD != $CNCY_CD || CTRY_CD != $CTRY_CD || CHNL_ID != $CHNL_ID,",
+				"     (ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S && CNCY_CD == $CNCY_CD && CTRY_CD == $CTRY_CD && CHNL_ID == $CHNL_ID )&& AUC_AMT != $AUC_AMT,",
+				"     disjoint: false) ~> split1@(Insert, Update)",
+				"split1@Insert derive(ITM_STY_CLR_SEQ_NBR_S = $ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD = $CNCY_CD,",
+				"          CTRY_CD = $CTRY_CD,",
+				"          CHNL_ID = $CHNL_ID,",
+				"          AUC_AMT = $AUC_AMT,",
+				"          ORIG_RTL_PRC_AMT = $ORIG_RTL_PRC_AMT,",
+				"          change_code = 1) ~> derivedColumn2",
+				"split1@Update derive(ITM_STY_CLR_SEQ_NBR_S = $ITM_STY_CLR_SEQ_NBR_S,",
+				"          CNCY_CD = $CNCY_CD,",
+				"          CTRY_CD = $CTRY_CD,",
+				"          CHNL_ID = $CHNL_ID,",
+				"          AUC_AMT = $AUC_AMT,",
+				"          ORIG_RTL_PRC_AMT = $ORIG_RTL_PRC_AMT,",
+				"          change_code = 4) ~> derivedColumn3",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy_insert_update.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Insert",
+				"derivedColumn3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['AB_xfmIPTItemAttributeTrnfm_PX_DS_ISCCA_Item_ASIA_copy_insert_update.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> Update"
+			]
+		}
+	}
+}

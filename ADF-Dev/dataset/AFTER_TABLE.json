@@ -1,0 +1,20 @@
+{
+	"name": "AFTER_TABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/18-ItemAttribute"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "AFTER_TABLE_18"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

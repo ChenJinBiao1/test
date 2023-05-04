@@ -1,0 +1,62 @@
+{
+	"name": "ldIPT126RPMOPORILoad_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT124RPMTrnfrm0_PX_DS_OPORI",
+						"type": "DatasetReference"
+					},
+					"name": "DSOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_OPORI_OUTB_PMOTN_REQ_GRP_T_126_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "OPORIOUTBPMOTNREQGRPT"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_GRP_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSOPORI",
+				"DSOPORI sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_GRP_ID_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['OPORI_OUTB_PMOTN_REQ_GRP_T_126_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OPORIOUTBPMOTNREQGRPT"
+			]
+		}
+	}
+}

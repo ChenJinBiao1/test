@@ -1,0 +1,268 @@
+{
+	"name": "srcIPT121RPMApprPromoExtract2_PX",
+	"properties": {
+		"folder": {
+			"name": "12-PriceUpdatesRPM"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract1_PX_DS_ApprPromoExtract",
+						"type": "DatasetReference"
+					},
+					"name": "DSApprPromoExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TNETP_NET_PMOTN_T_121",
+						"type": "DatasetReference"
+					},
+					"name": "TNETPNETPMOTNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TPRGP_PRGS_PMOTN_T_121",
+						"type": "DatasetReference"
+					},
+					"name": "TPRGPPRGSPMOTNT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_DS_NetPromoZone",
+						"type": "DatasetReference"
+					},
+					"name": "DSNetPromoZone"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_DS_PrgsPromoZone",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrgsPromoZone"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT121RPMApprPromoExtract2_PX_FFPrgsPromoRejects",
+						"type": "DatasetReference"
+					},
+					"name": "FFPrgsPromoRejects"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LNetPromo"
+				},
+				{
+					"name": "LNetPromoDerivedColumn"
+				},
+				{
+					"name": "LNetPromoSplit"
+				},
+				{
+					"name": "loNetPromo"
+				},
+				{
+					"name": "rejNetPromo"
+				},
+				{
+					"name": "LPrgsPromo"
+				},
+				{
+					"name": "LPrgsPromoDerivedColumn"
+				},
+				{
+					"name": "LPrgsPromoSplit1"
+				},
+				{
+					"name": "loPrgsPromo"
+				},
+				{
+					"name": "rejPrgsPromo"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSApprPromoExtract",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TNETPNETPMOTNT",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MIN_QTY as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(10,0),",
+				"          PMOTN_PCT_OFF_RAT as decimal(10,0),",
+				"          PMOTN_DLR_OFF_AMT as decimal(10,0),",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> TPRGPPRGSPMOTNT",
+				"DSApprPromoExtract, TNETPNETPMOTNT lookup(DSApprPromoExtract@PMOTN_REQ_ID_S == TNETPNETPMOTNT@PMOTN_REQ_ID_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LNetPromo",
+				"LNetPromo derive(IsMatch = isMatch()) ~> LNetPromoDerivedColumn",
+				"LNetPromoDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LNetPromoSplit@(LNetPromoMatch, LNetPromoNotMatch)",
+				"LNetPromoSplit@LNetPromoMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LNetPromoSplit@LNetPromoMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PMOTN_REQ_ID_S = LNetPromoSplit@LNetPromoMatch@PMOTN_REQ_ID_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loNetPromo",
+				"LNetPromoSplit@LNetPromoNotMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LNetPromoSplit@LNetPromoNotMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejNetPromo",
+				"rejNetPromo, TPRGPPRGSPMOTNT lookup(rejNetPromo@PMOTN_REQ_ID_S == TPRGPPRGSPMOTNT@PMOTN_REQ_ID_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LPrgsPromo",
+				"LPrgsPromo derive(IsMatch = isMatch()) ~> LPrgsPromoDerivedColumn",
+				"LPrgsPromoDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LPrgsPromoSplit1@(LPrgsPromoMatch, LPrgsPromoNotMatch)",
+				"LPrgsPromoSplit1@LPrgsPromoMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LPrgsPromoSplit1@LPrgsPromoMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          PMOTN_REQ_ID_S = LPrgsPromoSplit1@LPrgsPromoMatch@PMOTN_REQ_ID_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MIN_QTY,",
+				"          PMOTN_PRC_UN_AMT,",
+				"          PMOTN_PCT_OFF_RAT,",
+				"          PMOTN_DLR_OFF_AMT,",
+				"          PMOTN_DSCT_CD,",
+				"          PMOTN_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPrgsPromo",
+				"LPrgsPromoSplit1@LPrgsPromoNotMatch select(mapColumn(",
+				"          PMOTN_REQ_ID_S = LPrgsPromoSplit1@LPrgsPromoNotMatch@PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejPrgsPromo",
+				"loNetPromo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract2_PX.DS_NetPromoZone.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSNetPromoZone",
+				"loPrgsPromo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          PMOTN_STRT_DT as string,",
+				"          PMOTN_END_DT as string,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as string,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as string,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          MIN_QTY as string,",
+				"          PMOTN_PRC_UN_AMT as string,",
+				"          PMOTN_PCT_OFF_RAT as string,",
+				"          PMOTN_DLR_OFF_AMT as string,",
+				"          PMOTN_DSCT_CD as string,",
+				"          PMOTN_DESC as string",
+				"     ),",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract2_PX.DS_PrgsPromoZone.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPrgsPromoZone",
+				"rejPrgsPromo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['srcIPT121RPMApprPromoExtract2_PX.FFPrgsPromoRejects.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFPrgsPromoRejects"
+			]
+		}
+	}
+}

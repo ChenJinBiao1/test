@@ -1,0 +1,118 @@
+{
+	"name": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_UMHDS_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('ldIPT011BCRItemsUMHDS_LMHDS_PX.FF_Rej_UMHDS.',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "UNIV_MDSE_HIER_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRD_DESC",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "DIV_ID",
+				"type": "String"
+			},
+			{
+				"name": "DIV_DESC",
+				"type": "String"
+			},
+			{
+				"name": "DIV_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "DEPT_ID",
+				"type": "String"
+			},
+			{
+				"name": "DEPT_DESC",
+				"type": "String"
+			},
+			{
+				"name": "DEPT_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CLS_ID",
+				"type": "String"
+			},
+			{
+				"name": "CLS_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CLS_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "SCLS_ID",
+				"type": "String"
+			},
+			{
+				"name": "SCLS_DESC",
+				"type": "String"
+			},
+			{
+				"name": "SCLS_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

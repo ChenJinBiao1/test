@@ -1,0 +1,28 @@
+{
+	"name": "AB_UIACX_UNIV_INTR_APPL_XREF_T_123",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/12-PriceUpdatesRPM"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "UIACX_UNIV_INTR_APPL_XREF_T_123.txt",
+				"folderPath": "source",
+				"fileSystem": "12priceupdatesrpm"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

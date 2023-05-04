@@ -1,0 +1,116 @@
+{
+	"name": "Idt022BCRInvntLoad_PX",
+	"properties": {
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT021BCRInvntTransform_PX_ASIA_DS_DailyInventoryUpdate",
+						"type": "DatasetReference"
+					},
+					"name": "DailyInventoryUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_CCLDI_STY_CLR_LOC_DLY_INV_T",
+						"type": "DatasetReference"
+					},
+					"name": "GoCcldiStyClrLocDlyInvT"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AddRows"
+				},
+				{
+					"name": "OutInventoryUpdate"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OPR_STY_CLR_NBR as string,",
+				"          OPR_LOC_NBR as integer,",
+				"          PROC_DT as string,",
+				"          OH_INV_UN_QTY as integer,",
+				"          IXIT_INV_UN_QTY as integer,",
+				"          NON_SELL_UN_QTY as integer,",
+				"          RSV_UN_QTY as integer,",
+				"          XPCT_UN_QTY as integer,",
+				"          ON_ORD_QTY as integer,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DailyInventoryUpdate",
+				"DailyInventoryUpdate derive(AVAL_INV_QTY = OH_INV_UN_QTY-(RSV_UN_QTY + NON_SELL_UN_QTY),",
+				"          CRT_UPDT_USER_ID = 'PIPT021U',",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'PIPT021U',",
+				"          LST_UPDT_DTTM = currentDate()) ~> AddRows",
+				"AddRows select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = OPR_LOC_NBR,",
+				"          INV_TXN_DT = PROC_DT,",
+				"          SOH_INV_QTY = OH_INV_UN_QTY,",
+				"          IXIT_QTY = IXIT_INV_UN_QTY,",
+				"          AVAL_INV_QTY,",
+				"          XFR_RSV_QTY = RSV_UN_QTY,",
+				"          XFR_XPCT_QTY = XPCT_UN_QTY,",
+				"          OORD_QTY = ON_ORD_QTY,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> OutInventoryUpdate",
+				"OutInventoryUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          INV_TXN_DT as string,",
+				"          LOC_NBR as string,",
+				"          SOH_INV_QTY as string,",
+				"          IXIT_QTY as string,",
+				"          AVAL_INV_QTY as string,",
+				"          XFR_RSV_QTY as string,",
+				"          XFR_XPCT_QTY as string,",
+				"          OORD_QTY as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['GO_CCLDI_STY_CLR_LOC_DLY_INV_T.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          INV_TXN_DT,",
+				"          LOC_NBR,",
+				"          SOH_INV_QTY,",
+				"          IXIT_QTY,",
+				"          AVAL_INV_QTY,",
+				"          XFR_RSV_QTY,",
+				"          XFR_XPCT_QTY,",
+				"          OORD_QTY,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> GoCcldiStyClrLocDlyInvT"
+			]
+		}
+	}
+}

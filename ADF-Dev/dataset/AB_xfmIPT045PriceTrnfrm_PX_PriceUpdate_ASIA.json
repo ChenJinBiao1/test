@@ -1,0 +1,134 @@
+{
+	"name": "AB_xfmIPT045PriceTrnfrm_PX_PriceUpdate_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('xfmIPT045PriceTrnfrm_PX.PriceUpdate.',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "destintion",
+				"fileSystem": "04currentpriceinbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LocationNbr",
+				"type": "String"
+			},
+			{
+				"name": "PriceChgStatusCode",
+				"type": "String"
+			},
+			{
+				"name": "LocationTypeCode",
+				"type": "String"
+			},
+			{
+				"name": "CountryCode",
+				"type": "String"
+			},
+			{
+				"name": "CountryDesc",
+				"type": "String"
+			},
+			{
+				"name": "CurrencyCode",
+				"type": "String"
+			},
+			{
+				"name": "CurrencyDesc",
+				"type": "String"
+			},
+			{
+				"name": "BrandID",
+				"type": "String"
+			},
+			{
+				"name": "AreaId",
+				"type": "String"
+			},
+			{
+				"name": "PriceChgId",
+				"type": "String"
+			},
+			{
+				"name": "ItemSKUID",
+				"type": "String"
+			},
+			{
+				"name": "MerchandiseDivisionID",
+				"type": "String"
+			},
+			{
+				"name": "MerchandiseDepartmentID",
+				"type": "String"
+			},
+			{
+				"name": "MerchandiseClassID",
+				"type": "String"
+			},
+			{
+				"name": "MerchandiseSubclassID",
+				"type": "String"
+			},
+			{
+				"name": "ItemStyleID",
+				"type": "String"
+			},
+			{
+				"name": "ColorDiffID",
+				"type": "String"
+			},
+			{
+				"name": "SizeDiffID",
+				"type": "String"
+			},
+			{
+				"name": "PriceAmt",
+				"type": "String"
+			},
+			{
+				"name": "EffectiveDate",
+				"type": "String"
+			},
+			{
+				"name": "EndDate",
+				"type": "String"
+			},
+			{
+				"name": "GLBL_ITM_STY_CC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "ITM_STY_CLR_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "Timestamp",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

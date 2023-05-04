@@ -1,0 +1,20 @@
+{
+	"name": "TMCO_MDSE_CO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "TMCO_MDSE_CO"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

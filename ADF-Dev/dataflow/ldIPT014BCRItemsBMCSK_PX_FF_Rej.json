@@ -1,0 +1,138 @@
+{
+	"name": "ldIPT014BCRItemsBMCSK_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsBMCSK_PX_BMCSK_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTBMCSK"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsBMCSK_PX_FF_Reject_Style_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejectStyle1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsBMCSK_PX_FF_Reject_Style_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejectStyle"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     BRD_ID as integer (toInteger(null())),",
+				"     MKT_ID as string (toString(null())),",
+				"     CHNL_ID as integer (toInteger(null())),",
+				"     SKU_NBR as string (toString(null())),",
+				"     ITM_STY_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_NBR as string (toString(null())),",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     ITM_STY_CC_NBR as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     MKT_DIFF1_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          SKU_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTBMCSK",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          SKU_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFRejectStyle1",
+				"IPTBMCSK filter(BRD_ID == $BRD_ID || isNull(BRD_ID)  && \r",
+				"MKT_ID == $MKT_ID || isNull(MKT_ID) && \r",
+				"CHNL_ID == $CHNL_ID || isNull(CHNL_ID) && \r",
+				"SKU_NBR == $SKU_NBR || isNull(SKU_NBR) && \r",
+				"ITM_STY_SEQ_NBR_S == $ITM_STY_SEQ_NBR_S || isNull(ITM_STY_SEQ_NBR_S) && \r",
+				"ITM_STY_NBR == $ITM_STY_NBR || isNull(ITM_STY_NBR) && \r",
+				"ITM_STY_CLR_SEQ_NBR_S ==$ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S) &&\r",
+				"ITM_STY_CC_NBR == $ITM_STY_CC_NBR || isNull(ITM_STY_CC_NBR)  && \r",
+				"MKT_DIFF1_ID == $MKT_DIFF1_ID || isNull(MKT_DIFF1_ID)  &&\r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFRejectStyle1 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          SKU_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRItemsBMCSK _PX.FF_Reject_Style.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFRejectStyle"
+			]
+		}
+	}
+}

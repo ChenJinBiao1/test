@@ -1,0 +1,157 @@
+{
+	"name": "xfmIPT225B_IPT_MD_LoopbackCheck",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_ApprMDCheck_225B",
+						"type": "DatasetReference"
+					},
+					"name": "IPTApprMDCheck"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_UnApprMDCheck_225B",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUnApprMDCheck"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_CC_DESC",
+						"type": "DatasetReference"
+					},
+					"name": "CCDESC"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT225_IPTApprovedMD_LoopBackCheck_Error_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTApprMDLoopBack"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT225_IPTUnApproved_MD_LoopBackCheck_Error_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUnApprMDLoopBack"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LCCDesc"
+				},
+				{
+					"name": "LCC"
+				},
+				{
+					"name": "outAppMDErr"
+				},
+				{
+					"name": "outAppMDErr1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTApprMDCheck",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTUnApprMDCheck",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_CLR_ABBR_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CCDESC",
+				"IPTApprMDCheck, CCDESC lookup(IPTApprMDCheck@ITM_STY_CLR_SEQ_NBR_S == CCDESC@ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCCDesc",
+				"IPTUnApprMDCheck, CCDESC lookup(IPTUnApprMDCheck@ITM_STY_CLR_SEQ_NBR_S == CCDESC@ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LCC",
+				"LCCDesc select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STYLECOLOR = ITM_STY_CC_NBR,",
+				"          STYLECOLOR_ABBR_DESC = ITM_STY_CLR_ABBR_DESC,",
+				"          ITM_STY_CLR_SEQ_NBR_S = IPTApprMDCheck@ITM_STY_CLR_SEQ_NBR_S,",
+				"          STR_NBR,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outAppMDErr",
+				"LCC select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          STYLECOLOR = ITM_STY_CC_NBR,",
+				"          STYLECOLOR_ABBR_DESC = ITM_STY_CLR_ABBR_DESC,",
+				"          ITM_STY_CLR_SEQ_NBR_S = IPTUnApprMDCheck@ITM_STY_CLR_SEQ_NBR_S,",
+				"          STR_NBR,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          DESCRIPTION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outAppMDErr1",
+				"outAppMDErr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT225_IPTApprovedMD_LoopBackCheck_Error_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTApprMDLoopBack",
+				"outAppMDErr1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT225_IPTUnApproved_MD_LoopBackCheck_Error_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTUnApprMDLoopBack"
+			]
+		}
+	}
+}

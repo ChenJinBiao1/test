@@ -1,0 +1,148 @@
+{
+	"name": "ldIPT011BCRItemsLMHDS_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT011BCRItemsUMHDSSeqNbr_PX_DS_LMHDSLoad",
+						"type": "DatasetReference"
+					},
+					"name": "DSLMHDS"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_LMHDS_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLMHDS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XLMHDS"
+				},
+				{
+					"name": "XLMHDSSelect"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U'),",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          BRD_DESC as string,",
+				"          MKT_DESC as string,",
+				"          CORP_ID as string,",
+				"          CO_ID as string,",
+				"          CORP_DESC as string,",
+				"          CO_DESC as string,",
+				"          DIV_ID as string,",
+				"          DIV_DESC as string,",
+				"          DEPT_ID as string,",
+				"          DEPT_DESC as string,",
+				"          CLS_ID as string,",
+				"          CLS_DESC as string,",
+				"          SCLS_ID as string,",
+				"          SCLS_DESC as string,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          PRGM_NBR as integer,",
+				"          PRGM_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_M_CD as string,",
+				"          SZ_DESC as string,",
+				"          SEASON_CD as string,",
+				"          SEASON_YR as integer,",
+				"          SEASON_DESC as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          MKT_DIF2_ID as string,",
+				"          ITM_SKU_NBR as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          LGCY_IND as string,",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLMHDS",
+				"DSLMHDS derive(CORP_ID = right('00'+ CORP_ID,2),",
+				"          MDSE_CO_ID = CO_ID,",
+				"          MDSE_DIV_ID = DIV_ID,",
+				"          MDSE_DEPT_ID = DEPT_ID,",
+				"          MDSE_CLS_ID = CLS_ID,",
+				"          MDSE_SCLS_ID = SCLS_ID,",
+				"          MDSE_CO_DESC = CO_DESC,",
+				"          MDSE_DIV_DESC = DIV_DESC,",
+				"          MDSE_DEPT_DESC = DEPT_DESC,",
+				"          MDSE_CLS_DESC = CLS_DESC,",
+				"          MDSE_SCLS_DESC = SCLS_DESC,",
+				"          CRT_UPDT_USER_ID = $jsUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $jsUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XLMHDS",
+				"XLMHDS select(mapColumn(",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S,",
+				"          CORP_ID,",
+				"          CORP_DESC,",
+				"          MDSE_CO_ID,",
+				"          MDSE_DIV_ID,",
+				"          MDSE_DEPT_ID,",
+				"          MDSE_CLS_ID,",
+				"          MDSE_SCLS_ID,",
+				"          MDSE_CO_DESC,",
+				"          MDSE_DIV_DESC,",
+				"          MDSE_DEPT_DESC,",
+				"          MDSE_CLS_DESC,",
+				"          MDSE_SCLS_DESC,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XLMHDSSelect",
+				"XLMHDSSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S as string,",
+				"          CORP_ID as string,",
+				"          CORP_DESC as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          MDSE_CO_DESC as string,",
+				"          MDSE_DIV_DESC as string,",
+				"          MDSE_DEPT_DESC as string,",
+				"          MDSE_CLS_DESC as string,",
+				"          MDSE_SCLS_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat(\"ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_LMHDS_Temp.\",$pInvocationId,\"txt\"))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTLMHDS"
+			]
+		}
+	}
+}

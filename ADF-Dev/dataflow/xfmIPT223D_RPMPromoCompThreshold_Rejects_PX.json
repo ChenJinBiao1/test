@@ -1,0 +1,120 @@
+{
+	"name": "xfmIPT223D_RPMPromoCompThreshold_Rejects_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_PROMO_CMP_223D",
+						"type": "DatasetReference"
+					},
+					"name": "RPMPROMOCMP"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_223",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT223_Promo_Errors_RPM_Threshold_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "PromoErrors"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPromoId"
+				},
+				{
+					"name": "loPromoId"
+				},
+				{
+					"name": "xAddDesc"
+				},
+				{
+					"name": "xoDesc"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PROMO_DTL_ID as integer,",
+				"          PROMO_DTL_DISPLAY_ID as string,",
+				"          PROMO_COMP_ID as integer,",
+				"          STATE as string,",
+				"          APPLY_TO_CODE as integer,",
+				"          START_DATE as timestamp,",
+				"          END_DATE as timestamp,",
+				"          CREATE_DATE as timestamp,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as timestamp,",
+				"          APPROVAL_ID as string,",
+				"          IGNORE_CONSTRAINTS as integer,",
+				"          LOCK_VERSION as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMPROMOCMP",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"RPMPROMOCMP, IPTTPROOUHILVOPORI lookup(PROMO_COMP_ID == PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPromoId",
+				"LPromoId select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PROMO_DTL_ID,",
+				"          PROMO_DTL_DISPLAY_ID,",
+				"          PROMO_COMP_ID,",
+				"          STATE,",
+				"          APPLY_TO_CODE,",
+				"          START_DATE,",
+				"          END_DATE,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          IGNORE_CONSTRAINTS,",
+				"          LOCK_VERSION",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPromoId",
+				"loPromoId filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> xAddDesc",
+				"xAddDesc derive(DESCRIPTION = 'Promo Component Detail Id in RPM Promo comp Detail table is missing any Item/Location in rpm_promo_comp_threshold table') ~> xoDesc",
+				"xoDesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT223_Promo_Errors_RPM_Threshold_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> PromoErrors"
+			]
+		}
+	}
+}

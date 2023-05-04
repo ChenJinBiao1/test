@@ -1,0 +1,159 @@
+{
+	"name": "ldIPT011BCRItemsLMHDS_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_LMHDS_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "LMHDSTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_LMHDS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejLMHDS1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_LMHDS_PX_FF_Rej_LMHDS_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejLMHDS2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     LGCY_MDSE_HIER_SEQ_NBR_S as integer (toInteger(null())),",
+				"     CORP_ID as string (toString(null())),",
+				"     MDSE_CO_ID as string (toString(null())),",
+				"     MDSE_DIV_ID as string (toString(null())),",
+				"     MDSE_DEPT_ID as string (toString(null())),",
+				"     MDSE_CLS_ID as string (toString(null())),",
+				"     MDSE_SCLS_ID as string (toString(null())),",
+				"     CORP_DESC as string (toString(null())),",
+				"     MDSE_CO_DESC as string (toString(null())),",
+				"     MDSE_DIV_DESC as string (toString(null())),",
+				"     MDSE_DEPT_DESC as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     MDSE_CLS_DESC as string (toString(null())),",
+				"     MDSE_SCLS_DESC as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          CORP_DESC as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          MDSE_CO_DESC as string,",
+				"          MDSE_DIV_DESC as string,",
+				"          MDSE_DEPT_DESC as string,",
+				"          MDSE_CLS_DESC as string,",
+				"          MDSE_SCLS_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> LMHDSTemp",
+				"source(output(",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S as integer,",
+				"          CORP_ID as string,",
+				"          CORP_DESC as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          MDSE_CO_DESC as string,",
+				"          MDSE_DIV_DESC as string,",
+				"          MDSE_DEPT_DESC as string,",
+				"          MDSE_CLS_DESC as string,",
+				"          MDSE_SCLS_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFRejLMHDS1",
+				"LMHDSTemp filter(LGCY_MDSE_HIER_SEQ_NBR_S == $LGCY_MDSE_HIER_SEQ_NBR_S || isNull(LGCY_MDSE_HIER_SEQ_NBR_S)  && \r",
+				"CORP_ID == $CORP_ID || isNull(CORP_ID) && \r",
+				"CORP_DESC == $CORP_DESC || isNull(CORP_DESC) && \r",
+				"MDSE_CO_ID == $MDSE_CO_ID || isNull(MDSE_CO_ID) && \r",
+				"MDSE_DIV_ID == $MDSE_DIV_ID || isNull(MDSE_DIV_ID) && \r",
+				"MDSE_DEPT_ID == $MDSE_DEPT_ID || isNull(MDSE_DEPT_ID) && \r",
+				"MDSE_CLS_ID ==$MDSE_CLS_ID || isNull(MDSE_CLS_ID) &&\r",
+				"MDSE_SCLS_ID == $MDSE_SCLS_ID || isNull(MDSE_SCLS_ID)  && \r",
+				"MDSE_CO_DESC == $MDSE_CO_DESC || isNull(MDSE_CO_DESC) && \r",
+				"MDSE_DIV_DESC == $MDSE_DIV_DESC || isNull(MDSE_DIV_DESC) && \r",
+				"MDSE_DEPT_DESC == $MDSE_DEPT_DESC || isNull(MDSE_DEPT_DESC) && \r",
+				"MDSE_CLS_DESC == $MDSE_CLS_DESC || isNull(MDSE_CLS_DESC) && \r",
+				"MDSE_SCLS_DESC == $MDSE_CLS_DESC || isNull(MDSE_SCLS_DESC) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFRejLMHDS1 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          LGCY_MDSE_HIER_SEQ_NBR_S as string,",
+				"          CORP_ID as string,",
+				"          CORP_DESC as string,",
+				"          MDSE_CO_ID as string,",
+				"          MDSE_DIV_ID as string,",
+				"          MDSE_DEPT_ID as string,",
+				"          MDSE_CLS_ID as string,",
+				"          MDSE_SCLS_ID as string,",
+				"          MDSE_CO_DESC as string,",
+				"          MDSE_DIV_DESC as string,",
+				"          MDSE_DEPT_DESC as string,",
+				"          MDSE_CLS_DESC as string,",
+				"          MDSE_SCLS_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT011BCRItemsUMHDS_LMHDS_PX.FF_Rej_LMHDS.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejLMHDS2"
+			]
+		}
+	}
+}

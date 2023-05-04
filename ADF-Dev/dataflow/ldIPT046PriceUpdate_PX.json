@@ -1,0 +1,264 @@
+{
+	"name": "ldIPT046PriceUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045PriceTrnfrm_PX_PriceUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPriceUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_IPTEGI_LOCLT_LOC_LIST_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPALOCLTLOCLISTT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTEGI_IPTEGI_LOCLT_LOC_LIST_T",
+						"type": "DatasetReference"
+					},
+					"name": "IPELOCLTLOCLISTT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT046PriceUpdate_PX_FF_RejLoc_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejLoc"
+				},
+				{
+					"dataset": {
+						"referenceName": "IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPAISCLA"
+				},
+				{
+					"dataset": {
+						"referenceName": "IPTEGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPEISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FLOCLT"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "loMKTID"
+				},
+				{
+					"name": "rejloc"
+				},
+				{
+					"name": "xoIPAPriceUpdate"
+				},
+				{
+					"name": "xoIPEPriceUpdate"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "Match"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "split2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          LocationNbr as integer,",
+				"          PriceChgStatusCode as string,",
+				"          LocationTypeCode as string,",
+				"          CountryCode as string,",
+				"          CountryDesc as string,",
+				"          CurrencyCode as string,",
+				"          CurrencyDesc as string,",
+				"          BrandID as string,",
+				"          AreaId as string,",
+				"          PriceChgId as integer,",
+				"          ItemSKUID as string,",
+				"          MerchandiseDivisionID as string,",
+				"          MerchandiseDepartmentID as string,",
+				"          MerchandiseClassID as string,",
+				"          MerchandiseSubclassID as string,",
+				"          ItemStyleID as string,",
+				"          ColorDiffID as string,",
+				"          SizeDiffID as string,",
+				"          PriceAmt as string,",
+				"          EffectiveDate as date,",
+				"          EndDate as date,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          Timestamp as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPriceUpdate",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          MKT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPALOCLTLOCLISTT",
+				"source(output(",
+				"          LOC_NBR as integer,",
+				"          MKT_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPELOCLTLOCLISTT",
+				"IPALOCLTLOCLISTT, IPELOCLTLOCLISTT union(byName: true)~> FLOCLT",
+				"DSPriceUpdate, FLOCLT lookup(LocationNbr == LOC_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"split1@Yes select(mapColumn(",
+				"          LocationNbr,",
+				"          PriceChgStatusCode,",
+				"          LocationTypeCode,",
+				"          CountryCode,",
+				"          CountryDesc,",
+				"          CurrencyCode,",
+				"          CurrencyDesc,",
+				"          BrandID,",
+				"          AreaId,",
+				"          PriceChgId,",
+				"          ItemSKUID,",
+				"          MerchandiseDivisionID,",
+				"          MerchandiseDepartmentID,",
+				"          MerchandiseClassID,",
+				"          MerchandiseSubclassID,",
+				"          ItemStyleID,",
+				"          ColorDiffID,",
+				"          SizeDiffID,",
+				"          PriceAmt,",
+				"          EffectiveDate,",
+				"          EndDate,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          Timestamp,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMKTID",
+				"split1@No select(mapColumn(",
+				"          LocationNbr,",
+				"          LocationTypeCode,",
+				"          CountryCode,",
+				"          CountryDesc,",
+				"          CurrencyCode,",
+				"          CurrencyDesc,",
+				"          BrandID,",
+				"          PriceChgStatusCode,",
+				"          AreaId,",
+				"          PriceChgId,",
+				"          ItemSKUID,",
+				"          MerchandiseDivisionID,",
+				"          MerchandiseDepartmentID,",
+				"          MerchandiseClassID,",
+				"          MerchandiseSubclassID,",
+				"          ItemStyleID,",
+				"          ColorDiffID,",
+				"          SizeDiffID,",
+				"          PriceAmt,",
+				"          EffectiveDate,",
+				"          EndDate,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          Timestamp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejloc",
+				"split2@No2 select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LocationNbr,",
+				"          PRC_STAT_CD = PriceChgStatusCode,",
+				"          RTL_PRC_AMT = PriceAmt,",
+				"          STRT_DT = EffectiveDate,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          PRC_CHG_ID = PriceChgId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoIPAPriceUpdate",
+				"split2@Yes2 select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LocationNbr,",
+				"          PRC_STAT_CD = PriceChgStatusCode,",
+				"          RTL_PRC_AMT = PriceAmt,",
+				"          STRT_DT = EffectiveDate,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          PRC_CHG_ID = PriceChgId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoIPEPriceUpdate",
+				"loMKTID derive(CRT_UPDT_USER_ID = 'PIPT041U',",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'PIPT041U',",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          PriceChgId = iif(PriceChgId!=0  , PriceChgId, toInteger(null()))) ~> derivedColumn1",
+				"lookup1 derive(IsMatch = isMatch()) ~> Match",
+				"Match split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"derivedColumn1 split(MKT_ID != 5,",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"rejloc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT045PriceStatMarkDownUpdate.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejLoc",
+				"xoIPEPriceUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFIPAISCLA",
+				"xoIPAPriceUpdate sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[('IPTEGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046.txt')],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFIPEISCLA"
+			]
+		}
+	}
+}

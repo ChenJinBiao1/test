@@ -1,0 +1,100 @@
+{
+	"name": "ldIPT094DIVTZoneGrps_DCSTM_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT094DIVTZoneGrps_DCSTM_PX_X_DCSTM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "XoDCSTMSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "xoDCSTM"
+				},
+				{
+					"name": "xoDCSTMAddColumn"
+				},
+				{
+					"name": "RDDCStr"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string ('PIPT091U'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSZoneGroups",
+				"RDDCStr select(mapColumn(",
+				"          STR_NBR,",
+				"          DC_NBR = DC_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoDCSTM",
+				"xoDCSTM derive(CRT_UPDT_USER_ID = $pUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> xoDCSTMAddColumn",
+				"DSZoneGroups aggregate(groupBy(DC_ID,",
+				"          STR_NBR),",
+				"     each(match(!in(['DC_ID','STR_NBR'],name)), $$ = first($$))) ~> RDDCStr",
+				"xoDCSTMAddColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          STR_NBR as string,",
+				"          DC_NBR as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('ldIPT094DIVTZoneGrps_DCSTM.PX_X_DCSTM.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> XoDCSTMSink"
+			]
+		}
+	}
+}

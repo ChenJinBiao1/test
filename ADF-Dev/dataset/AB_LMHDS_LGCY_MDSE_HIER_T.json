@@ -1,0 +1,57 @@
+{
+	"name": "AB_LMHDS_LGCY_MDSE_HIER_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "LMHDS_LGCY_MDSE_HIER_T.txt",
+				"folderPath": "source",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "LGCY_MDSE_HIER_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CO_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_DIV_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_DEPT_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CLS_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_SCLS_ID",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

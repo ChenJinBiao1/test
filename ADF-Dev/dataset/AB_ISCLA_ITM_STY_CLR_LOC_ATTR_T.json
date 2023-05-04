@@ -1,0 +1,49 @@
+{
+	"name": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPTCGI.ISCLA_ITM_STY_CLR_LOC_ATTR_T.txt",
+				"folderPath": "source",
+				"fileSystem": "09divtzonegroups"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITM_STY_CLR_SEQ_NBR_S ",
+				"type": "String"
+			},
+			{
+				"name": " LOC_NBR ",
+				"type": "String"
+			},
+			{
+				"name": " STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": " RTL_PRC_AMT ",
+				"type": "String"
+			},
+			{
+				"name": " PRC_STAT_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

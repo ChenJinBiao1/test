@@ -1,0 +1,80 @@
+{
+	"name": "ldIPT045DeletePriceMarkDownUpdate_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT045PriceStatMarkDownUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPriceUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "IPEIPAISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          LocationNbr as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          STRT_DT as date,",
+				"          RTL_PRC_AMT as decimal(15,2),",
+				"          PRC_STAT_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPriceUpdate",
+				"DSPriceUpdate derive(LST_UPDT_USER_ID = '',",
+				"          LST_UPDT_DTTM = currentDate()) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LocationNbr,",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LOC_NBR as string,",
+				"          STRT_DT as string,",
+				"          RTL_PRC_AMT as string,",
+				"          PRC_STAT_CD as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ISCLA_ITM_STY_CLR_LOC_ATTR_T.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPEIPAISCLA"
+			]
+		}
+	}
+}

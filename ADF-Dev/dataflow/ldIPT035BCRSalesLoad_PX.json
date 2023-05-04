@@ -1,0 +1,104 @@
+{
+	"name": "ldIPT035BCRSalesLoad_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT034BCRSalesTrnfrm_PX_DS_StoreSalesIPTUpdate_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSStoreSalesIPTUpdate"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_CCSDS_STY_CLR_STR_DLY_SLS_T_035_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "CCSDSSTYCLRSTRDLYSLSTTemp"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XSales"
+				},
+				{
+					"name": "XSalesSelect"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U')",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          TXN_DT as string,",
+				"          STR_NBR as integer,",
+				"          LN_TOT_UN_SLS_QTY as integer,",
+				"          LN_TOT_RTL_SLS_AMT as decimal(10,0),",
+				"          LN_TOT_XTD_WAC_CST_AMT as decimal(10,0),",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          RTL_SLS_PRE_VAT_AMT as decimal(10,0),",
+				"          MKT_ID as string,",
+				"          CTRY_CD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSStoreSalesIPTUpdate",
+				"DSStoreSalesIPTUpdate derive(RTL_SLS_TXN_DT = toDate(TXN_DT),",
+				"          RTL_SLS_QTY = LN_TOT_UN_SLS_QTY,",
+				"          RTL_SLS_AMT = LN_TOT_RTL_SLS_AMT,",
+				"          CST_SLS_AMT = LN_TOT_XTD_WAC_CST_AMT,",
+				"          CRT_UPDT_USER_ID = $jsUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $jsUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XSales",
+				"XSales select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          RTL_SLS_TXN_DT,",
+				"          STR_NBR,",
+				"          RTL_SLS_QTY,",
+				"          RTL_SLS_AMT,",
+				"          RTL_PRC_AMT,",
+				"          CST_SLS_AMT,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          RTL_SLS_PRE_VAT_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> XSalesSelect",
+				"XSalesSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          RTL_SLS_TXN_DT as string,",
+				"          STR_NBR as string,",
+				"          RTL_SLS_QTY as string,",
+				"          RTL_SLS_AMT as string,",
+				"          RTL_PRC_AMT as string,",
+				"          CST_SLS_AMT as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          RTL_SLS_PRE_VAT_AMT as string",
+				"     ),",
+				"     partitionFileNames:['CCSDS_STY_CLR_STR_DLY_SLS_T_035_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CCSDSSTYCLRSTRDLYSLSTTemp"
+			]
+		}
+	}
+}

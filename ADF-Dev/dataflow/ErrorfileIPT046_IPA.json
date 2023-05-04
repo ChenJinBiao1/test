@@ -1,0 +1,121 @@
+{
+	"name": "ErrorfileIPT046_IPA",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "IPTCGI_ISCLA_ITM_STY_CLR_LOC_ATTR_T_046",
+						"type": "DatasetReference"
+					},
+					"name": "IPAISCAL"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT046PriceUpdate_PX_FF_IPA_RejISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT046PriceUpdate_PX_FF_IPA_RejISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFIPARejISCLA"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FILTER"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     LOC_NBR as integer (toInteger(null())),",
+				"     STRT_DT as string (toString(null())),",
+				"     RTL_PRC_AMT as decimal(15,2) (toDecimal(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string (toString(null())),",
+				"     PRC_CHG_ID as integer (toInteger(null())),",
+				"     PRC_STAT_CD as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          PRC_STAT_CD as string,",
+				"          RTL_PRC_AMT as decimal(15,2),",
+				"          STRT_DT as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          PRC_CHG_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPAISCAL",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          PRC_STAT_CD as string,",
+				"          RTL_PRC_AMT as decimal(15,2),",
+				"          STRT_DT as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          PRC_CHG_ID as integer,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"IPAISCAL filter((ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)) && \r",
+				"(LOC_NBR == ($LOC_NBR) || isNull(LOC_NBR)) && \r",
+				"(PRC_STAT_CD == $PRC_STAT_CD || isNull(PRC_STAT_CD)) && \r",
+				"(RTL_PRC_AMT == $RTL_PRC_AMT || isNull(RTL_PRC_AMT)) && \r",
+				"(STRT_DT == toDate($STRT_DT) || isNull(STRT_DT)) && \r",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && \r",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && \r",
+				"(LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) && \r",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)) && \r",
+				"(PRC_CHG_ID == $PRC_CHG_ID || isNull(PRC_CHG_ID))) ~> FILTER",
+				"FILTER, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LOC_NBR as string,",
+				"          PRC_STAT_CD as string,",
+				"          RTL_PRC_AMT as string,",
+				"          STRT_DT as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          PRC_CHG_ID as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT046PriceUpdate_PX.FF_IPA_RejISCLA.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFIPARejISCLA"
+			]
+		}
+	}
+}

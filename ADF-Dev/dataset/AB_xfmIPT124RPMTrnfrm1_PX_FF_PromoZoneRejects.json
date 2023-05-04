@@ -1,0 +1,109 @@
+{
+	"name": "AB_xfmIPT124RPMTrnfrm1_PX_FF_PromoZoneRejects",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/12-PriceUpdatesRPM"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "xfmIPT124RPMTrnfrm1_PX.FF_PromoZoneRejects.txt",
+				"folderPath": "destintion",
+				"fileSystem": "12priceupdatesrpm"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PMOTN_REQ_ID_S",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_END_DT",
+				"type": "String"
+			},
+			{
+				"name": "PROC_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "PRC_SYS_EXT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "EXTL_PMOTN_IND",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_LVL_CD",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_APPL_TYP_CD",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_HIER_LVL_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "PRC_GRP_ZN_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "MIN_QTY",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_PRC_UN_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_PCT_OFF_RAT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_DLR_OFF_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_DSCT_CD",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CNCY_CD",
+				"type": "String"
+			},
+			{
+				"name": "Count",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

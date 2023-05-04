@@ -1,0 +1,69 @@
+{
+	"name": "AB_ERROR_106_FF_TPLDVRej",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ldIPT106DIVTPromo_TPLDV_PX.FF_TPLDVRej.ASIA.txt",
+				"folderPath": "error",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PMOTN_LADR_ID_S",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_LADR_SEQ_ORD_NBR",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_PRC_UN_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_PCT_OFF_RAT",
+				"type": "String"
+			},
+			{
+				"name": "PMOTN_DLR_OFF_AMT",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "CRT_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			},
+			{
+				"name": "DATE_TIME",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,407 @@
+{
+	"name": "xfmlIPT021BCRInvtTransform_PX",
+	"properties": {
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_Inventory_BCR_to_IPT",
+						"type": "DatasetReference"
+					},
+					"name": "InventoryExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_BMCPC_BRD_MKT_CTRY_LGCY_CTL_T",
+						"type": "DatasetReference"
+					},
+					"name": "BmcpcBrdMktCtryLgcyctlT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_GlobalCC_seqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSGlobalCC"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_LOCIT_LOC_LIST_T",
+						"type": "DatasetReference"
+					},
+					"name": "ABLOCITLOCLISTT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT021BCRInvntTransform_PX_ASIA_FF_RejBMCPC",
+						"type": "DatasetReference"
+					},
+					"name": "FMRejBMCBC"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT021BCRInvntTransform_PX_ASIA_FF_Reject_CC",
+						"type": "DatasetReference"
+					},
+					"name": "FMRejCC"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT021BCRInvntTransform_PX_ASIA_DS_DailyInventoryUpdate",
+						"type": "DatasetReference"
+					},
+					"name": "xfmIPT021BCRInvntTransformPXASIADSDailyInventoryUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT021BCRInvntTransform_PX_ASIA_FF_Reject_LocNbr",
+						"type": "DatasetReference"
+					},
+					"name": "xfmIPT021BCRInvntTransformPXASIAFFRejectLocNbr"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LLgcylnd"
+				},
+				{
+					"name": "LLgcylndMatchSplit"
+				},
+				{
+					"name": "CheckLLgcyIndMatch"
+				},
+				{
+					"name": "FILegacyInd"
+				},
+				{
+					"name": "LGlobalCCNbr"
+				},
+				{
+					"name": "LLgcyseqNbr"
+				},
+				{
+					"name": "CheckLGlobalCCNbrMatch"
+				},
+				{
+					"name": "LGlobalCCNbrMacthsplit"
+				},
+				{
+					"name": "LLgcyseqNbrCheckMatch"
+				},
+				{
+					"name": "LLgcyseqNbrMatchSplit"
+				},
+				{
+					"name": "FRejectCC"
+				},
+				{
+					"name": "FValidCC"
+				},
+				{
+					"name": "LLgctseqNbrRemoveAttribute"
+				},
+				{
+					"name": "LGlobalCCNbrRemoveAttribute"
+				},
+				{
+					"name": "AInventory"
+				},
+				{
+					"name": "JInventory"
+				},
+				{
+					"name": "JInventoryRemoveAttribute"
+				},
+				{
+					"name": "LLocNum"
+				},
+				{
+					"name": "LLocNumCheckMatch"
+				},
+				{
+					"name": "LLocNumMatchSplit"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          OPR_BRD_ID as integer,",
+				"          OPR_ENTP_MKT_ID as string,",
+				"          OPR_CHNL_ID as integer,",
+				"          OPR_STY_CD as string,",
+				"          CLR_ID as string,",
+				"          OPR_STY_CLR_NBR as string,",
+				"          OPR_LOC_NBR as integer,",
+				"          PROC_DT as string,",
+				"          OH_INV_UN_QTY as integer,",
+				"          IXIT_INV_UN_QTY as integer,",
+				"          NON_SELL_UN_QTY as integer,",
+				"          RSV_UN_QTY as integer,",
+				"          XPCT_UN_QTY as integer,",
+				"          ON_ORD_QTY as integer,",
+				"          CD_DTL_NM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> InventoryExtract",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          LGCY_IND as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BmcpcBrdMktCtryLgcyctlT",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_SKU_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSGlobalCC",
+				"source(output(",
+				"          LOC_NBR as integer 'LOC_NBR'",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ABLOCITLOCLISTT",
+				"InventoryExtract, BmcpcBrdMktCtryLgcyctlT lookup(OPR_BRD_ID == BRD_ID",
+				"     && OPR_ENTP_MKT_ID == MKT_ID",
+				"     && OPR_CHNL_ID == CHNL_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLgcylnd",
+				"CheckLLgcyIndMatch split(IsMatch==true(),",
+				"     disjoint: true) ~> LLgcylndMatchSplit@(LLgcylndMatch, LLgcylndNotMacth)",
+				"LLgcylnd derive(IsMatch = isMatch()) ~> CheckLLgcyIndMatch",
+				"LLgcylndMatchSplit@LLgcylndMatch split(LGCY_IND == 'N',",
+				"     disjoint: true) ~> FILegacyInd@(FioNotLegacy, FioLegacy)",
+				"FILegacyInd@FioNotLegacy, DSGlobalCC lookup(OPR_ENTP_MKT_ID == DSGlobalCC@MKT_ID",
+				"     && OPR_CHNL_ID == DSGlobalCC@CHNL_ID",
+				"     && OPR_CHNL_ID == DSGlobalCC@CHNL_ID",
+				"     && OPR_STY_CD == ITM_STY_NBR",
+				"     && CLR_ID == MKT_DIFF1_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LGlobalCCNbr",
+				"FILegacyInd@FioLegacy, DSGlobalCC lookup(OPR_ENTP_MKT_ID == DSGlobalCC@MKT_ID",
+				"     && OPR_CHNL_ID == DSGlobalCC@CHNL_ID",
+				"     && OPR_STY_CLR_NBR == ITM_STY_CC_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLgcyseqNbr",
+				"LGlobalCCNbr derive(isMatch = isMatch()) ~> CheckLGlobalCCNbrMatch",
+				"LGlobalCCNbrRemoveAttribute split(isMatch,",
+				"     disjoint: true) ~> LGlobalCCNbrMacthsplit@(LGlobalCCNbrMacth, LGlobalCCNbrNoMatch)",
+				"LLgcyseqNbr derive(isMatch = isMatch()) ~> LLgcyseqNbrCheckMatch",
+				"LLgctseqNbrRemoveAttribute split(isMatch,",
+				"     disjoint: true) ~> LLgcyseqNbrMatchSplit@(LLgcyseqNbrMatch, LLgcyseqNbrNoMatch)",
+				"LGlobalCCNbrMacthsplit@LGlobalCCNbrNoMatch, LLgcyseqNbrMatchSplit@LLgcyseqNbrNoMatch union(byName: true,",
+				"     partitionBy('hash', 1))~> FRejectCC",
+				"LGlobalCCNbrMacthsplit@LGlobalCCNbrMacth, LLgcyseqNbrMatchSplit@LLgcyseqNbrMatch union(byName: true)~> FValidCC",
+				"LLgcyseqNbrCheckMatch select(mapColumn(",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          PROC_DT,",
+				"          OH_INV_UN_QTY,",
+				"          IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY,",
+				"          RSV_UN_QTY,",
+				"          XPCT_UN_QTY,",
+				"          ON_ORD_QTY,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          isMatch = LLgcyseqNbrCheckMatch@isMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LLgctseqNbrRemoveAttribute",
+				"CheckLGlobalCCNbrMatch select(mapColumn(",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          PROC_DT,",
+				"          OH_INV_UN_QTY,",
+				"          IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY,",
+				"          RSV_UN_QTY,",
+				"          XPCT_UN_QTY,",
+				"          ON_ORD_QTY,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          isMatch = CheckLGlobalCCNbrMatch@isMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LGlobalCCNbrRemoveAttribute",
+				"FValidCC aggregate(groupBy(OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          PROC_DT),",
+				"     IXIT_INV_UN_QTY = sum(IXIT_INV_UN_QTY),",
+				"          NON_SELL_UN_QTY = sum(NON_SELL_UN_QTY),",
+				"          OH_INV_UN_QTY = sum(OH_INV_UN_QTY),",
+				"          ON_ORD_QTY = sum(ON_ORD_QTY),",
+				"          RSV_UN_QTY = sum(RSV_UN_QTY),",
+				"          XPCT_UN_QTY = sum(XPCT_UN_QTY)) ~> AInventory",
+				"AInventory, FValidCC join(AInventory@OPR_LOC_NBR == FValidCC@OPR_LOC_NBR",
+				"     && AInventory@ITM_STY_CLR_SEQ_NBR_S == FValidCC@ITM_STY_CLR_SEQ_NBR_S",
+				"     && AInventory@PROC_DT == FValidCC@PROC_DT,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JInventory",
+				"JInventory select(mapColumn(",
+				"          OPR_LOC_NBR = AInventory@OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S = AInventory@ITM_STY_CLR_SEQ_NBR_S,",
+				"          PROC_DT = AInventory@PROC_DT,",
+				"          IXIT_INV_UN_QTY = AInventory@IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY = AInventory@NON_SELL_UN_QTY,",
+				"          OH_INV_UN_QTY = AInventory@OH_INV_UN_QTY,",
+				"          ON_ORD_QTY = AInventory@ON_ORD_QTY,",
+				"          RSV_UN_QTY = AInventory@RSV_UN_QTY,",
+				"          XPCT_UN_QTY = AInventory@XPCT_UN_QTY,",
+				"          OPR_STY_CLR_NBR,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          OPR_STY_CD,",
+				"          CLR_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> JInventoryRemoveAttribute",
+				"JInventoryRemoveAttribute, ABLOCITLOCLISTT lookup(OPR_LOC_NBR == LOC_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLocNum",
+				"LLocNum derive(isMatch = isMatch()) ~> LLocNumCheckMatch",
+				"LLocNumCheckMatch split(isMatch,",
+				"     disjoint: false) ~> LLocNumMatchSplit@(LLocNumMacth, LLocNumNoMatch)",
+				"LLgcylndMatchSplit@LLgcylndNotMacth sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT021BCRInvntTransform_PX',$pInvocationId,'.FF_Rej_BMCPC.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 0,",
+				"     mapColumn(",
+				"          OPR_BRD_ID,",
+				"          OPR_MKT_ID = OPR_ENTP_MKT_ID,",
+				"          OPR_CHNL_ID,",
+				"          OPR_STY_CD,",
+				"          CLR_ID,",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          PROC_DT,",
+				"          OH_INV_UN_QTY,",
+				"          IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY,",
+				"          RSV_UN_QTY,",
+				"          XPCT_UN_QTY,",
+				"          ON_ORD_QTY,",
+				"          LOC_DESC = CD_DTL_NM",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> FMRejBMCBC",
+				"FRejectCC sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT021BCRInvntTransform_PX.',$pInvocationId,'.FF_Reject_CC.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1,",
+				"     partitionBy('hash', 1)) ~> FMRejCC",
+				"LLocNumMatchSplit@LLocNumMacth sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          OPR_STY_CLR_NBR as string,",
+				"          OPR_LOC_NBR as string,",
+				"          PROC_DT as string,",
+				"          OH_INV_UN_QTY as string,",
+				"          IXIT_INV_UN_QTY as string,",
+				"          NON_SELL_UN_QTY as string,",
+				"          RSV_UN_QTY as string,",
+				"          XPCT_UN_QTY as string,",
+				"          ON_ORD_QTY as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT021BCRInvntTransform_PX.',$pInvocationId,'.DS_DailyInventoryUpdate.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          OPR_STY_CLR_NBR,",
+				"          OPR_LOC_NBR,",
+				"          PROC_DT,",
+				"          OH_INV_UN_QTY,",
+				"          IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY,",
+				"          RSV_UN_QTY,",
+				"          XPCT_UN_QTY,",
+				"          ON_ORD_QTY,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> xfmIPT021BCRInvntTransformPXASIADSDailyInventoryUpdate",
+				"LLocNumMatchSplit@LLocNumNoMatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          OPR_LOC_NBR as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          PROC_DT as string,",
+				"          IXIT_INV_UN_QTY as string,",
+				"          NON_SELL_UN_QTY as string,",
+				"          OH_INV_UN_QTY as string,",
+				"          ON_ORD_QTY as string,",
+				"          RSV_UN_QTY as string,",
+				"          XPCT_UN_QTY as string,",
+				"          OPR_STY_CLR_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          OPR_STY_CD as string,",
+				"          CLR_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT021BCRInvntTransform_PX.',$pInvocationId,'FF_Reject_LocNbr.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          OPR_LOC_NBR,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          PROC_DT,",
+				"          IXIT_INV_UN_QTY,",
+				"          NON_SELL_UN_QTY,",
+				"          OH_INV_UN_QTY,",
+				"          ON_ORD_QTY,",
+				"          RSV_UN_QTY,",
+				"          XPCT_UN_QTY,",
+				"          OPR_STY_CLR_NBR,",
+				"          GLBL_ITM_STY_CC_NBR,",
+				"          OPR_STY_CD,",
+				"          CLR_ID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> xfmIPT021BCRInvntTransformPXASIAFFRejectLocNbr"
+			]
+		}
+	}
+}

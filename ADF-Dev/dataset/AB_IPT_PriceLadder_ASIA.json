@@ -1,0 +1,72 @@
+{
+	"name": "AB_IPT_PriceLadder_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/10-DIVTPriceLadders"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "IPT_PriceLadder_ASIA.txt",
+					"type": "Expression"
+				},
+				"folderPath": "source",
+				"fileSystem": "10divtpriceladders"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Brand ID",
+				"type": "String"
+			},
+			{
+				"name": "Market ID",
+				"type": "String"
+			},
+			{
+				"name": "Channel",
+				"type": "String"
+			},
+			{
+				"name": "Zone Name",
+				"type": "String"
+			},
+			{
+				"name": "Division",
+				"type": "String"
+			},
+			{
+				"name": "Ladder Name",
+				"type": "String"
+			},
+			{
+				"name": "Ladder Type",
+				"type": "String"
+			},
+			{
+				"name": "% Off",
+				"type": "String"
+			},
+			{
+				"name": "Amount Off",
+				"type": "String"
+			},
+			{
+				"name": "Net Price",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

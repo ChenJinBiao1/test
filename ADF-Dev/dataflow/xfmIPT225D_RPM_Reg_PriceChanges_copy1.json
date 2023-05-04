@@ -1,0 +1,258 @@
+{
+	"name": "xfmIPT225D_RPM_Reg_PriceChanges_copy1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225C_RPM_Reg_PriceChanges_DS_RPM_PriceChange_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSRPMPriceChange"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_LOCLT_225D",
+						"type": "DatasetReference"
+					},
+					"name": "IPTLOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_ISCLA_225D",
+						"type": "DatasetReference"
+					},
+					"name": "IPTISCLA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT225_RPM_RegPriceChange_Notin_IPT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFPriceChangeError"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225D_RPM_Reg_PriceChanges_DS_RegPC_Success_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSRegPCSuccess"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225D_RPM_Reg_PriceChanges_DS_RegPC_Success_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFStrRejects"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LSTR"
+				},
+				{
+					"name": "LValidate"
+				},
+				{
+					"name": "outValidStr"
+				},
+				{
+					"name": "outSuccess"
+				},
+				{
+					"name": "outNotinISCLA"
+				},
+				{
+					"name": "XAddDesc"
+				},
+				{
+					"name": "rejStr"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "IsMatch2"
+				},
+				{
+					"name": "split2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PRICE_CHANGE_ID as integer,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as integer,",
+				"          EFFECTIVE_DATE as timestamp,",
+				"          CHANGE_AMOUNT as decimal(15,2),",
+				"          CREATE_DATE as timestamp,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as timestamp,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as integer,",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSRPMPriceChange",
+				"source(output(",
+				"          LOC_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTLOCLT",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          STRT_DT as timestamp,",
+				"          RTL_PRC_AMT as decimal(15,2)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTISCLA",
+				"DSRPMPriceChange, IPTLOCLT lookup(LOCATION == LOC_NBR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LSTR",
+				"outValidStr, IPTISCLA lookup(outValidStr@ITM_STY_CLR_SEQ_NBR_S == IPTISCLA@ITM_STY_CLR_SEQ_NBR_S",
+				"     && LOCATION == LOC_NBR",
+				"     && EFFECTIVE_DATE == STRT_DT",
+				"     && CHANGE_AMOUNT == RTL_PRC_AMT,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LValidate",
+				"split1@Yes select(mapColumn(",
+				"          PRICE_CHANGE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outValidStr",
+				"split2@Yes2 select(mapColumn(",
+				"          PRICE_CHANGE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = split2@Yes2@ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outSuccess",
+				"split2@No2 select(mapColumn(",
+				"          PRICE_CHANGE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S = split2@No2@ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outNotinISCLA",
+				"outNotinISCLA derive(DESCRIPTION = 'RPM Reg Price Change is NOT available in IPT') ~> XAddDesc",
+				"split1@No select(mapColumn(",
+				"          PRICE_CHANGE_ID,",
+				"          STATE,",
+				"          ITEM,",
+				"          DIFF_ID,",
+				"          ZONE_ID,",
+				"          EFFECTIVE_DATE,",
+				"          CHANGE_AMOUNT,",
+				"          CREATE_DATE,",
+				"          CREATE_ID,",
+				"          APPROVAL_DATE,",
+				"          APPROVAL_ID,",
+				"          LOCATION,",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          ITM_STY_CLR_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejStr",
+				"LSTR derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"LValidate derive(IsMatch = isMatch()) ~> IsMatch2",
+				"IsMatch2 split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes2, No2)",
+				"XAddDesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT225_RPM_RegPriceChange_Notin_IPT_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFPriceChangeError",
+				"outSuccess sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT225D_RPM_Reg_PriceChanges.DS_RegPC_Success_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSRegPCSuccess",
+				"rejStr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('xfmIPT225D_RPM_Reg_PriceChanges.FF_Str_Rejects.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFStrRejects"
+			]
+		}
+	}
+}

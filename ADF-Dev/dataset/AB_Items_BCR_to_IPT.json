@@ -1,0 +1,174 @@
+{
+	"name": "AB_Items_BCR_to_IPT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "String",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('Items_BCR_to_IPT_',dataset().pInvocationId,'.txt')",
+					"type": "Expression"
+				},
+				"folderPath": "source",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OPR_BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "BCR_BRD_NM",
+				"type": "String"
+			},
+			{
+				"name": "BCR_MKT_NM",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_CO_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CORP_DESC",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CO_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_DIV_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_DIV_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_DEPT_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_DEPT_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_CLASS_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_CLS_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_SCLS_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_SCLS_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CD",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_STY_DESC",
+				"type": "String"
+			},
+			{
+				"name": "CLR_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CLR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "PRD_UNQ_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MDSE_PGM_ID",
+				"type": "String"
+			},
+			{
+				"name": "MDSE_PGM_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_BRD_SKU_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRD_SKU_DESC",
+				"type": "String"
+			},
+			{
+				"name": "BRD_SKU_ABBR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "SZ_CD",
+				"type": "String"
+			},
+			{
+				"name": "SZ_MDL_CD",
+				"type": "String"
+			},
+			{
+				"name": "SZ_DESC",
+				"type": "String"
+			},
+			{
+				"name": "SEAS_CD",
+				"type": "String"
+			},
+			{
+				"name": "SEAS_YR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "SEAS_YR_DESC",
+				"type": "String"
+			},
+			{
+				"name": "OPR_SZ_CD",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

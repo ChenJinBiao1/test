@@ -1,0 +1,82 @@
+{
+	"name": "ldIPT011BCRItemsUMHDSDivision_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT011BCRItemsUMHDS_PX_DS_HIERARCHY_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSHIERARCHY"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_UMHDS_UNIV_MDSE_HIER_T_OUT_02",
+						"type": "DatasetReference"
+					},
+					"name": "IPTUMHDS"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDDivision"
+				},
+				{
+					"name": "outDivision"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          BRD_DESC as string,",
+				"          BRD_ABBR_DESC as string,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          DIV_ABBR_DESC as string,",
+				"          DEPT_ID as integer,",
+				"          DEPT_DESC as string,",
+				"          DEPT_ABBR_DESC as string,",
+				"          CLS_ID as integer,",
+				"          CLS_DESC as string,",
+				"          CLS_ABBR_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSHIERARCHY",
+				"DSHIERARCHY aggregate(groupBy(BRD_ID,",
+				"          DIV_ID),",
+				"     each(match(!in(['BRD_ID','DIV_ID'],name)), $$ = first($$))) ~> RDDivision",
+				"RDDivision select(mapColumn(",
+				"          BRD_ID,",
+				"          DIV_ID,",
+				"          BRD_DESC,",
+				"          BRD_ABBR_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outDivision",
+				"outDivision sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          DIV_ID as string,",
+				"          DIV_DESC as string,",
+				"          DIV_ABBR_DESC as string",
+				"     ),",
+				"     partitionFileNames:['IPTCGI.UMHDS_UNIV_MDSE_HIER_T_OUT_02.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTUMHDS"
+			]
+		}
+	}
+}

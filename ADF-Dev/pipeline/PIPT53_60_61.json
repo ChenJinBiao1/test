@@ -1,0 +1,102 @@
+{
+	"name": "PIPT53_60_61",
+	"properties": {
+		"activities": [
+			{
+				"name": "PIPT53DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT53DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=metricCalc.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT53DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT60DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT53DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT60DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=mdUpdate.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT60DU",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PIPT61DU",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PIPT60DU",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript_sh",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/shell?jobName=PIPT61DU&&scriptPath=@{pipeline().globalParameters.UI_para}&&scriptName=purgeInventoryData.sh&&params=-mktGrp,AS",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "PIPT61DU",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"state": {
+				"type": "String",
+				"defaultValue": "0"
+			}
+		},
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-02-10T02:32:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

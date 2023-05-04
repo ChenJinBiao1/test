@@ -1,0 +1,59 @@
+{
+	"name": "ldIPT106DIVTPromo_TPLDV_PX",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT105DIVTPromo_TPLDV_PX_DS_TPLDV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSTPLDV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Test_Email",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          PMOTN_LADR_SEQ_ORD_NBR as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(15,2),",
+				"          PMOTN_PCT_OFF_RAT as decimal(15,3),",
+				"          PMOTN_DLR_OFF_AMT as decimal(15,2),",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSTPLDV",
+				"DSTPLDV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

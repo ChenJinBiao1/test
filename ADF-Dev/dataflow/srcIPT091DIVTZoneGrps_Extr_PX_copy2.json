@@ -1,0 +1,404 @@
+{
+	"name": "srcIPT091DIVTZoneGrps_Extr_PX_copy2",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_Zone_Store_Mapping_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTExtract"
+				},
+				{
+					"dataset": {
+						"referenceName": "PRCGP_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "ffzoneGroupprc"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_FF_RejDateOverlap_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejDateOverIap"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_PrcGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPrcGroups"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT091DIVTZoneGrps_Extr_PX_DS_ZoneGroups_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSZoneGroups"
+				}
+			],
+			"transformations": [
+				{
+					"name": "getFFRejDateOverIap"
+				},
+				{
+					"name": "XPrcgrp1"
+				},
+				{
+					"name": "XPrcgrp2"
+				},
+				{
+					"name": "XPrcgrp3"
+				},
+				{
+					"name": "XPrcgrp4"
+				},
+				{
+					"name": "XPrcgrp5"
+				},
+				{
+					"name": "XPrcgrp6"
+				},
+				{
+					"name": "XPrcgrp8"
+				},
+				{
+					"name": "XPrcgrp7"
+				},
+				{
+					"name": "XPrcgrp9"
+				},
+				{
+					"name": "XPrcgrp10"
+				},
+				{
+					"name": "XPrcgrp11"
+				},
+				{
+					"name": "xoPrcgrp1"
+				},
+				{
+					"name": "xoPrcgrp2"
+				},
+				{
+					"name": "xoPrcgrp3"
+				},
+				{
+					"name": "xoPrcgrp4"
+				},
+				{
+					"name": "xoPrcgrp5"
+				},
+				{
+					"name": "xoPrcgrp6"
+				},
+				{
+					"name": "xoPrcgrp7"
+				},
+				{
+					"name": "xoPrcgrp8"
+				},
+				{
+					"name": "xoPrcgrp9"
+				},
+				{
+					"name": "xoPrcgrp10"
+				},
+				{
+					"name": "xoPrcgrp11"
+				},
+				{
+					"name": "Xp1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DC_ID as integer,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTExtract",
+				"source(output(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string,",
+				"          BrandId as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ffzoneGroupprc",
+				"split1@n derive(REASON = 'Date overlap for the same store') ~> getFFRejDateOverIap",
+				"ffzoneGroupprc derive(PrcGrpDesc = CTRY_CD,",
+				"          PrcGrpId = 1,",
+				"          Brand = BrandId) ~> XPrcgrp1",
+				"ffzoneGroupprc derive(PrcGrpDesc = CNCY_CD,",
+				"          PrcGrpId = 2,",
+				"          Brand = BrandId) ~> XPrcgrp2",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM1,",
+				"          PrcGrpId = 3,",
+				"          Brand = BrandId) ~> XPrcgrp3",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM2,",
+				"          PrcGrpId = 4,",
+				"          Brand = BrandId) ~> XPrcgrp4",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM3,",
+				"          PrcGrpId = 5,",
+				"          Brand = BrandId) ~> XPrcgrp5",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM4,",
+				"          PrcGrpId = 6,",
+				"          Brand = BrandId) ~> XPrcgrp6",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM6,",
+				"          PrcGrpId = 8,",
+				"          Brand = BrandId) ~> XPrcgrp8",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM5,",
+				"          PrcGrpId = 7,",
+				"          Brand = BrandId) ~> XPrcgrp7",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM7,",
+				"          PrcGrpId = 9,",
+				"          Brand = BrandId) ~> XPrcgrp9",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM8,",
+				"          PrcGrpId = 10,",
+				"          Brand = BrandId) ~> XPrcgrp10",
+				"ffzoneGroupprc derive(PrcGrpDesc = CSTM9,",
+				"          PrcGrpId = 11,",
+				"          Brand = BrandId) ~> XPrcgrp11",
+				"XPrcgrp1 select(mapColumn(",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          Brand = BrandId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp1",
+				"XPrcgrp2 select(mapColumn(",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          Brand = BrandId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp2",
+				"XPrcgrp3 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp3",
+				"XPrcgrp4 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp4",
+				"XPrcgrp5 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp5",
+				"XPrcgrp6 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp6",
+				"XPrcgrp7 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp7",
+				"XPrcgrp8 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp8",
+				"XPrcgrp9 select(mapColumn(",
+				"          Brand = BrandId,",
+				"          PrcGrpDesc,",
+				"          PrcGrpId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp9",
+				"XPrcgrp10 select(mapColumn(",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          Brand",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp10",
+				"XPrcgrp11 select(mapColumn(",
+				"          PrcGrpDesc,",
+				"          PrcGrpId,",
+				"          Brand = BrandId",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoPrcgrp11",
+				"xoPrcgrp1, xoPrcgrp2, xoPrcgrp3, xoPrcgrp4, xoPrcgrp5, xoPrcgrp6, xoPrcgrp7, xoPrcgrp8, xoPrcgrp9, xoPrcgrp10, xoPrcgrp11 union(byName: true)~> Xp1",
+				"IPTExtract split(iif(STRT_EFF_DT==END_EFF_DT, 1, 0) == 0,",
+				"     disjoint: false) ~> split1@(y, n)",
+				"split1@y derive(CSTM1 = iif(isNull(CSTM1), '', CSTM1),",
+				"          CSTM2 = iif(isNull(CSTM2), '', CSTM2),",
+				"          CSTM3 = iif(isNull(CSTM3), '', CSTM3),",
+				"          CSTM4 = iif(isNull(CSTM4), '', CSTM4),",
+				"          CSTM5 = iif(isNull(CSTM5), '', CSTM5),",
+				"          CSTM6 = iif(isNull(CSTM6), '', CSTM6),",
+				"          CSTM7 = iif(isNull(CSTM7), '', CSTM7),",
+				"          CSTM8 = iif(isNull(CSTM8), '', CSTM8),",
+				"          CSTM9 = iif(isNull(CSTM9), '', CSTM9)) ~> derivedColumn1",
+				"getFFRejDateOverIap sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string,",
+				"          Reason as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT091DIVTZoneGrps_Extr_PX.FF_RejDateOverlap.',$pInvocationId,'.csv'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          DC_ID,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          CTRY_CD,",
+				"          CNCY_CD,",
+				"          CSTM1,",
+				"          CSTM2,",
+				"          CSTM3,",
+				"          CSTM4,",
+				"          CSTM5,",
+				"          CSTM6,",
+				"          CSTM7,",
+				"          CSTM8,",
+				"          CSTM9,",
+				"          {Like Store},",
+				"          Reason = REASON",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> FFRejDateOverIap",
+				"Xp1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PrcGrpDesc as string,",
+				"          PrcGrpId as string,",
+				"          Brand as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT091DIVTZoneGrps_Extr_PX.DS_PrcGroups.',$pInvocationId,'.txt') )],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPrcGroups",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          DC_ID as string,",
+				"          STR_NBR as string,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          CSTM1 as string,",
+				"          CSTM2 as string,",
+				"          CSTM3 as string,",
+				"          CSTM4 as string,",
+				"          CSTM5 as string,",
+				"          CSTM6 as string,",
+				"          CSTM7 as string,",
+				"          CSTM8 as string,",
+				"          CSTM9 as string,",
+				"          {Like Store} as string",
+				"     ),",
+				"     partitionFileNames:[(concat('srcIPT091DIVTZoneGrps_Extr_PX.DS_ZoneGroups.',$pInvocationId,'.txt') )],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSZoneGroups"
+			]
+		}
+	}
+}

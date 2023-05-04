@@ -1,0 +1,255 @@
+{
+	"name": "sqrIPT049DeletePromoUpdate",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send-Emial_4",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "DSIPTDeletePromo",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:DSIPTDeletePromo_3\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send-Emial_5",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ForEach3",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:ForEach3\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "DSIPTDeletePromo",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "IPT_049_SQL1_UPDATE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "AB_srcIPT041CurrentPriceAggregateExtract_FF_LastRunTimeStamp_ASIA",
+						"type": "DatasetReference",
+						"parameters": {
+							"pInvocationId": "ASIA"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach3",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "DSIPTDeletePromo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('DSIPTDeletePromo').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "049",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "ENT_ESB_DB",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "LST_RUNTM_TMST",
+												"type": "Datetime",
+												"value": {
+													"value": "@item().LST_RUNTM_TMST",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "time",
+												"type": "Datetime",
+												"value": {
+													"value": "@formatDateTime(addhours(utcnow(),8))",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pLastUpdatedId",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().parameters.pLastUpdatedId",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pScrbName",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().parameters.pScrbName",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "pTxnTypeCode",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().parameters.pTxnTypeCode",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "NonQuery",
+										"text": {
+											"value": "UPDATE  AGGR_SCRB_T SET LST_RUNTM_TMST= ? , LST_UPDT_DTTM = ? ,LST_UPDT_USER_ID = ?\nWHERE AGGR_SCRB_T.SCRB_NM = ?\nAND AGGR_SCRB_T.TXN_TYP_CD = ?",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "IPT_049_SQL1_UPDATE",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT_049_SQL1_UPDATE&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT_049_SQL1_UPDATE.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT_049_SQL1_UPDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pTxnTypeCode": {
+				"type": "string",
+				"defaultValue": "PromoPriceDeleteDelta"
+			},
+			"pLastUpdatedId": {
+				"type": "string",
+				"defaultValue": "PIPT049U"
+			},
+			"pScrbName": {
+				"type": "string",
+				"defaultValue": "IPT"
+			}
+		},
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-30T02:28:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

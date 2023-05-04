@@ -1,0 +1,226 @@
+{
+	"name": "xfmIPT223H_RPMUnApprMD_Item_PX",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_Un_ApprovedMD_Success_RPMStaging_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSApprMDComplete"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_CLEARANCE_223H",
+						"type": "DatasetReference"
+					},
+					"name": "RPMCLEARANCE"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT22_UnapproveMD_Success_RPM_Base_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "UnApprMDSuccessItem"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT223_UnapproveMD_Errors_RPM_Base_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "UnApprMDErrorItem"
+				}
+			],
+			"transformations": [
+				{
+					"name": "inApprMD"
+				},
+				{
+					"name": "fiBrdMktChnl"
+				},
+				{
+					"name": "LItmDiffLocDt"
+				},
+				{
+					"name": "inmatch"
+				},
+				{
+					"name": "xiAddDesc"
+				},
+				{
+					"name": "xAddDesc"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as string,",
+				"          DIV_DESC as string,",
+				"          MD_REQ_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          STRT_DT as date,",
+				"          MD_PRC_AMT as decimal(15,2),",
+				"          RCMD_MD_PCT_OFF_RAT as decimal(15,2),",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as timestamp,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSApprMDComplete",
+				"source(output(",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          LOCATION as integer,",
+				"          EFFECTIVE_DATE as date,",
+				"          CHANGE_AMOUNT as integer,",
+				"          CHANGE_CURRENCY as string,",
+				"          CHANGE_PERCENT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMCLEARANCE",
+				"DSApprMDComplete select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inApprMD",
+				"inApprMD filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> fiBrdMktChnl",
+				"fiBrdMktChnl, RPMCLEARANCE lookup(ITM_STY_NBR == ITEM",
+				"     && MKT_DIFF1_ID == DIFF_ID",
+				"     && STR_NBR == LOCATION",
+				"     && STRT_DT == EFFECTIVE_DATE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LItmDiffLocDt",
+				"split1@Yes select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR,",
+				"          CHANGE_AMOUNT,",
+				"          CHANGE_CURRENCY,",
+				"          CHANGE_PERCENT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> inmatch",
+				"split1@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MD_REQ_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          STRT_DT,",
+				"          MD_PRC_AMT,",
+				"          RCMD_MD_PCT_OFF_RAT,",
+				"          PROC_STAT_CD,",
+				"          MDSE_LVL_CD,",
+				"          MD_CNT,",
+				"          PNT_DT,",
+				"          ITM_STY_NBR,",
+				"          MKT_DIFF1_ID,",
+				"          STR_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: false) ~> xiAddDesc",
+				"xiAddDesc derive(DESCRIPTION = 'MD record approved in RPM Staging is not in Active state or not present in RPM CLEARANCE base table') ~> xAddDesc",
+				"LItmDiffLocDt derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"inmatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRD_ID as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as string,",
+				"          MD_REQ_SEQ_NBR_S as string,",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          STRT_DT as string,",
+				"          MD_PRC_AMT as string,",
+				"          RCMD_MD_PCT_OFF_RAT as string,",
+				"          PROC_STAT_CD as string,",
+				"          MDSE_LVL_CD as string,",
+				"          MD_CNT as string,",
+				"          PNT_DT as string,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          STR_NBR as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CHANGE_CURRENCY as string,",
+				"          CHANGE_PERCENT as string",
+				"     ),",
+				"     partitionFileNames:[(concat('IPT22_UnapproveMD_Success_RPM_Base_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> UnApprMDSuccessItem",
+				"xAddDesc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT223_UnapproveMD_Errors_RPM_Base_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> UnApprMDErrorItem"
+			]
+		}
+	}
+}

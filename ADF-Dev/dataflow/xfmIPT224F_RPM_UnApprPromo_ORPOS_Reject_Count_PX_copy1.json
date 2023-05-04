@@ -1,0 +1,329 @@
+{
+	"name": "xfmIPT224F_RPM_UnApprPromo_ORPOS_Reject_Count_PX_copy1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT221F_CombineRPMLoadFiles_DS_ComplexPromoUpdate_combine",
+						"type": "DatasetReference"
+					},
+					"name": "DSComplexPromoUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_TPROO_UHILV_OPORI_224F",
+						"type": "DatasetReference"
+					},
+					"name": "IPTTPROOUHILVOPORI"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_TSPCT_224F",
+						"type": "DatasetReference"
+					},
+					"name": "RPMTSPCT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_ORPOS_224F",
+						"type": "DatasetReference"
+					},
+					"name": "RPMORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_COUNT_224",
+						"type": "DatasetReference"
+					},
+					"name": "IPTCOUNT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Total_UnApprovedPromo_Count_IPT_RPM_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotalCount"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT224_UnApproved_Promotions_Not_Published_To_ORPOS",
+						"type": "DatasetReference"
+					},
+					"name": "FFNotInORPOS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_Summary_Of_Promotions_UnApproved_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFTotatIPTRPMCount"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDPromoUpdt"
+				},
+				{
+					"name": "LBrdMktChnl"
+				},
+				{
+					"name": "loBrdMktChnl"
+				},
+				{
+					"name": "FBMC"
+				},
+				{
+					"name": "LTSPCT"
+				},
+				{
+					"name": "fobmc"
+				},
+				{
+					"name": "lotspctPromo"
+				},
+				{
+					"name": "LORPOS"
+				},
+				{
+					"name": "loORPOS"
+				},
+				{
+					"name": "rejORPOS"
+				},
+				{
+					"name": "XAddDESC"
+				},
+				{
+					"name": "AggORPOSCount"
+				},
+				{
+					"name": "JCount"
+				},
+				{
+					"name": "joout1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "OUTxoORPOS"
+				},
+				{
+					"name": "OUTxoORPOS1"
+				},
+				{
+					"name": "FcountPromo"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          PMOTN_STRT_DT as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_CD as string,",
+				"          PRC_SYS_EXT_DTTM as timestamp,",
+				"          EXTL_PMOTN_IND as string,",
+				"          MDSE_LVL_CD as string,",
+				"          CHNL_ID as integer,",
+				"          MKT_ID as string,",
+				"          PMOTN_APPL_TYP_CD as string,",
+				"          MIN_QTY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSComplexPromoUpdate",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          PMOTN_GRP_ID_S as integer,",
+				"          BRD_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          CRT_UPDT_USER_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTTPROOUHILVOPORI",
+				"source(output(",
+				"          {PROMO_ID } as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMTSPCT",
+				"source(output(",
+				"          PROMO_ID as integer,",
+				"          STATE as integer,",
+				"          GROUP_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMORPOS",
+				"source(output(",
+				"          GROUO_KEY as integer,",
+				"          COUNT as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTCOUNT",
+				"source(output(",
+				"          DESCRIPTION as string,",
+				"          COUNT as integer,",
+				"          ACTION_TO_BE_TAKEN as string,",
+				"          SORT_KEY as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFTotalCount",
+				"DSComplexPromoUpdate aggregate(groupBy(PMOTN_REQ_ID_S),",
+				"     each(match(!in(['PMOTN_REQ_ID_S'],name)), $$ = first($$))) ~> RDPromoUpdt",
+				"RDPromoUpdt, IPTTPROOUHILVOPORI lookup(PMOTN_REQ_ID_S == PMOTN_GRP_ID_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LBrdMktChnl",
+				"LBrdMktChnl select(mapColumn(",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          PMOTN_REQ_ID_S = PROMO_ID,",
+				"          PMOTN_GRP_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_CD,",
+				"          PRC_SYS_EXT_DTTM,",
+				"          EXTL_PMOTN_IND,",
+				"          MDSE_LVL_CD,",
+				"          PMOTN_APPL_TYP_CD,",
+				"          MIN_QTY,",
+				"          CRT_UPDT_USER_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loBrdMktChnl",
+				"loBrdMktChnl filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId && MKT_ID == $pMarketId) ~> FBMC",
+				"fobmc, RPMTSPCT lookup(PMOTN_ID == {PROMO_ID },",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LTSPCT",
+				"FBMC select(mapColumn(",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          PMOTN_ID = PMOTN_GRP_ID_S,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> fobmc",
+				"LTSPCT select(mapColumn(",
+				"          BRD_ID,",
+				"          CHNL_ID,",
+				"          MKT_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC,",
+				"          PMOTN_ID,",
+				"          PMOTN_STRT_DT,",
+				"          PMOTN_END_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lotspctPromo",
+				"lotspctPromo, RPMORPOS lookup(PMOTN_ID == PROMO_ID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LORPOS",
+				"split2@Yes select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PMOTN_ID,",
+				"          STATE,",
+				"          GROUP_KEY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loORPOS",
+				"split2@No select(mapColumn(",
+				"          PMOTN_ID,",
+				"          DIV_ID,",
+				"          DIV_DESC",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejORPOS",
+				"rejORPOS derive(ERROR_DESCRIPTION = 'PLEASE REACH TO RPM TEAM FOR MORE DETAILS ON FAILURE') ~> XAddDESC",
+				"loORPOS aggregate(groupBy(STATE,",
+				"          GROUP_KEY),",
+				"     COUNT = count()) ~> AggORPOSCount",
+				"AggORPOSCount, IPTCOUNT join(GROUP_KEY == GROUO_KEY,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> JCount",
+				"JCount select(mapColumn(",
+				"          COUNT = AggORPOSCount@COUNT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> joout1",
+				"joout1 split(isNull(COUNT) || COUNT == 0,",
+				"     disjoint: false) ~> split1@(xoORPOS, xoORPOS1)",
+				"split1@xoORPOS derive(DESCRIPTION = 'Number of UnApproved Promotions Published to ORPOS',",
+				"          COUNT = 0,",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Promotions Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_UnApproved_Promotions_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoORPOS",
+				"split1@xoORPOS1 derive(DESCRIPTION = 'Number of UnApproved Promotions Published to ORPOS',",
+				"          ACTION_TO_BE_TAKEN = 'If the count of Promotions Successfully processed in RPM and ORPOS does not match,then refer the attached files by names IPT224_UnApproved_Promotions_Not_Published_To_ORPOS_*',",
+				"          SORT_KEY = 5) ~> OUTxoORPOS1",
+				"OUTxoORPOS, OUTxoORPOS1, FFTotalCount union(byName: true)~> FcountPromo",
+				"LORPOS derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(Yes, No)",
+				"FcountPromo select(mapColumn(",
+				"          DESCRIPTION,",
+				"          COUNT,",
+				"          ACTION_TO_BE_TAKEN",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"XAddDESC sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT224_UnApproved_Promotions_Not_Published_To_ORPOS.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFNotInORPOS",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('Summary_Of_Promotions_UnApproved.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFTotatIPTRPMCount"
+			]
+		}
+	}
+}

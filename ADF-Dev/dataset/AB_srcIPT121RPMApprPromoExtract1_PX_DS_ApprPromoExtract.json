@@ -1,0 +1,28 @@
+{
+	"name": "AB_srcIPT121RPMApprPromoExtract1_PX_DS_ApprPromoExtract",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/12-PriceUpdatesRPM"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "srcIPT121RPMApprPromoExtract1_PX.DS_ApprPromoExtract.txt",
+				"folderPath": "destintion",
+				"fileSystem": "12priceupdatesrpm"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

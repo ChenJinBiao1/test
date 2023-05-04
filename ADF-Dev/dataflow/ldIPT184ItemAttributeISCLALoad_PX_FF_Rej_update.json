@@ -1,0 +1,114 @@
+{
+	"name": "ldIPT184ItemAttributeISCLALoad_PX_FF_Rej_update",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ISCLA_ITM_STY_CLR_LOC_ATTR_T_184_Temp2",
+						"type": "DatasetReference"
+					},
+					"name": "ISCLAUpdateTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT183ItemAttributeISCLALoad_PX_FF_ISCLARejects_upd_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFISCLARejectsupd"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT183ItemAttributeISCLALoad_PX_FF_ISCLARejects_upd_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFISCLARejectsupd1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (0),",
+				"     LOC_NBR as integer (0),",
+				"     STRT_DT as string (toString(null())),",
+				"     RTL_PRC_AMT as decimal(10,0) (toDecimal(0)),",
+				"     PRC_STAT_CD as string (toString(null())),",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string (toString(null())),",
+				"     DLT_IND as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as timestamp,",
+				"          DLT_IND as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ISCLAUpdateTemp",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer,",
+				"          RTL_PRC_AMT as decimal(10,0),",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as timestamp,",
+				"          DLT_IND as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFISCLARejectsupd",
+				"ISCLAUpdateTemp filter(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)  && \r",
+				"LOC_NBR == $LOC_NBR || isNull(LOC_NBR)  && \r",
+				"STRT_DT == toTimestamp($STRT_DT) || isNull(STRT_DT)  && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM)  &&\r",
+				"RTL_PRC_AMT ==$RTL_PRC_AMT  || isNull(RTL_PRC_AMT) &&\r",
+				"PRC_STAT_CD == $PRC_STAT_CD || isNull(PRC_STAT_CD)  && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)  && \r",
+				"DLT_IND == $DLT_IND || isNull(DLT_IND)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFISCLARejectsupd union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          LOC_NBR as string,",
+				"          RTL_PRC_AMT as string,",
+				"          PRC_STAT_CD as string,",
+				"          STRT_DT as string,",
+				"          DLT_IND as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT183ItemAttributeISCLALoad_PX.FF_ISCLARejects.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFISCLARejectsupd1"
+			]
+		}
+	}
+}

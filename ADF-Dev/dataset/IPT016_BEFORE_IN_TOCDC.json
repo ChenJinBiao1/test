@@ -1,0 +1,20 @@
+{
+	"name": "IPT016_BEFORE_IN_TOCDC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "IPT016_BEFORE_IN_TOCDC"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

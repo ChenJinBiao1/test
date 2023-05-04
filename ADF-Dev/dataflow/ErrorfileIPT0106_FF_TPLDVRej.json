@@ -1,0 +1,122 @@
+{
+	"name": "ErrorfileIPT0106_FF_TPLDVRej",
+	"properties": {
+		"folder": {
+			"name": "10-DIVTPriceLadders"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT105DIVTPromo_TPLDV_PX_DS_TPLDV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "source1",
+					"description": "从 AB_xfmIPT105DIVTPromo_TPLDV_PX_DS_TPLDV_ASIA导入数据"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_106_FF_TPLDVRej",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ERROR_106_FF_TPLDVRej",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     PMOTN_LADR_ID_S as integer,",
+				"     PMOTN_LADR_SEQ_ORD_NBR as integer,",
+				"     PMOTN_PRC_UN_AMT as decimal(15,2),",
+				"     PMOTN_PCT_OFF_RAT as decimal(15,2),",
+				"     PMOTN_DLR_OFF_AMT as decimal(15,2),",
+				"     CRT_UPDT_DTTM as string,",
+				"     CRT_UPDT_USER_ID as string,",
+				"     LST_UPDT_ID as string,",
+				"     LST_UPDT_DTTM as string",
+				"}",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          PMOTN_LADR_SEQ_ORD_NBR as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(15,2),",
+				"          PMOTN_PCT_OFF_RAT as decimal(15,2),",
+				"          PMOTN_DLR_OFF_AMT as decimal(15,2),",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_ID as string,",
+				"          LST_UPDT_DTTM as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          PMOTN_LADR_ID_S as integer,",
+				"          PMOTN_LADR_SEQ_ORD_NBR as integer,",
+				"          PMOTN_PRC_UN_AMT as decimal(15,2),",
+				"          PMOTN_PCT_OFF_RAT as decimal(15,2),",
+				"          PMOTN_DLR_OFF_AMT as decimal(15,2),",
+				"          CRT_UPDT_DTTM as date,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          DATE_TIME as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"source1 filter((PMOTN_LADR_ID_S == $PMOTN_LADR_ID_S || isNull(PMOTN_LADR_ID_S)) && ",
+				"(PMOTN_LADR_SEQ_ORD_NBR == $PMOTN_LADR_SEQ_ORD_NBR || isNull(PMOTN_LADR_SEQ_ORD_NBR)) && ",
+				"(PMOTN_PRC_UN_AMT == $PMOTN_PRC_UN_AMT || isNull(PMOTN_PRC_UN_AMT)) && ",
+				"(PMOTN_PCT_OFF_RAT == $PMOTN_PCT_OFF_RAT || isNull(PMOTN_PCT_OFF_RAT)) && ",
+				"(PMOTN_DLR_OFF_AMT == $PMOTN_DLR_OFF_AMT || isNull(PMOTN_DLR_OFF_AMT)) && ",
+				"(CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM)) && ",
+				"(CRT_UPDT_USER_ID == $CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID)) && ",
+				"(LST_UPDT_ID == $LST_UPDT_ID || isNull(LST_UPDT_ID)) && ",
+				"(LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM))) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, source2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PMOTN_LADR_ID_S as string,",
+				"          PMOTN_LADR_SEQ_ORD_NBR as string,",
+				"          PMOTN_PRC_UN_AMT as string,",
+				"          PMOTN_PCT_OFF_RAT as string,",
+				"          PMOTN_DLR_OFF_AMT as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:['sqrIPT094DIVTZoneGrpsLOCLT.FF_RejDCSTM.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

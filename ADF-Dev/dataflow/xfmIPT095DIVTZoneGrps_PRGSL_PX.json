@@ -1,0 +1,168 @@
+{
+	"name": "xfmIPT095DIVTZoneGrps_PRGSL_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT093DIVTZoneGrps_Zones_PX_DS_PRGSL_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGSL"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_PRGPZ_PRC_GRP_ZN_T_95D",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPRGPZ"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT095DIVTZoneGrps_PRGSL_PX_DS_PRGSLLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSPRGSLLoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPRGPZ"
+				},
+				{
+					"name": "loPRGPZ"
+				},
+				{
+					"name": "outPRGSLLoad"
+				},
+				{
+					"name": "DeleteoutPRGSLLoad"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string (\"PIPT095U\"),",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          ZoneDesc as string,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as integer,",
+				"          PrcGrpId as string,",
+				"          CNCY_CD as string,",
+				"          STR_NBR as integer,",
+				"          STRT_EFF_DT as string,",
+				"          END_EFF_DT as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSPRGSL",
+				"source(output(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as integer,",
+				"          PRC_GRP_ZN_DESC as string,",
+				"          PRC_GRP_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPRGPZ",
+				"DSPRGSL, IPTPRGPZ lookup(upper(ZoneDesc) == upper(PRC_GRP_ZN_DESC)",
+				"     && DSPRGSL@PRC_GRP_SEQ_NBR_S == IPTPRGPZ@PRC_GRP_SEQ_NBR_S,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPRGPZ",
+				"split1@Yes select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpid = PrcGrpId,",
+				"          CNCY_CD,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          PRC_GRP_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loPRGPZ",
+				"loPRGPZ derive(STRT_DT = toDate(toString(toTimestamp(concat(split(replace(STRT_EFF_DT, '/', '-'),'-')[3],'-',split(replace(STRT_EFF_DT, '/', '-'),'-')[1],'-',split(replace(STRT_EFF_DT, '/', '-'),'-')[2]),'yyyy-MM-dd'),'yyyy-MM-dd HH:mm:ss.SSS')),",
+				"          END_DT = toDate(toString(toTimestamp(concat(split(replace(END_EFF_DT, '/', '-'),'-')[3],'-',split(replace(END_EFF_DT, '/', '-'),'-')[1],'-',split(replace(END_EFF_DT, '/', '-'),'-')[2]),'yyyy-MM-dd'),'yyyy-MM-dd HH:mm:ss.SSS')),",
+				"          LGCY_CSTM_STR_ATTR_NBR = toString(null()),",
+				"          CRT_UPDT_USER_ID = 'PIPT095U',",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'PIPT095U',",
+				"          LST_UPDT_DTTM = currentDate()) ~> outPRGSLLoad",
+				"outPRGSLLoad select(mapColumn(",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          STR_NBR,",
+				"          STRT_DT,",
+				"          END_DT,",
+				"          LGCY_CSTM_STR_ATTR_NBR,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DeleteoutPRGSLLoad",
+				"LPRGPZ derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"select1 split(isMatch(),",
+				"     disjoint: false) ~> split1@(Yes)",
+				"derivedColumn1 select(mapColumn(",
+				"          ZoneDesc,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          PrcGrpId,",
+				"          CNCY_CD,",
+				"          STR_NBR,",
+				"          STRT_EFF_DT,",
+				"          END_EFF_DT,",
+				"          PRC_GRP_ZN_SEQ_NBR_S,",
+				"          PRC_GRP_ZN_DESC,",
+				"          PRC_GRP_SEQ_NBR_S = DSPRGSL@PRC_GRP_SEQ_NBR_S,",
+				"          IsMatch",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"DeleteoutPRGSLLoad sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PRC_GRP_ZN_SEQ_NBR_S as string,",
+				"          STR_NBR as string,",
+				"          STRT_DT as string,",
+				"          END_DT as string,",
+				"          LGCY_CSTM_STR_ATTR_NBR as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT095DIVTZoneGrps_PRGSL_PX.DS_PRGSLLoad.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSPRGSLLoad"
+			]
+		}
+	}
+}

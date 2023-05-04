@@ -1,0 +1,26 @@
+{
+	"name": "UIACX_UNIV_INTR_APPL_XREF_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"IPT_DB_SCHEMA": {
+				"type": "String",
+				"defaultValue": "IPTCGI"
+			}
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "UIACX_UNIV_INTR_APPL_XREF_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

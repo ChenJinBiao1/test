@@ -1,0 +1,234 @@
+{
+	"name": "xfmIPT183NewProductToISCLA_PX",
+	"properties": {
+		"folder": {
+			"name": "18-ItemAttribute"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_ISCCA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCCA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_LOCLT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLOCLT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT183ExtractISCLA_PX_DS_ISCLA_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLA"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT183NewProductToISCLA_PX_FF_RejLocNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejLocNbr"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT183NewProductToISCLA_PX_DS_Dummy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDummy"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT183NewProductToISCLA_PX_DS_ISCLALoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSISCLALoad"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LLOCLT"
+				},
+				{
+					"name": "LLOCLTDerivedColumn"
+				},
+				{
+					"name": "LLOCLTSplit1"
+				},
+				{
+					"name": "loLOCLT"
+				},
+				{
+					"name": "rejStrNbr"
+				},
+				{
+					"name": "LISCLA"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "LISCLAsplit1"
+				},
+				{
+					"name": "loExistingItemLoc"
+				},
+				{
+					"name": "lonewItemLoc"
+				},
+				{
+					"name": "XISCLA"
+				},
+				{
+					"name": "RDISCLA"
+				},
+				{
+					"name": "xoISCLA"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          CTRY_CD as string,",
+				"          CNCY_CD as string,",
+				"          ORIG_RTL_PRC_AMT as decimal(10,0),",
+				"          AUC_AMT as decimal(10,0),",
+				"          OPR_BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCCA",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          STR_NBR as integer,",
+				"          CNCY_CD as string,",
+				"          CTRY_CD as string,",
+				"          CHNL_ID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLOCLT",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          LOC_NBR as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSISCLA",
+				"DSISCCA, DSLOCLT lookup(OPR_BRD_ID == BRD_ID",
+				"     && DSISCCA@MKT_ID == DSLOCLT@MKT_ID",
+				"     && DSISCCA@CNCY_CD == DSLOCLT@CNCY_CD",
+				"     && DSISCCA@CTRY_CD == DSLOCLT@CTRY_CD",
+				"     && DSISCCA@CHNL_ID == DSLOCLT@CHNL_ID,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LLOCLT",
+				"LLOCLT derive(IsMatch = isMatch()) ~> LLOCLTDerivedColumn",
+				"LLOCLTDerivedColumn split(IsMatch == true(),",
+				"     disjoint: false) ~> LLOCLTSplit1@(LLOCLTMatch, LLOCLTNotMatch)",
+				"LLOCLTSplit1@LLOCLTMatch select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = STR_NBR,",
+				"          ORIG_RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loLOCLT",
+				"LLOCLTSplit1@LLOCLTNotMatch select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          CTRY_CD = LLOCLTSplit1@LLOCLTNotMatch@CTRY_CD,",
+				"          CNCY_CD = LLOCLTSplit1@LLOCLTNotMatch@CNCY_CD,",
+				"          ORIG_RTL_PRC_AMT,",
+				"          AUC_AMT,",
+				"          OPR_BRD_ID,",
+				"          MKT_ID = LLOCLTSplit1@LLOCLTNotMatch@MKT_ID,",
+				"          CHNL_ID = LLOCLTSplit1@LLOCLTNotMatch@CHNL_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejStrNbr",
+				"loLOCLT, DSISCLA lookup(loLOCLT@LOC_NBR == DSISCLA@LOC_NBR",
+				"     && loLOCLT@ITM_STY_CLR_SEQ_NBR_S == DSISCLA@ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LISCLA",
+				"LISCLA derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(IsMatch == true(),",
+				"     disjoint: false) ~> LISCLAsplit1@(LISCLAMatch, vNotMatch)",
+				"LISCLAsplit1@LISCLAMatch select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S = LISCLAsplit1@LISCLAMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LISCLAsplit1@LISCLAMatch@LOC_NBR,",
+				"          ORIG_RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loExistingItemLoc",
+				"LISCLAsplit1@vNotMatch select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S = LISCLAsplit1@vNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR = LISCLAsplit1@vNotMatch@LOC_NBR,",
+				"          ORIG_RTL_PRC_AMT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> lonewItemLoc",
+				"lonewItemLoc derive(STRT_DT = '2001-01-01',",
+				"          RTL_PRC_AMT = ORIG_RTL_PRC_AMT,",
+				"          PRC_STAT_CD = 'R',",
+				"          CRT_UPDT_USER_ID = 'PIPT18',",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = 'PIPT18',",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          DLT_IND = 'N') ~> XISCLA",
+				"xoISCLA aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR,",
+				"          STRT_DT),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S','LOC_NBR','STRT_DT'],name)), $$ = first($$))) ~> RDISCLA",
+				"XISCLA select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          LOC_NBR,",
+				"          STRT_DT,",
+				"          RTL_PRC_AMT,",
+				"          PRC_STAT_CD,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          DLT_IND",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoISCLA",
+				"rejStrNbr sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT183NewProductToISCLA_PX.FF_RejLocNbr.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejLocNbr",
+				"loExistingItemLoc sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT183NewProductToISCLA_PX.DS_Dummy.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSDummy",
+				"RDISCLA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT183NewProductToISCLA_PX.DS_ISCLALoad.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSISCLALoad"
+			]
+		}
+	}
+}

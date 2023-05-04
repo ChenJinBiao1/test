@@ -1,0 +1,220 @@
+{
+	"name": "xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX",
+	"properties": {
+		"folder": {
+			"name": "03-BCRUnitSales"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRUHLIV_Seq_Trnfrm_PX_DS_UHLIV_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSUHLIV"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRLHLIV_Seq_Trnfrm_PX_DS_LGCY_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSLGCY"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ITMSTY_ITM_STY_T_033",
+						"type": "DatasetReference"
+					},
+					"name": "ITMSTYITMSTYT"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ITMSCC_ITM_STY_CC_T_033",
+						"type": "DatasetReference"
+					},
+					"name": "ITMSCCITMSTYCCT"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX_FF_Rej_ITM_STY_NBR_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTYNBR"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX_FF_Rej_ITM_STY_CLR_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejITMSTYCLR"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX_DS_OUTPUT_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSOUTPUT"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FUHLIVLGCY"
+				},
+				{
+					"name": "DSUHLIVSelect"
+				},
+				{
+					"name": "LITMSTYNBR"
+				},
+				{
+					"name": "LITMSTYNBRDerivedColumn"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "LITMSTYNBRMatchSelect"
+				},
+				{
+					"name": "LITMSTYNBRNotMatchSelect"
+				},
+				{
+					"name": "LITMCLR"
+				},
+				{
+					"name": "LITMCLRDerivedColumn"
+				},
+				{
+					"name": "split2"
+				},
+				{
+					"name": "loITMCLR"
+				},
+				{
+					"name": "loITMCLR2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          BRD_ID as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSUHLIV",
+				"source(output(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as integer,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSLGCY",
+				"source(output(",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_STY_NBR as string,",
+				"          MKT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ITMSTYITMSTYT",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ITMSCCITMSTYCCT",
+				"DSUHLIVSelect, DSLGCY union(byName: true)~> FUHLIVLGCY",
+				"DSUHLIV select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSUHLIVSelect",
+				"FUHLIVLGCY, ITMSTYITMSTYT lookup(FUHLIVLGCY@ITM_STY_SEQ_NBR_S == ITMSTYITMSTYT@ITM_STY_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LITMSTYNBR",
+				"LITMSTYNBR derive(IsMatch = isMatch()) ~> LITMSTYNBRDerivedColumn",
+				"LITMSTYNBRDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(LITMSTYNBRMatch, LITMSTYNBRNotMatch)",
+				"split1@LITMSTYNBRMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = split1@LITMSTYNBRMatch@ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = split1@LITMSTYNBRMatch@ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_NBR,",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LITMSTYNBRMatchSelect",
+				"split1@LITMSTYNBRNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = split1@LITMSTYNBRNotMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LITMSTYNBRNotMatchSelect",
+				"LITMSTYNBRMatchSelect, ITMSCCITMSTYCCT lookup(LITMSTYNBRMatchSelect@ITM_STY_CLR_SEQ_NBR_S == ITMSCCITMSTYCCT@ITM_STY_CLR_SEQ_NBR_S,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LITMCLR",
+				"LITMCLR derive(IsMatch = isMatch()) ~> LITMCLRDerivedColumn",
+				"LITMCLRDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> split2@(LITMCLRMatch, LITMCLRNotMatch)",
+				"split2@LITMCLRMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S = split2@LITMCLRMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = split2@LITMCLRMatch@ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CC_NBR,",
+				"          MKT_ID,",
+				"          ITM_STY_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loITMCLR",
+				"split2@LITMCLRNotMatch select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S,",
+				"          ITM_STY_CLR_SEQ_NBR_S = split2@LITMCLRNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_SEQ_NBR_S = split2@LITMCLRNotMatch@ITM_STY_SEQ_NBR_S,",
+				"          MKT_ID,",
+				"          ITM_STY_NBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loITMCLR2",
+				"LITMSTYNBRNotMatchSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX.FF_Rej_ITM_STY_NBR.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejITMSTYNBR",
+				"loITMCLR2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX.FF_Rej_ITM_STY_CLR.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFRejITMSTYCLR",
+				"loITMCLR sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['xfmIPT033BCRItem_Clr_Seq_Trnfrm_PX.DS_OUTPUT.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSOUTPUT"
+			]
+		}
+	}
+}

@@ -1,0 +1,81 @@
+{
+	"name": "ldIPT091DIVTZoneGrps_MRHPG_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT091DIVTZoneGrps_MRHPG_PX_DS_MRHPGLoad_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSMRHPGLoad"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T_OUT",
+						"type": "DatasetReference"
+					},
+					"name": "IPTMRHPG"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XMRHPG"
+				},
+				{
+					"name": "outMRHPG"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUserId as string (\"PIPT091U\")",
+				"}",
+				"source(output(",
+				"          UNIV_HIER_LVL_SEQ_NBR_S as string,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSMRHPGLoad",
+				"DSMRHPGLoad derive(CRT_UPDT_DTTM = currentDate(),",
+				"          CRT_UPDT_USER_ID = $pUserId,",
+				"          LST_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $pUserId) ~> XMRHPG",
+				"XMRHPG select(mapColumn(",
+				"          MDSE_HIER_LVL_SEQ_NBR_S = UNIV_HIER_LVL_SEQ_NBR_S,",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S,",
+				"          CRT_UPDT_DTTM,",
+				"          CRT_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outMRHPG",
+				"outMRHPG sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MDSE_HIER_PRC_GRP_SEQ_NBR_S as string,",
+				"          MDSE_HIER_LVL_SEQ_NBR_S as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          DATE_TIME as string",
+				"     ),",
+				"     partitionFileNames:[(\"IPTCGI_MRHPG_MDSE_HIER_PRC_GRP_T.txt\")],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTMRHPG"
+			]
+		}
+	}
+}

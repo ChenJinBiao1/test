@@ -1,0 +1,108 @@
+{
+	"name": "IPT_Zone_Store_Mapping_FTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_FTP_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIZ"
+			}
+		},
+		"folder": {
+			"name": "IPTFile/09-DIVTZoneGroups"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "DC_ID",
+				"type": "String"
+			},
+			{
+				"name": "STR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "STRT_EFF_DT",
+				"type": "String"
+			},
+			{
+				"name": "END_EFF_DT",
+				"type": "String"
+			},
+			{
+				"name": "CTRY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CNCY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CSTM1",
+				"type": "String"
+			},
+			{
+				"name": "CSTM2",
+				"type": "String"
+			},
+			{
+				"name": "CSTM3",
+				"type": "String"
+			},
+			{
+				"name": "CSTM4",
+				"type": "String"
+			},
+			{
+				"name": "CSTM5",
+				"type": "String"
+			},
+			{
+				"name": "CSTM6",
+				"type": "String"
+			},
+			{
+				"name": "CSTM7",
+				"type": "String"
+			},
+			{
+				"name": "CSTM8",
+				"type": "String"
+			},
+			{
+				"name": "CSTM9",
+				"type": "String"
+			},
+			{
+				"name": "Like_Store",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

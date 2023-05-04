@@ -1,0 +1,69 @@
+{
+	"name": "xfmIPT225A_IPT_Promo_LoopbackCheck",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_PromoCheck_225A",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPromoCheck"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT225_IPTPromo_LoopBackCheck_Error_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPromoLoopBack"
+				}
+			],
+			"transformations": [
+				{
+					"name": "fiBrdMktChnl"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pBrandId as integer (1),",
+				"     pChnlId as integer (1),",
+				"     pMarketId as string ('8'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          pmotn_strt_dt as timestamp,",
+				"          PMOTN_END_DT as timestamp,",
+				"          PROC_STAT_DESC as string,",
+				"          DESCRIPTION as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPromoCheck",
+				"IPTPromoCheck filter(BRD_ID == $pBrandId && CHNL_ID == $pChnlId &&  MKT_ID == $pMarketId) ~> fiBrdMktChnl",
+				"fiBrdMktChnl sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT225_IPTPromo_LoopBackCheck_Error_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTPromoLoopBack"
+			]
+		}
+	}
+}

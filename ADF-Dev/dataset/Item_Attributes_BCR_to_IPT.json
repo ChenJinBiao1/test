@@ -1,0 +1,82 @@
+{
+	"name": "Item_Attributes_BCR_to_IPT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_FTP_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTFile/18-ItemAttribute"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation",
+				"fileName": {
+					"value": "Item_Attributes_BCR_to_IPT_ASIA_GAP_200223032808.csv",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "/apps/xchg/IPA/IPADEV/default/inbox",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OPR_BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "CTRY_CD",
+				"type": "String"
+			},
+			{
+				"name": "LCL_CNCY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CORP_ID",
+				"type": "String"
+			},
+			{
+				"name": "COMP_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_BRD_STY_ID",
+				"type": "String"
+			},
+			{
+				"name": "CLR_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CLR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "RTL_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "WAC_CST_AMT",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

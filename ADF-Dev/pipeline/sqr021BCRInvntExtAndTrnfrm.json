@@ -1,0 +1,46 @@
+{
+	"name": "sqr021BCRInvntExtAndTrnfrm",
+	"properties": {
+		"activities": [
+			{
+				"name": "SrcIPT021_BCRInvntExtract_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "srcIPT021BCRInvntExtract_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "xfmlIPT021BCRInvtTransform_PX",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "SrcIPT021_BCRInvntExtract_PX",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "xfmlIPT021BCRInvtTransform_PX",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-14T09:12:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

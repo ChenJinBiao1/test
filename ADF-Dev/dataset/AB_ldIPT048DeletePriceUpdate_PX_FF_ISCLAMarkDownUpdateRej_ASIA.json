@@ -1,0 +1,66 @@
+{
+	"name": "AB_ldIPT048DeletePriceUpdate_PX_FF_ISCLAMarkDownUpdateRej_ASIA",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pInvocationId": {
+				"type": "string",
+				"defaultValue": "ASIA"
+			}
+		},
+		"folder": {
+			"name": "AzureBlobFile/04-CurrentPriceInbound"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('ldIPT048DeletePriceUpdate_PX.FF_ISCLAMarkDownUpdateRej.',dataset().pInvocationId,'.txt')\n\n",
+					"type": "Expression"
+				},
+				"folderPath": "error",
+				"fileSystem": "04currentpriceinbound"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITM_STY_CLR_SEQ_NBR_S",
+				"type": "String"
+			},
+			{
+				"name": "LOC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "STRT_DT",
+				"type": "String"
+			},
+			{
+				"name": "RTL_PRC_AMT",
+				"type": "String"
+			},
+			{
+				"name": "PRC_STAT_CD",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_USER_ID",
+				"type": "String"
+			},
+			{
+				"name": "LST_UPDT_DTTM",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

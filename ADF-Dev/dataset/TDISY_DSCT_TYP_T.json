@@ -1,0 +1,20 @@
+{
+	"name": "TDISY_DSCT_TYP_T",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_DB_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTDB"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "IPTCGI",
+			"table": "TDISY_DSCT_TYP_T"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

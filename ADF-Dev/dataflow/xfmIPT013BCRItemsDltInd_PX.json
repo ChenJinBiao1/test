@@ -1,0 +1,278 @@
+{
+	"name": "xfmIPT013BCRItemsDltInd_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStySeqNbr_PX_DS_ItemSty_SeqNbr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSItemStySeqNbrSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_TMKET_MKT_T_ItmStyNbr",
+						"type": "DatasetReference"
+					},
+					"name": "ITMSTYDeleteIndSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_ItemStyClr_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSItemStyClrSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ITMSCC_ITM_STY_CC_T_DeleteInd",
+						"type": "DatasetReference"
+					},
+					"name": "ITMSCCDeleteIndSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsItemStyleSeqNbr_PX_DS_Dummy_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDummySink"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStySeqNbr_PX_DS_DelInd_Y_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDelIndYITMSTYSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_DelInd_Y_ITMSCC_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDelIndYITMSCCSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_Dummy_CC_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSDummyCCSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ITMSTYDeleteIndSelect"
+				},
+				{
+					"name": "LDeleteIndLookup"
+				},
+				{
+					"name": "LDeleteIndDerivedColumn"
+				},
+				{
+					"name": "LDeleteIndSplit"
+				},
+				{
+					"name": "ITMSCCDeleteIndSelect"
+				},
+				{
+					"name": "ITMSCCDeleteIndLookup"
+				},
+				{
+					"name": "ITMSCCDeleteIndderivedColumn"
+				},
+				{
+					"name": "ITMSCCDeleteIndSplit"
+				},
+				{
+					"name": "DSDummyCCSelect"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_SKU_NBR as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          {GLBL_SKU_NBR } as string,",
+				"          ITM_STY_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSItemStySeqNbrSource",
+				"source(output(",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITMSTYNBR as string,",
+				"          MKTID as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ITMSTYDeleteIndSource",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          BRD_DESC as string,",
+				"          MKT_DESC as string,",
+				"          CORP_ID as string,",
+				"          CORP_DESC as string,",
+				"          CO_DESC as string,",
+				"          DIV_ID as integer,",
+				"          DIV_DESC as string,",
+				"          DEPT_ID as integer,",
+				"          DEPT_DESC as string,",
+				"          CLS_ID as integer,",
+				"          CLS_DESC as string,",
+				"          SCLS_ID as integer,",
+				"          SCLS_DESC as string,",
+				"          ITM_STY_NBR as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          PRGM_NBR as integer,",
+				"          PRGM_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_M_CD as string,",
+				"          SZ_DESC as string,",
+				"          SEASON_CD as string,",
+				"          SEASON_YR as integer,",
+				"          SEASON_DESC as string,",
+				"          MKT_DIFF1_ID as string,",
+				"          MKT_DIF2_ID as string,",
+				"          ITM_SKU_NBR as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          LGCY_IND as string,",
+				"          MDSE_HIER_SEQ_NBR_S as integer,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          {GLBL_SKU_NBR } as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSItemStyClrSource",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITMSTYCCNBR as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ITMSCCDeleteIndSource",
+				"ITMSTYDeleteIndSource select(mapColumn(",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ItmStyNbr = ITMSTYNBR,",
+				"          MktId = MKTID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ITMSTYDeleteIndSelect",
+				"ITMSTYDeleteIndSelect, DSItemStySeqNbrSource lookup(MKT_ID == toString(MktId)",
+				"     && GLBL_ITM_STY_NBR == ItmStyNbr,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> LDeleteIndLookup",
+				"LDeleteIndLookup derive(IsMatch = isMatch()) ~> LDeleteIndDerivedColumn",
+				"LDeleteIndDerivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> LDeleteIndSplit@(LDeleteIndLookupMatch, LDeleteIndLookupNotMatch)",
+				"ITMSCCDeleteIndSource select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ItmStyCCNbr = ITMSTYCCNBR",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> ITMSCCDeleteIndSelect",
+				"ITMSCCDeleteIndSelect, DSItemStyClrSource lookup(ITMSCCDeleteIndSelect@ITM_STY_CLR_SEQ_NBR_S == DSItemStyClrSource@ITM_STY_CLR_SEQ_NBR_S",
+				"     && ItmStyCCNbr == GLBL_ITM_STY_CC_NBR,",
+				"     multiple: true,",
+				"     broadcast: 'auto')~> ITMSCCDeleteIndLookup",
+				"ITMSCCDeleteIndLookup derive(IsMatch = isMatch()) ~> ITMSCCDeleteIndderivedColumn",
+				"ITMSCCDeleteIndderivedColumn split(IsMatch==true(),",
+				"     disjoint: false) ~> ITMSCCDeleteIndSplit@(ITMSCCDeleteIndLookupMatch, ITMSCCDeleteIndLookupNotMatch)",
+				"ITMSCCDeleteIndSplit@ITMSCCDeleteIndLookupMatch select(mapColumn(",
+				"          MKT_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> DSDummyCCSelect",
+				"LDeleteIndSplit@LDeleteIndLookupMatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_SEQ_NBR_S as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT013BCRItemsItemStyleSeqNbr_PX_DS_Dummy.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ITM_STY_SEQ_NBR_S = LDeleteIndSplit@LDeleteIndLookupMatch@ITM_STY_SEQ_NBR_S",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DSDummySink",
+				"LDeleteIndSplit@LDeleteIndLookupNotMatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ItmStyNbr as string,",
+				"          MktId as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT013BCRItemsStySeqNbr_PX.DS_DelInd_Y.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ITM_STY_SEQ_NBR_S = LDeleteIndSplit@LDeleteIndLookupNotMatch@ITM_STY_SEQ_NBR_S,",
+				"          ItmStyNbr,",
+				"          MktId",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DSDelIndYITMSTYSink",
+				"ITMSCCDeleteIndSplit@ITMSCCDeleteIndLookupNotMatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ItmStyCCNbr as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT013BCRItemsStyClrSeqNbr_PX.DS_DelInd_Y_ITMSCC.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S = ITMSCCDeleteIndSplit@ITMSCCDeleteIndLookupNotMatch@ITM_STY_CLR_SEQ_NBR_S,",
+				"          ItmStyCCNbr",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DSDelIndYITMSCCSink",
+				"DSDummyCCSelect sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MKT_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT013BCRItemsStyClrSeqNbr_PX.DS_Dummy_CC.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          MKT_ID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> DSDummyCCSink"
+			]
+		}
+	}
+}

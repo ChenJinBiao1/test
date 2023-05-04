@@ -1,0 +1,41 @@
+{
+	"name": "ldt022BCRInvntLoad_PX_WAY1",
+	"properties": {
+		"activities": [
+			{
+				"name": "IPT_02_SQL1_SIU",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExecuteRemoteScript",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"http": {
+							"value": "http://10.58.8.34:8386/api/executeCommand/python?jobName=IPT_02_SQL1_SIU&&scriptPath=%2Fopt%2Fazure_data_transfer%2Fipt%2Fdata_integration%2F&&scriptName=IPT_02_SQL1_SIU.py",
+							"type": "Expression"
+						},
+						"jobname": {
+							"value": "IPT_02_SQL1_SIU",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"ForEachABRecordJson": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "02-BCRInventory"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-01-30T02:28:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

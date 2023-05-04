@@ -1,0 +1,125 @@
+{
+	"name": "ldIPT014BCRItemsITMSCC_PX",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT013BCRItemsStyClrSeqNbr_PX_DS_ITMSTY_ITMSCC_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSITMSTYITSCC"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsITMSCC_PX_FF_Reject_StyleColor_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "IPTITMSCC"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RDITMSCC"
+				},
+				{
+					"name": "XITMSTY"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jsUserId as string ('PIPT014U')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          MKT_ID as string,",
+				"          CHNL_ID as integer,",
+				"          CO_ID as string,",
+				"          CORP_ID as string,",
+				"          DIV_ID as integer,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          GLBL_ITM_STY_CC_NBR as string,",
+				"          GLBL_ITM_STY_NBR as string,",
+				"          {GLBL_SKU_NBR } as string,",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          ITM_STY_SEQ_NBR_S as integer,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          LGCY_IND as string,",
+				"          MDSE_HIER_SEQ_NBR_S as integer,",
+				"          SEASON_DESC as string,",
+				"          PRGM_NBR as integer,",
+				"          PRGM_DESC as string,",
+				"          ITM_STY_DESC as string,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_M_CD as string,",
+				"          SZ_DESC as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DSITMSTYITSCC",
+				"DSITMSTYITSCC aggregate(groupBy(ITM_STY_CLR_SEQ_NBR_S),",
+				"     each(match(!in(['ITM_STY_CLR_SEQ_NBR_S'],name)), $$ = first($$))) ~> RDITMSCC",
+				"RDITMSCC derive(ITM_STY_CC_NBR = GLBL_ITM_STY_CC_NBR,",
+				"          ITM_STY_CLR_ABBR_DESC = ITM_STY_CLR_DESC,",
+				"          SEAS_CD_DESC = SEASON_DESC,",
+				"          DLT_IND = 'N',",
+				"          CRT_UPDT_USER_ID = $jsUserId,",
+				"          CRT_UPDT_DTTM = currentDate(),",
+				"          LST_UPDT_USER_ID = $jsUserId,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XITMSTY",
+				"XITMSTY select(mapColumn(",
+				"          ITM_STY_CLR_SEQ_NBR_S,",
+				"          ITM_STY_CC_NBR,",
+				"          ITM_STY_SEQ_NBR_S,",
+				"          ITM_STY_CLR_DESC,",
+				"          ITM_STY_CLR_ABBR_DESC,",
+				"          SEAS_CD_DESC,",
+				"          LGCY_IND,",
+				"          DLT_IND,",
+				"          CRT_UPDT_USER_ID,",
+				"          CRT_UPDT_DTTM,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          ITM_STY_CC_NBR as string,",
+				"          ITM_STY_SEQ_NBR_S as string,",
+				"          ITM_STY_CLR_DESC as string,",
+				"          ITM_STY_CLR_ABBR_DESC as string,",
+				"          SEAS_CD_DESC as string,",
+				"          LGCY_IND as string,",
+				"          DLT_IND as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRItemsITMSCC_PX_FF_Reject_StyleColor_Temp.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTITMSCC"
+			]
+		}
+	}
+}

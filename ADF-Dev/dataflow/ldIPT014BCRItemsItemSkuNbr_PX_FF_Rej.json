@@ -1,0 +1,134 @@
+{
+	"name": "ldIPT014BCRItemsItemSkuNbr_PX_FF_Rej",
+	"properties": {
+		"folder": {
+			"name": "01-BCRItems"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsItemSkuNbr_PX_ITSKU_ITM_SKU_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "SKUTemp"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsItemSkuNbr_PX_FF_ITSKU_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFITSKU1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_ldIPT014BCRItemsItemSkuNbr_PX_FF_ITSKU_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFITSKU"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     ITM_STY_CLR_SEQ_NBR_S as integer (toInteger(null())),",
+				"     SKU_NBR as string (toString(null())),",
+				"     ITM_SKU_DESC as string (toString(null())),",
+				"     ITM_SKU_ABBR_DESC as string (toString(null())),",
+				"     SZ_CD as string (toString(null())),",
+				"     SZ_MDL_CD as string (toString(null())),",
+				"     SZ_DESC as string (toString(null())),",
+				"     CRT_UPDT_USER_ID as string (toString(null())),",
+				"     CRT_UPDT_DTTM as string,",
+				"     LST_UPDT_USER_ID as string (toString(null())),",
+				"     LST_UPDT_DTTM as string,",
+				"     MKT_ID as string (toString(null()))",
+				"}",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          {SKU_NBR } as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_MDL_CD as string,",
+				"          SZ_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          MKT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SKUTemp",
+				"source(output(",
+				"          ITM_STY_CLR_SEQ_NBR_S as integer,",
+				"          {SKU_NBR } as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_MDL_CD as string,",
+				"          SZ_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as date,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as date,",
+				"          MKT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FFITSKU1",
+				"SKUTemp filter(ITM_STY_CLR_SEQ_NBR_S == $ITM_STY_CLR_SEQ_NBR_S || isNull(ITM_STY_CLR_SEQ_NBR_S)  && \r",
+				"{SKU_NBR } == $SKU_NBR || isNull({SKU_NBR }) && \r",
+				"ITM_SKU_DESC == $ITM_SKU_DESC || isNull(ITM_SKU_DESC) && \r",
+				"ITM_SKU_ABBR_DESC == $ITM_SKU_ABBR_DESC || isNull(ITM_SKU_ABBR_DESC) && \r",
+				"SZ_CD == $SZ_CD || isNull(SZ_CD) && \r",
+				"SZ_MDL_CD == $SZ_MDL_CD || isNull(SZ_MDL_CD) && \r",
+				"SZ_DESC ==$SZ_DESC || isNull(SZ_DESC) &&\r",
+				"MKT_ID == $MKT_ID || isNull(MKT_ID) && \r",
+				"CRT_UPDT_USER_ID ==$CRT_UPDT_USER_ID || isNull(CRT_UPDT_USER_ID) &&\r",
+				"CRT_UPDT_DTTM == toDate($CRT_UPDT_DTTM) || isNull(CRT_UPDT_DTTM) && \r",
+				"LST_UPDT_DTTM == toDate($LST_UPDT_DTTM) || isNull(LST_UPDT_DTTM) && \r",
+				"LST_UPDT_USER_ID == $LST_UPDT_USER_ID || isNull(LST_UPDT_USER_ID)) ~> filter1",
+				"filter1 derive(DATE_TIME = currentDate()) ~> derivedColumn1",
+				"derivedColumn1, FFITSKU1 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ITM_STY_CLR_SEQ_NBR_S as string,",
+				"          {SKU_NBR } as string,",
+				"          ITM_SKU_DESC as string,",
+				"          ITM_SKU_ABBR_DESC as string,",
+				"          SZ_CD as string,",
+				"          SZ_MDL_CD as string,",
+				"          SZ_DESC as string,",
+				"          CRT_UPDT_USER_ID as string,",
+				"          CRT_UPDT_DTTM as string,",
+				"          LST_UPDT_USER_ID as string,",
+				"          LST_UPDT_DTTM as string,",
+				"          MKT_ID as string",
+				"     ),",
+				"     partitionFileNames:['ldIPT014BCRaItemsItemSkuNbr_PX.FF_ITSKU.ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFITSKU"
+			]
+		}
+	}
+}

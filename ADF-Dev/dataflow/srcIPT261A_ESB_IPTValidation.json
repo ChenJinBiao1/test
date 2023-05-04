@@ -1,0 +1,124 @@
+{
+	"name": "srcIPT261A_ESB_IPTValidation",
+	"properties": {
+		"folder": {
+			"name": "26-ESBPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_ESB_INSTANCE_EU_261_IPT",
+						"type": "DatasetReference"
+					},
+					"name": "ESBINSTANCEEU"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ESB_INSTANCE_ASIA_261_IPT",
+						"type": "DatasetReference"
+					},
+					"name": "ESBINSTANCEASIA"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_ESB_ENTERPRISE_AGGR",
+						"type": "DatasetReference"
+					},
+					"name": "ESBENTERPRISEAGGR"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT261A_ESB_IPTValidation_DS_Match",
+						"type": "DatasetReference"
+					},
+					"name": "DSmatch"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT261_ESB_IPTvalidations_Count_mismatch",
+						"type": "DatasetReference"
+					},
+					"name": "FFESBIPTDeliveryError"
+				}
+			],
+			"transformations": [
+				{
+					"name": "fuESBASIAEU"
+				},
+				{
+					"name": "agcount"
+				},
+				{
+					"name": "Lcount"
+				},
+				{
+					"name": "loMatch"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Count as integer,",
+				"          txn_typ_cd as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ESBINSTANCEEU",
+				"source(output(",
+				"          Count as integer,",
+				"          txn_typ_cd as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ESBINSTANCEASIA",
+				"source(output(",
+				"          Aggr_Count as integer,",
+				"          txn_typ_cd as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ESBENTERPRISEAGGR",
+				"ESBINSTANCEEU, ESBINSTANCEASIA union(byName: true)~> fuESBASIAEU",
+				"fuESBASIAEU aggregate(groupBy(txn_typ_cd),",
+				"     sum_count = count()) ~> agcount",
+				"agcount, ESBENTERPRISEAGGR lookup(upper(agcount@txn_typ_cd) == upper(ESBENTERPRISEAGGR@txn_typ_cd),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> Lcount",
+				"Lcount select(mapColumn(",
+				"          txn_typ_cd = agcount@txn_typ_cd,",
+				"          sum_count,",
+				"          Aggr_Count",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> loMatch",
+				"loMatch split(sum_count == Aggr_Count && isNull(txn_typ_cd),",
+				"     disjoint: false) ~> split1@(outMatch, cntreject)",
+				"split1@outMatch sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT261A_ESB_IPTValidation.DS_Match'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSmatch",
+				"split1@cntreject sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('IPT261_ESB_IPTvalidations_Count_mismatch'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFESBIPTDeliveryError"
+			]
+		}
+	}
+}

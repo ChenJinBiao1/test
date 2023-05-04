@@ -1,0 +1,177 @@
+{
+	"name": "xfmIPT225G_IPT_PromoEndDateCheck_copy1",
+	"properties": {
+		"folder": {
+			"name": "22-E2EPricingValidations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_PromoEndDt_225G",
+						"type": "DatasetReference"
+					},
+					"name": "IPTPromoEndDt"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_RPM_PROMO_225G",
+						"type": "DatasetReference"
+					},
+					"name": "RPMPROMO"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225G_IPT_PromoEndDateCheck_IPT_ValidPromoEndDt_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "IPTValidPromoEndDt"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_xfmIPT225G_IPT_PromoEndDateCheck_IPT_ValidPromoEndDt_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "PromoEndDate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LPromoEndDt"
+				},
+				{
+					"name": "outPromoEnddt"
+				},
+				{
+					"name": "rejEndDt"
+				},
+				{
+					"name": "IsMatch"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          BRD_ID as integer,",
+				"          DIV_ID as string,",
+				"          DEPT_ID as integer,",
+				"          CLS_ID as integer,",
+				"          SCLS_ID as integer,",
+				"          MKT_ID as integer,",
+				"          CHNL_ID as integer,",
+				"          PMOTN_REQ_ID_S as integer,",
+				"          pmotn_strt_dt as timestamp,",
+				"          PMOTN_END_DT as string,",
+				"          PROC_STAT_DESC as string,",
+				"          {DESCRIPTION } as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPTPromoEndDt",
+				"source(output(",
+				"          promo_id as integer,",
+				"          state as string,",
+				"          start_date as timestamp,",
+				"          {end_date } as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> RPMPROMO",
+				"IPTPromoEndDt, RPMPROMO lookup(PMOTN_REQ_ID_S == promo_id",
+				"     && PMOTN_END_DT == {end_date },",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LPromoEndDt",
+				"split1@Yes select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT = pmotn_strt_dt,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_DESC,",
+				"          {DESCRIPTION },",
+				"          DIV_ID,",
+				"          DEPT_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outPromoEnddt",
+				"split1@No select(mapColumn(",
+				"          BRD_ID,",
+				"          MKT_ID,",
+				"          CHNL_ID,",
+				"          PMOTN_REQ_ID_S,",
+				"          PMOTN_STRT_DT = pmotn_strt_dt,",
+				"          PMOTN_END_DT,",
+				"          PROC_STAT_DESC,",
+				"          {DESCRIPTION },",
+				"          DEPT_ID,",
+				"          DIV_ID,",
+				"          CLS_ID,",
+				"          SCLS_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> rejEndDt",
+				"LPromoEndDt derive(IsMatch = isMatch()) ~> IsMatch",
+				"IsMatch split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"outPromoEnddt sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CLEARANCE_ID as string,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as string,",
+				"          EFFECTIVE_DATE as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CREATE_DATE as string,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as string,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as string",
+				"     ),",
+				"     partitionFileNames:['xfmIPT225G_IPT_PromoEndDateCheck_IPT_ValidPromoEndDt_ASIA.txt'],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> IPTValidPromoEndDt",
+				"rejEndDt sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CLEARANCE_ID as string,",
+				"          STATE as string,",
+				"          ITEM as string,",
+				"          DIFF_ID as string,",
+				"          ZONE_ID as string,",
+				"          EFFECTIVE_DATE as string,",
+				"          CHANGE_AMOUNT as string,",
+				"          CREATE_DATE as string,",
+				"          CREATE_ID as string,",
+				"          APPROVAL_DATE as string,",
+				"          APPROVAL_ID as string,",
+				"          LOCATION as string",
+				"     ),",
+				"     partitionFileNames:[(concat('xfmIPT225G_IPT_PromoEndDateCheck_IPT_ValidPromoEndDt_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> PromoEndDate"
+			]
+		}
+	}
+}

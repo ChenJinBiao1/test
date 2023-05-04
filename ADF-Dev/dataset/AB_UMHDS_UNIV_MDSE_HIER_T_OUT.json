@@ -1,0 +1,41 @@
+{
+	"name": "AB_UMHDS_UNIV_MDSE_HIER_T_OUT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "AzureBlobFile/OracleMapping/01-BCRItems"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "IPTCGI.UMHDS_UNIV_MDSE_HIER_T_OUT.txt",
+				"folderPath": "source",
+				"fileSystem": "01brcitems"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRD_DESC",
+				"type": "String"
+			},
+			{
+				"name": "BRD_ABBR_DESC",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

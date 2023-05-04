@@ -1,0 +1,393 @@
+{
+	"name": "ExecuteRemoteScript",
+	"properties": {
+		"activities": [
+			{
+				"name": "jon until",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "job name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@if(equals(variables('state'),'1' ) ,true,if(equals(variables('state2'),'2' ),true ,false))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "check",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Wait1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SelfHosted_IPT_DB_DEV",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "jobname",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().parameters.jobname",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "time",
+												"type": "String",
+												"value": {
+													"value": "@variables('time')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "select count(1) AS COUNT from IPTCGI.IPT_CMD_RECORD\nwhere \nJOB_NAME = ? and \nto_char(EXEC_DATE,'yyyy-mm-dd') = ? and \nJOB_STATUS = 1",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "set",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "check",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "state",
+								"value": {
+									"value": "@if(equals(activity('check').output.resultSets[0].rows[0].COUNT, 1),'1', '0')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "check2",
+							"type": "Script",
+							"dependsOn": [
+								{
+									"activity": "Wait1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SelfHosted_IPT_DB_DEV",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "jobname",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().parameters.jobname",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "time",
+												"type": "String",
+												"value": {
+													"value": "@variables('time')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											}
+										],
+										"type": "Query",
+										"text": {
+											"value": "select count(1) AS COUNT from IPTCGI.IPT_CMD_RECORD\nwhere \nJOB_NAME = ? and \nto_char(EXEC_DATE,'yyyy-mm-dd') = ? and \nJOB_STATUS = 2",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "set2",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "check2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "state2",
+								"value": {
+									"value": "@if(equals(activity('check2').output.resultSets[0].rows[0].COUNT, 1),'2' , '0')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Wait1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 120
+							}
+						}
+					],
+					"timeout": "23:00:00"
+				}
+			},
+			{
+				"name": "job name",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "time",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@pipeline().parameters.http",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "IRnEW",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET"
+				}
+			},
+			{
+				"name": "job if",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "jon until",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('state'), '1')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "False_copy1_copy2",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "SelfHosted_IPT_DB_DEV",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"type": "Query",
+										"text": {
+											"value": "select 1/0 from IPTCGI.IPT_CMD_RECORD",
+											"type": "Expression"
+										}
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "change stage_copy1_copy2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "state",
+								"value": "'0'"
+							}
+						},
+						{
+							"name": "change stage2_copy1_copy2",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "change stage_copy1_copy2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "state2",
+								"value": "'0'"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Send-Emial",
+				"description": "",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "job if",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "customFactoryName",
+						"value": "''"
+					}
+				],
+				"typeProperties": {
+					"url": "https://prod-09.chinanorth2.logic.azure.cn:443/workflows/a95fad29ccc64b6eb1382e5341e0acf9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zmThVyZEiDtBlQqQFfOiSTumqAxHQTYvmF1CnSRoqbs",
+					"method": "POST",
+					"body": {
+						"value": "{\n    \"title\": \"Run Error Notification\",\n    \"message\": \"Activity:@{pipeline().parameters.jobname}\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().Pipeline}\",\n    \"receiver\": \"@{pipeline().globalParameters.Receiver}\",\n    \"time\": \"@{utcnow()}\",\n    \"color\": \"Red\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Fail1",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Send-Emial",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": "failed",
+					"errorCode": "500"
+				}
+			},
+			{
+				"name": "time",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "time",
+					"value": {
+						"value": "@formatDateTime(addhours(utcnow(),8),'yyyy-MM-dd')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"http": {
+				"type": "string",
+				"defaultValue": "''"
+			},
+			"jobname": {
+				"type": "string",
+				"defaultValue": "''"
+			}
+		},
+		"variables": {
+			"state": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"state2": {
+				"type": "String",
+				"defaultValue": "0"
+			},
+			"time": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "ALL/subitem"
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-03-07T08:42:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

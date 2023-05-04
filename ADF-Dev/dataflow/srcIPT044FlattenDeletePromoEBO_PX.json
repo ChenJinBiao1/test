@@ -1,0 +1,203 @@
+{
+	"name": "srcIPT044FlattenDeletePromoEBO_PX",
+	"properties": {
+		"folder": {
+			"name": "04-CurrentPriceInbound"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Xi_IPTPromoPrice",
+						"type": "DatasetReference"
+					},
+					"name": "XiIPTPromo"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTCGI_OPORI_OUTB_PMOTN_REQ_GRP_T_042",
+						"type": "DatasetReference"
+					},
+					"name": "IPAOPORI"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPTEGI_OPORI_OUTB_PMOTN_REQ_GRP_T_042",
+						"type": "DatasetReference"
+					},
+					"name": "IPEOPORI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "FF_ESBPromoDelete",
+						"type": "DatasetReference"
+					},
+					"name": "FFESBPromoUpdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT044FlattenDeletePromoEBO_PX_FF_RejOPORI1_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FFRejOPORI1"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_srcIPT044FlattenDeletePromoEBO_PX_IPTDeletePromo_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "DSIPTPromoPrice"
+				}
+			],
+			"transformations": [
+				{
+					"name": "XIPTPromoPrice"
+				},
+				{
+					"name": "xoDeletePromo"
+				},
+				{
+					"name": "xoIPTPromo"
+				},
+				{
+					"name": "FOPORI"
+				},
+				{
+					"name": "LOPORI"
+				},
+				{
+					"name": "LOPORI1"
+				},
+				{
+					"name": "RDPromoId"
+				},
+				{
+					"name": "Match"
+				},
+				{
+					"name": "split1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pUser as string ('PIPT041U'),",
+				"     pInvocationId as string ('ASIA')",
+				"}",
+				"source(output(",
+				"          PmotnId as string,",
+				"          LocationNbr as string,",
+				"          Timestamp as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> XiIPTPromo",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          {PMOTN_GRP_ID_S } as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPAOPORI",
+				"source(output(",
+				"          PMOTN_REQ_ID_S as string,",
+				"          {PMOTN_GRP_ID_S } as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> IPEOPORI",
+				"XiIPTPromo derive(PROC_STAT_CD = '10',",
+				"          EXTL_PRC_SYS_STAT_CD = '02',",
+				"          LST_UPDT_USER_ID = $pUser,",
+				"          LST_UPDT_DTTM = currentDate()) ~> XIPTPromoPrice",
+				"XIPTPromoPrice select(mapColumn(",
+				"          PmotnId,",
+				"          LocationNbr,",
+				"          Timestamp",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoDeletePromo",
+				"XIPTPromoPrice select(mapColumn(",
+				"          PMOTN_REQ_ID = PmotnId,",
+				"          EXTL_PRC_SYS_STAT_CD,",
+				"          PROC_STAT_CD,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> xoIPTPromo",
+				"IPAOPORI, IPEOPORI union(byName: true)~> FOPORI",
+				"xoIPTPromo, FOPORI lookup(PMOTN_REQ_ID == {PMOTN_GRP_ID_S },",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LOPORI",
+				"LOPORI select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          EXTL_PRC_SYS_STAT_CD,",
+				"          PROC_STAT_CD,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> LOPORI1",
+				"select1 aggregate(groupBy(PMOTN_REQ_ID_S),",
+				"     each(match(!in(['PMOTN_REQ_ID_S'],name)), $$ = first($$))) ~> RDPromoId",
+				"LOPORI1 derive(IsMatch = isMatch()) ~> Match",
+				"Match split(IsMatch==true(),",
+				"     disjoint: false) ~> split1@(Yes, No)",
+				"split1@Yes select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          EXTL_PRC_SYS_STAT_CD,",
+				"          PROC_STAT_CD,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"split1@No select(mapColumn(",
+				"          PMOTN_REQ_ID_S,",
+				"          EXTL_PRC_SYS_STAT_CD,",
+				"          PROC_STAT_CD,",
+				"          LST_UPDT_USER_ID,",
+				"          LST_UPDT_DTTM",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"xoDeletePromo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('FF_ESBPromoDelete.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FFESBPromoUpdate",
+				"select2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT044FlattenDeletePromoEBO_PX.FF_RejOPORI1.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> FFRejOPORI1",
+				"RDPromoId sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:[(concat('srcIPT044FlattenDeletePromoEBO_PX.IPTDeletePromo.',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> DSIPTPromoPrice"
+			]
+		}
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "IM_XREF",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=dgrccxrfdb001.rcc.gapinc.dev;port=1521;servicename=P_DSCXRFD1;user id=gapchinaipt",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI3NjBlYWVlNi01Zjc2LTQzYzctYjVmOS0wNGYxYjAyNDg3ZTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "IRnEW",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

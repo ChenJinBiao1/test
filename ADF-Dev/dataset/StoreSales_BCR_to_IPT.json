@@ -1,0 +1,79 @@
+{
+	"name": "StoreSales_BCR_to_IPT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SelfHosted_IPT_FTP_DEV",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IPTFile/03-BCRUnitSales"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation",
+				"fileName": "StoreSales_BCR_to_IPT_ASIA_200223032216.csv",
+				"folderPath": {
+					"value": "/apps/xchg/IPA/IPADEV/default/inbox",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OPR_BRD_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_MKT_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_CHNL_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CD",
+				"type": "String"
+			},
+			{
+				"name": "CLR_ID",
+				"type": "String"
+			},
+			{
+				"name": "OPR_STY_CLR_NBR",
+				"type": "String"
+			},
+			{
+				"name": "OPR_LOC_NBR",
+				"type": "String"
+			},
+			{
+				"name": "PROC_DT",
+				"type": "String"
+			},
+			{
+				"name": "LN_TOT_UN_SLS_QTY",
+				"type": "String"
+			},
+			{
+				"name": "LN_Tot_RTL_SLS_AMT",
+				"type": "String"
+			},
+			{
+				"name": "LN_TOT_XTD_WAC_CST_AMT",
+				"type": "String"
+			},
+			{
+				"name": "LN_TOT_XTD_ORIG_RTL_PRC_AMT",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

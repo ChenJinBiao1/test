@@ -1,0 +1,97 @@
+{
+	"name": "xfmIPT093DIVTZoneGrps_Zones_DIVS_PX",
+	"properties": {
+		"folder": {
+			"name": "09-DIVTZoneGroups"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AB_STG_ADM_DIV",
+						"type": "DatasetReference"
+					},
+					"name": "DIVS"
+				},
+				{
+					"dataset": {
+						"referenceName": "AB_IPT_Zone_Store_Mapping_FileSummary_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "FileSummary"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AB_mailid_ASIA",
+						"type": "DatasetReference"
+					},
+					"name": "mailid"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LKFileNumber"
+				},
+				{
+					"name": "outEmailIDs"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     pInvocationId as string (\"ASIA\")",
+				"}",
+				"source(output(",
+				"          EML_ADDR_ID as string,",
+				"          FIL_NBR_S as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DIVS",
+				"source(output(",
+				"          FileNo as integer,",
+				"          BrandName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> FileSummary",
+				"DIVS, FileSummary lookup(FIL_NBR_S == FileNo,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> LKFileNumber",
+				"split1@Yes select(mapColumn(",
+				"          FIL_NBR_S,",
+				"          BrandName,",
+				"          EML_ADDR_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> outEmailIDs",
+				"LKFileNumber derive(IsMatch = isMatch()) ~> derivedColumn1",
+				"derivedColumn1 split(isMatch(),",
+				"     disjoint: false) ~> split1@(Yes)",
+				"outEmailIDs sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          FIL_NBR_S as string,",
+				"          BrandName as string,",
+				"          EML_ADDR_ID as string",
+				"     ),",
+				"     partitionFileNames:[(concat('mailid_',$pInvocationId,'.txt'))],",
+				"     umask: 0777,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> mailid"
+			]
+		}
+	}
+}

@@ -1,0 +1,41 @@
+{
+	"name": "IPT",
+	"properties": {
+		"globalParameters": {
+			"IPT_DB_SHCEMA": {
+				"type": "string",
+				"value": "IPTCGI"
+			},
+			"IPT_DS_DIR": {
+				"type": "string",
+				"value": "/seqfiles/dsfiles"
+			},
+			"WORK_DIR": {
+				"type": "string",
+				"value": "/seqfiles/workfiles"
+			},
+			"pInvocationId": {
+				"type": "string",
+				"value": "ASIA"
+			},
+			"Receiver": {
+				"type": "string",
+				"value": "tian.haizhou@trans-cosmos.com.cn;lu.jiangjun@trans-cosmos.com.cn;xu.guohao@trans-cosmos.com.cn;chen.jinbiao@trans-cosmos.com.cn;kelvinyip@trans-cosmos.com.cn"
+			},
+			"Pro_para": {
+				"type": "string",
+				"value": "%2Fapps%2Fpj%2FIPA%2FIPAProd%2FIPAProdprj%2Fshellscript"
+			},
+			"UI_para": {
+				"type": "string",
+				"value": "%2Fopt%2Ftomcat2%2Fapache-tomcat-6.0.35%2Fwebapps%2Fiptuibatch%2Fiptbatch%2Fbin"
+			}
+		}
+	},
+	"location": "chinanorth2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "45f94532-eb3d-4344-bb20-77cb4540f462",
+		"tenantId": "9ab89a3b-4fa5-47bb-81c6-cf534540df8f"
+	}
+}
